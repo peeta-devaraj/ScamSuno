@@ -1,0 +1,12 @@
+node_modules/
+.next/
+.vercel/
+.env*
+!.env.example
+*.tsbuildinfo
+next-env.d.ts
+playwright-report/
+test-results/
+.playwright-fixtures/
+evidence/day0/input/
+evidence/day0/probe.wav

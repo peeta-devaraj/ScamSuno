@@ -1,0 +1,9 @@
+.env*
+.git
+.next
+node_modules
+.playwright-fixtures
+test-results
+playwright-report
+evidence/day0/input
+evidence/day0/probe.wav

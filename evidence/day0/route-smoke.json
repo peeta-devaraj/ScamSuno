@@ -1,0 +1,24 @@
+{
+  "timestamp": "2026-11-06T14:39:50.999Z",
+  "input": "Timbre-generated scripted WAV, decoded and re-encoded by the app's browser PCM encoder",
+  "checks": [
+    {
+      "locale": "en",
+      "ok": true,
+      "status": 200,
+      "model": "prisma-v3.0",
+      "requestId": "9a97b9f4-94f1-425a-992c-6c62bfe957a4",
+      "proofIssued": true,
+      "classifierVerified": null
+    },
+    {
+      "locale": "hi",
+      "ok": true,
+      "status": 200,
+      "model": "prisma-v3.0",
+      "requestId": "392a2149-b4bc-4735-b3e6-d181c5a33fd5",
+      "proofIssued": true,
+      "classifierVerified": null
+    }
+  ]
+}

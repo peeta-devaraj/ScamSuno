@@ -1,0 +1,52 @@
+{"id":"t001","locale":"en","speech":"English","demand":"otp","transcript":"482197","expected_intent":"COMPLY","expected_verify":false,"tags":["synthetic_code"]}
+{"id":"t002","locale":"en","speech":"English","demand":"otp","transcript":"four eight two one nine seven","expected_intent":"COMPLY","expected_verify":false,"tags":["synthetic_code"]}
+{"id":"t003","locale":"en","speech":"English","demand":"otp","transcript":"I'll read my code to you now.","expected_intent":"COMPLY","expected_verify":false,"tags":[]}
+{"id":"t005","locale":"hi","speech":"Hindi","demand":"otp","transcript":"४८२१९७","expected_intent":"COMPLY","expected_verify":false,"tags":[]}
+{"id":"t006","locale":"hi","speech":"Hindi","demand":"otp","transcript":"चार आठ दो एक नौ सात","expected_intent":"COMPLY","expected_verify":false,"tags":["synthetic_code"]}
+{"id":"t007","locale":"hi","speech":"Hindi","demand":"otp","transcript":"मैं अभी अपना ओटीपी बता दूँगी।","expected_intent":"COMPLY","expected_verify":false,"tags":[]}
+{"id":"t009","locale":"hi","speech":"Hinglish","demand":"otp","transcript":"chaar aath do ek nau saat","expected_intent":"COMPLY","expected_verify":false,"tags":["synthetic_code"]}
+{"id":"t010","locale":"hi","speech":"Hinglish","demand":"otp","transcript":"haan, code bata deta hoon","expected_intent":"COMPLY","expected_verify":false,"tags":[]}
+{"id":"t011","locale":"hi","speech":"Hinglish","demand":"otp","transcript":"theek hai main OTP bolungi","expected_intent":"COMPLY","expected_verify":false,"tags":[]}
+{"id":"t013","locale":"en","speech":"English","demand":"otp","transcript":"I won’t share my OTP, even if it’s 482197.","expected_intent":"REFUSE","expected_verify":false,"tags":["hard_negative","synthetic_code"]}
+{"id":"t014","locale":"en","speech":"English","demand":"otp","transcript":"No, I don’t do bank work on calls.","expected_intent":"REFUSE","expected_verify":false,"tags":[]}
+{"id":"t017","locale":"hi","speech":"Hindi","demand":"otp","transcript":"मैं ४८२१९७ नहीं बताऊँगी।","expected_intent":"REFUSE","expected_verify":false,"tags":["hard_negative"]}
+{"id":"t018","locale":"hi","speech":"Hindi","demand":"otp","transcript":"मुझे फ़ोन पर कोई कोड नहीं देना है।","expected_intent":"REFUSE","expected_verify":false,"tags":[]}
+{"id":"t019","locale":"hi","speech":"Hindi","demand":"otp","transcript":"मैं खुद शाखा जाकर पूछूँगा।","expected_intent":"REFUSE","expected_verify":true,"tags":[]}
+{"id":"t021","locale":"hi","speech":"Hinglish","demand":"otp","transcript":"main 482197 nahi bataunga","expected_intent":"REFUSE","expected_verify":false,"tags":["hard_negative","synthetic_code"]}
+{"id":"t022","locale":"hi","speech":"Hinglish","demand":"otp","transcript":"main apna OTP nahi dungi","expected_intent":"REFUSE","expected_verify":false,"tags":[]}
+{"id":"t023","locale":"hi","speech":"Hinglish","demand":"otp","transcript":"theek hai lekin main card ke number par khud phone karunga","expected_intent":"REFUSE","expected_verify":true,"tags":["hard_negative"]}
+{"id":"t025","locale":"en","speech":"English","demand":"otp","transcript":"Did you say ‘482197’ as an example?","expected_intent":"QUESTION","expected_verify":false,"tags":["hard_negative","synthetic_code"]}
+{"id":"t026","locale":"en","speech":"English","demand":"otp","transcript":"Which branch are you calling from?","expected_intent":"QUESTION","expected_verify":false,"tags":[]}
+{"id":"t029","locale":"hi","speech":"Hindi","demand":"otp","transcript":"क्या आपने उदाहरण के लिए ४८२१९७ कहा?","expected_intent":"QUESTION","expected_verify":false,"tags":["hard_negative"]}
+{"id":"t030","locale":"hi","speech":"Hindi","demand":"otp","transcript":"आप किस शाखा से बोल रहे हैं?","expected_intent":"QUESTION","expected_verify":false,"tags":[]}
+{"id":"t031","locale":"hi","speech":"Hindi","demand":"otp","transcript":"बैंक को मेरा ओटीपी क्यों चाहिए?","expected_intent":"QUESTION","expected_verify":false,"tags":[]}
+{"id":"t033","locale":"hi","speech":"Hinglish","demand":"otp","transcript":"kaun bol raha hai?","expected_intent":"QUESTION","expected_verify":false,"tags":[]}
+{"id":"t034","locale":"hi","speech":"Hinglish","demand":"otp","transcript":"aapko OTP kyun chahiye?","expected_intent":"QUESTION","expected_verify":false,"tags":[]}
+{"id":"t035","locale":"hi","speech":"Hinglish","demand":"otp","transcript":"aapne four eight two one nine seven bola?","expected_intent":"QUESTION","expected_verify":false,"tags":["hard_negative","synthetic_code"]}
+{"id":"t037","locale":"en","speech":"English","demand":"otp","transcript":"I’m hanging up now.","expected_intent":"HANG_UP","expected_verify":false,"tags":[]}
+{"id":"t038","locale":"en","speech":"English","demand":"otp","transcript":"I’m ending this call and calling the number on my card.","expected_intent":"HANG_UP","expected_verify":true,"tags":[]}
+{"id":"t039","locale":"en","speech":"English","demand":"otp","transcript":"Bye, I’m disconnecting.","expected_intent":"HANG_UP","expected_verify":false,"tags":[]}
+{"id":"t041","locale":"hi","speech":"Hindi","demand":"otp","transcript":"मैं कॉल काट रही हूँ।","expected_intent":"HANG_UP","expected_verify":false,"tags":[]}
+{"id":"t042","locale":"hi","speech":"Hindi","demand":"otp","transcript":"मैं कॉल काटकर कार्ड पर दिए नंबर पर फ़ोन करूँगा।","expected_intent":"HANG_UP","expected_verify":true,"tags":[]}
+{"id":"t043","locale":"hi","speech":"Hindi","demand":"otp","transcript":"ठीक है, अब मैं कॉल खत्म कर रही हूँ।","expected_intent":"HANG_UP","expected_verify":false,"tags":[]}
+{"id":"t045","locale":"hi","speech":"Hinglish","demand":"otp","transcript":"main ab call kaat rahi hoon","expected_intent":"HANG_UP","expected_verify":false,"tags":[]}
+{"id":"t046","locale":"hi","speech":"Hinglish","demand":"otp","transcript":"call kaat ke main bank ke app mein check karungi","expected_intent":"HANG_UP","expected_verify":true,"tags":[]}
+{"id":"t047","locale":"hi","speech":"Hinglish","demand":"otp","transcript":"bye, ab main disconnect kar raha hoon","expected_intent":"HANG_UP","expected_verify":false,"tags":[]}
+{"id":"t049","locale":"en","speech":"English","demand":"otp","transcript":"Okay.","expected_intent":"ACKNOWLEDGE","expected_verify":false,"tags":[]}
+{"id":"t050","locale":"en","speech":"English","demand":"otp","transcript":"I’m listening.","expected_intent":"ACKNOWLEDGE","expected_verify":false,"tags":[]}
+{"id":"t051","locale":"en","speech":"English","demand":"otp","transcript":"One minute, please.","expected_intent":"ACKNOWLEDGE","expected_verify":false,"tags":[]}
+{"id":"t053","locale":"hi","speech":"Hindi","demand":"otp","transcript":"हाँ, बोलिए।","expected_intent":"ACKNOWLEDGE","expected_verify":false,"tags":[]}
+{"id":"t054","locale":"hi","speech":"Hindi","demand":"otp","transcript":"एक मिनट।","expected_intent":"ACKNOWLEDGE","expected_verify":false,"tags":[]}
+{"id":"t055","locale":"hi","speech":"Hindi","demand":"otp","transcript":"जी, सुन रही हूँ।","expected_intent":"ACKNOWLEDGE","expected_verify":false,"tags":[]}
+{"id":"t057","locale":"hi","speech":"Hinglish","demand":"otp","transcript":"haan ek minute","expected_intent":"ACKNOWLEDGE","expected_verify":false,"tags":[]}
+{"id":"t058","locale":"hi","speech":"Hinglish","demand":"otp","transcript":"theek hai","expected_intent":"ACKNOWLEDGE","expected_verify":false,"tags":[]}
+{"id":"t059","locale":"hi","speech":"Hinglish","demand":"otp","transcript":"ji boliye","expected_intent":"ACKNOWLEDGE","expected_verify":false,"tags":[]}
+{"id":"t061","locale":"en","speech":"English","demand":"otp","transcript":"The weather is nice today.","expected_intent":"UNCLEAR","expected_verify":false,"tags":[]}
+{"id":"t062","locale":"en","speech":"English","demand":"otp","transcript":"Hmm.","expected_intent":"UNCLEAR","expected_verify":false,"tags":[]}
+{"id":"t063","locale":"en","speech":"English","demand":"otp","transcript":"Maybe yes, maybe no, I don’t know.","expected_intent":"UNCLEAR","expected_verify":false,"tags":[]}
+{"id":"t065","locale":"hi","speech":"Hindi","demand":"otp","transcript":"आज मौसम अच्छा है।","expected_intent":"UNCLEAR","expected_verify":false,"tags":[]}
+{"id":"t066","locale":"hi","speech":"Hindi","demand":"otp","transcript":"हम्म।","expected_intent":"UNCLEAR","expected_verify":false,"tags":[]}
+{"id":"t067","locale":"hi","speech":"Hindi","demand":"otp","transcript":"हाँ, नहीं, पता नहीं।","expected_intent":"UNCLEAR","expected_verify":false,"tags":[]}
+{"id":"t069","locale":"hi","speech":"Hinglish","demand":"otp","transcript":"aaj mausam accha hai","expected_intent":"UNCLEAR","expected_verify":false,"tags":[]}
+{"id":"t070","locale":"hi","speech":"Hinglish","demand":"otp","transcript":"um","expected_intent":"UNCLEAR","expected_verify":false,"tags":[]}
+{"id":"t071","locale":"hi","speech":"Hinglish","demand":"otp","transcript":"haan nahi pata nahi","expected_intent":"UNCLEAR","expected_verify":false,"tags":[]}

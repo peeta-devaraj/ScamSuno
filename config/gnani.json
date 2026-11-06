@@ -1,0 +1,17 @@
+{
+  "stt": {
+    "primaryModel": "prisma-v3.0",
+    "fallbackModel": "prisma-v2.5",
+    "format": "transcribe",
+    "keyterms": ["OTP", "UPI", "PIN", "KYC", "bank", "account", "verify"],
+    "topic": "Fictional bank KYC phone call about a one-time code"
+  },
+  "tts": {
+    "model": "timbre-v3.0",
+    "fallbackModel": "timbre-v2.5",
+    "voice": "Avinash",
+    "fallbackVoices": { "en": "Girish", "hi": "Deepak" },
+    "sampleRate": 24000,
+    "bitrate": "64k"
+  }
+}

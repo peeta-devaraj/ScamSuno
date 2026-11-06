@@ -1,0 +1,20 @@
+{"id":"t004","locale":"en","speech":"English","demand":"otp","transcript":"Okay, I’ll tell you my OTP.","expected_intent":"COMPLY","expected_verify":false,"tags":[]}
+{"id":"t008","locale":"hi","speech":"Hindi","demand":"otp","transcript":"ठीक है, मैं कोड पढ़कर बताता हूँ।","expected_intent":"COMPLY","expected_verify":false,"tags":[]}
+{"id":"t012","locale":"hi","speech":"Hinglish","demand":"otp","transcript":"code de raha hoon","expected_intent":"COMPLY","expected_verify":false,"tags":[]}
+{"id":"t015","locale":"en","speech":"English","demand":"otp","transcript":"Okay, but I’ll check the official bank app first.","expected_intent":"REFUSE","expected_verify":true,"tags":["hard_negative"]}
+{"id":"t016","locale":"en","speech":"English","demand":"otp","transcript":"Even if it were 482197, I would never give you that code.","expected_intent":"REFUSE","expected_verify":false,"tags":["hard_negative","synthetic_code"]}
+{"id":"t020","locale":"hi","speech":"Hindi","demand":"otp","transcript":"ठीक है, लेकिन पहले बैंक के आधिकारिक ऐप में देखूँगी।","expected_intent":"REFUSE","expected_verify":true,"tags":["hard_negative"]}
+{"id":"t024","locale":"hi","speech":"Hinglish","demand":"otp","transcript":"baad mein call karo, abhi main code share nahi karungi","expected_intent":"REFUSE","expected_verify":false,"tags":[]}
+{"id":"t027","locale":"en","speech":"English","demand":"otp","transcript":"Why would a bank need my one-time code?","expected_intent":"QUESTION","expected_verify":false,"tags":[]}
+{"id":"t028","locale":"en","speech":"English","demand":"otp","transcript":"Is your number really the bank’s?","expected_intent":"QUESTION","expected_verify":false,"tags":[]}
+{"id":"t032","locale":"hi","speech":"Hindi","demand":"otp","transcript":"मैं आपकी पहचान कैसे जाँचूँ?","expected_intent":"QUESTION","expected_verify":false,"tags":[]}
+{"id":"t036","locale":"hi","speech":"Hinglish","demand":"otp","transcript":"yeh bank ka official number hai kya?","expected_intent":"QUESTION","expected_verify":false,"tags":[]}
+{"id":"t040","locale":"en","speech":"English","demand":"otp","transcript":"I’m hanging up, then I’ll call the number you gave me.","expected_intent":"HANG_UP","expected_verify":false,"tags":["hard_negative"]}
+{"id":"t044","locale":"hi","speech":"Hindi","demand":"otp","transcript":"कॉल बंद करके मैं आपके बताए नंबर पर फ़ोन करूँगा।","expected_intent":"HANG_UP","expected_verify":false,"tags":["hard_negative"]}
+{"id":"t048","locale":"hi","speech":"Hinglish","demand":"otp","transcript":"main phone rakh raha hoon, phir aapke diye number par call karunga","expected_intent":"HANG_UP","expected_verify":false,"tags":["hard_negative"]}
+{"id":"t052","locale":"en","speech":"English","demand":"otp","transcript":"Go on.","expected_intent":"ACKNOWLEDGE","expected_verify":false,"tags":[]}
+{"id":"t056","locale":"hi","speech":"Hindi","demand":"otp","transcript":"हेलो, बोलिए।","expected_intent":"ACKNOWLEDGE","expected_verify":false,"tags":[]}
+{"id":"t060","locale":"hi","speech":"Hinglish","demand":"otp","transcript":"accha, sun raha hoon","expected_intent":"ACKNOWLEDGE","expected_verify":false,"tags":[]}
+{"id":"t064","locale":"en","speech":"English","demand":"otp","transcript":"‘482197’","expected_intent":"UNCLEAR","expected_verify":false,"tags":["hard_negative","synthetic_code"]}
+{"id":"t068","locale":"hi","speech":"Hindi","demand":"otp","transcript":"‘४८२१९७’","expected_intent":"UNCLEAR","expected_verify":false,"tags":["hard_negative"]}
+{"id":"t072","locale":"hi","speech":"Hinglish","demand":"otp","transcript":"‘chaar aath do ek nau saat’","expected_intent":"UNCLEAR","expected_verify":false,"tags":["hard_negative","synthetic_code"]}

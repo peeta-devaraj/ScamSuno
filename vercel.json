@@ -1,0 +1,6 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "nextjs",
+  "regions": ["bom1"],
+  "buildCommand": "pnpm test && if [ \"$VERCEL_ENV\" = production ]; then pnpm check:audio; fi && pnpm build"
+}
