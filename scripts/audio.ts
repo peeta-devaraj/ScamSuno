@@ -11,7 +11,8 @@ const manifestPath = "src/generated/audio-manifest.json";
 const hash = (bytes: Uint8Array) => createHash("sha256").update(bytes).digest("hex");
 
 async function valid(entry: AudioEntry) {
-  if (!/^\/audio\/kyc_freeze\/(en|hi)\/kyc\.[a-z_]+\.[a-f0-9]{12}\.(mp3|wav)$/.test(entry.url)) return false;
+  const prefix = `/audio/kyc_freeze/${entry.locale}/${entry.lineId}.${entry.sha256.slice(0, 12)}`;
+  if (entry.url !== prefix + ".mp3" && entry.url !== prefix + ".wav") return false;
   const bytes = await readFile("public" + entry.url).catch(() => null);
   return bytes !== null && bytes.length === entry.bytes && hash(bytes) === entry.sha256;
 }

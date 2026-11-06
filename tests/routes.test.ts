@@ -29,7 +29,8 @@ function setupLLM(t: { after: (fn: () => void) => void }) {
 
 test("contextual numbers cannot score as disclosure even when the model suggests it", async (t) => {
   setupLLM(t);
-  for (const text of ["I won't share 482197", "“482197”", "you asked for 482197?", "you said 4.8.2.1.9.7", "मैं ४८२१९७ नहीं बताऊँगी", "main 482197 nahi dunga", "Okay"]) {
+  for (const text of ["I won't share 482197", "“482197”", "you asked for 482197?", "you said 4.8.2.1.9.7", "मैं ४८२१९७ नहीं बताऊँगी", "main 482197 nahi dunga", "Okay",
+    "“நான்கு எட்டு இரண்டு ஒன்று ஒன்பது ஏழு”", "அந்தக் குறியீட்டைச் சொல்ல மாட்டேன்", "నేను ౪౮౨౧౯౭ చెప్పను", "నేను కోడ్ ఇవ్వను", "సరే"]) {
     const guessed = await classify(text, ctx, async () => judgement("COMPLY", text));
     assert.equal(guessed.intent, "UNCLEAR");
     assert.equal(guessed.source, "guard");

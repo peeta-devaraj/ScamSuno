@@ -1,4 +1,6 @@
 import type { Locale } from "./scenario";
+import { ta } from "./copy-ta";
+import { te } from "./copy-te";
 
 const en = {
   ribbon: "Educational simulation", home: "Home", about: "How it works", mock: "Mock mode",
@@ -26,6 +28,7 @@ const en = {
   captions: "Caller transcript", noSecret: "Keep real codes private", revealTag: "Call outcome",
   debrief: "See what happened", training: "Training feedback", flagTitle: "Red flags in this call",
   behaviours: "Safety behaviours", sources: "Official guidance", trace: "How it read your replies",
+  report: "Report real cyber fraud", confidence: "Label confidence",
   pointLabel: "tested points", behaviourLabel: "behaviours tested", noneTested: "No points tested",
   untested: "Untested behaviours are excluded from the points total.",
   card: "Get my card", again: "Play again", download: "Download PNG", share: "Share", copy: "Copy link", copied: "Link copied",
@@ -75,6 +78,7 @@ const hi: Record<keyof typeof en, string> = {
   captions: "कॉलर के शब्द", noSecret: "असली कोड निजी रखें", revealTag: "कॉल का नतीजा",
   debrief: "देखें क्या हुआ", training: "अभ्यास का नतीजा", flagTitle: "इस कॉल के चेतावनी संकेत",
   behaviours: "सुरक्षित व्यवहार", sources: "आधिकारिक सलाह", trace: "आपके जवाब कैसे समझे गए",
+  report: "साइबर धोखाधड़ी की रिपोर्ट करें", confidence: "लेबल का भरोसा",
   pointLabel: "जाँचे गए अंक", behaviourLabel: "व्यवहार जाँचे गए", noneTested: "किसी व्यवहार पर अंक नहीं दिए गए",
   untested: "जिन व्यवहारों की जाँच नहीं हुई, उनके अंक कुल में शामिल नहीं हैं।",
   card: "मेरा कार्ड देखें", again: "फिर खेलें", download: "PNG डाउनलोड करें", share: "शेयर करें", copy: "लिंक कॉपी करें", copied: "लिंक कॉपी हुआ",
@@ -99,4 +103,4 @@ const hi: Record<keyof typeof en, string> = {
 };
 
 export type Copy = typeof en;
-export const copy: Record<Locale, Copy> = { en, hi };
+export const copy: Record<Locale, Copy> = { en, hi, ta, te };

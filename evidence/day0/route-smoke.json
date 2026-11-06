@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-06T14:39:50.999Z",
+  "timestamp": "2026-11-06T15:03:39.164Z",
   "input": "Timbre-generated scripted WAV, decoded and re-encoded by the app's browser PCM encoder",
   "checks": [
     {
@@ -7,7 +7,7 @@
       "ok": true,
       "status": 200,
       "model": "prisma-v3.0",
-      "requestId": "9a97b9f4-94f1-425a-992c-6c62bfe957a4",
+      "requestId": "88ccaf72-b176-417c-a3e1-a7c080faf57d",
       "proofIssued": true,
       "classifierVerified": null
     },
@@ -16,7 +16,25 @@
       "ok": true,
       "status": 200,
       "model": "prisma-v3.0",
-      "requestId": "392a2149-b4bc-4735-b3e6-d181c5a33fd5",
+      "requestId": "5c5b2b42-d82a-490b-8a0d-e455abcbf00e",
+      "proofIssued": true,
+      "classifierVerified": null
+    },
+    {
+      "locale": "ta",
+      "ok": true,
+      "status": 200,
+      "model": "prisma-v3.0",
+      "requestId": "443cb28e-0c35-4d2e-9b26-3fd8575a01f9",
+      "proofIssued": true,
+      "classifierVerified": null
+    },
+    {
+      "locale": "te",
+      "ok": true,
+      "status": 200,
+      "model": "prisma-v3.0",
+      "requestId": "fff27539-4d76-4011-b7ab-cfaca1628087",
       "proofIssued": true,
       "classifierVerified": null
     }

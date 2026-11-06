@@ -1,5 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 import { encodeWav } from "../../src/domain/wav";
+import { copy } from "../../src/domain/copy";
+import { lines } from "../../src/domain/scenario";
 
 test.beforeEach(async ({ page }) => {
   // Keep tests independent of the production clips' speaking durations.
@@ -19,6 +21,35 @@ async function answerWithoutMic(page: Page) {
   await page.getByRole("button", { name: "Continue without mic" }).click();
   await page.getByRole("button", { name: "Answer", exact: true }).click();
   await expect(page.getByText(/am I speaking with the account holder/)).toBeVisible();
+}
+
+for (const [locale, name] of [["ta", "தமிழ்"], ["te", "తెలుగు"]] as const) {
+  test(`${name} keeps the chosen locale from the landing page through the shared result`, async ({ page }) => {
+    const c = copy[locale];
+    await page.goto("/");
+    await page.getByRole("button", { name, exact: true }).click();
+    await expect(page.getByRole("button", { name, exact: true })).toHaveAttribute("aria-pressed", "true");
+    await page.reload();
+    const start = page.getByRole("link", { name: c.start });
+    await expect(start).toHaveAttribute("href", `/play?s=kyc_freeze&l=${locale}`);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+    await start.click();
+    await page.getByRole("button", { name: c.typingMode }).click();
+    const audio = page.waitForResponse((response) => response.url().includes(`/audio/kyc_freeze/${locale}/kyc.intro.`) && response.ok());
+    await page.getByRole("button", { name: c.answer, exact: true }).click();
+    await audio;
+    await expect(page.getByText(lines["kyc.intro"][locale], { exact: true })).toBeVisible();
+    await page.getByRole("button", { name: c.verify_self }).click();
+    await expect(page.getByRole("heading", { name: c.END_VERIFIED })).toBeVisible();
+    await page.getByRole("button", { name: c.debrief }).click();
+    await expect(page.getByRole("heading", { name: c.flagTitle })).toBeVisible();
+    await page.getByRole("button", { name: c.card }).click();
+    const png = await page.getByRole("link", { name: c.download }).getAttribute("href");
+    expect(png).toMatch(/^\/api\/card\?t=/);
+    await page.goto(png!.replace("/api/card", "/r"));
+    await expect(page.getByRole("heading", { name: c.END_VERIFIED })).toBeVisible();
+    await expect(page.getByRole("link", { name: c.start })).toHaveAttribute("href", `/?l=${locale}`);
+  });
 }
 
 test("mobile visitor verifies independently, downloads a PNG and opens the share view", async ({ page }) => {

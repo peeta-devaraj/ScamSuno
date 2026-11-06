@@ -13,7 +13,8 @@ const send = (session: ReturnType<typeof newSession>, intent: Intent, verify = f
 
 test("only a complete unquoted number run can trigger the disclosure shortcut", () => {
   for (const text of ["482197", "४ ८ २ १ ९ ७।", "four eight two one nine seven.", "chaar aath do ek nau saat",
-    "４８２１９７", "௪௮௨௧௯௭", "4-8-2-1-9-7"]) assert.equal(bareCode(text), true, text);
+    "４８２１９７", "௪௮௨௧௯௭", "౪౮౨౧౯౭", "4-8-2-1-9-7",
+    "நாலு எட்டு ரெண்டு ஒண்ணு ஒன்பது ஏழு", "నాలుగు ఎనిమిది రెండు ఒకటి తొమ్మిది ఏడు"]) assert.equal(bareCode(text), true, text);
   for (const text of ["‘482197’", "“four eight two one nine seven”", "'482197'.", "482197?",
     "I won't tell you 482197", "Are you asking me to say 482197?", "482197 is an example",
     "मैं ४८२१९७ नहीं बताऊँगी", "main 482197 nahi bataunga", "you said 482197",
@@ -27,6 +28,9 @@ test("mask digits, Unicode digits and spoken codes while retaining context", () 
   assert.equal(maskNumbers("मेरा नंबर 4, 8 और 2"), "मेरा नंबर •••");
   assert.equal(maskNumbers("one minute please"), "one minute please");
   assert.equal(maskNumbers("Call ١٩٣٠"), "Call ••••");
+  assert.equal(maskNumbers("நான்கு எட்டு இரண்டு ஒன்று ஒன்பது ஏழு என்று சொன்னீர்களா?"), "•••••• என்று சொன்னீர்களா?");
+  assert.equal(maskNumbers("౪౮౨౧౯౭ చెప్పను"), "•••••• చెప్పను");
+  assert.equal(maskNumbers("నాలుగు ఎనిమిది రెండు ఒకటి తొమ్మిది ఏడు చెప్పను"), "•••••• చెప్పను");
 });
 
 test("scenario graph terminates within MAX_TURNS and reaches every outcome", () => {

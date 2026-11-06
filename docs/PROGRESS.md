@@ -5,7 +5,7 @@
 - [x] Read MVP.md and audit the workspace, toolchain and documented provider APIs.
 - [x] Initialize Git and create the private GitHub repository.
 - [x] Implement Prisma and Timbre adapters, a real-call probe, and the static audio generation and manifest check.
-- [x] Implement the bilingual KYC script, deterministic branching, all four endings, and uncertainty-aware scoring.
+- [x] Implement the KYC script, deterministic branching, all four endings, and uncertainty-aware scoring.
 - [x] Replace the unsafe contextual digit shortcut and test quotations, refusals and misleading classifier suggestions.
 - [x] Implement AudioWorklet recording, transcript confirmation, typing, quick replies and the full captions path.
 - [x] Implement the debrief, official sources, privacy-safe PNG and share page.
@@ -19,10 +19,11 @@
 - [x] Push the implementation to the private GitHub repository and pass GitHub Actions.
 - [x] Deploy [ScamSuno](https://scamsuno.vercel.app) to Vercel production.
 - [x] Complete the production Chromium journey with live Prisma, actual Timbre playback, a confirmed voice reply, the debrief trace and a PNG card. The microphone input was synthetic.
+- [x] Add Tamil and Telugu alongside English and Hindi. Verify all 60 caller clips, four live STT round trips and seven Chromium journeys.
 
 ## Release gates
 
-- [ ] Fluent Hindi listening review and actual phone verification.
+- [ ] Native-speaker listening review and actual phone verification.
 - [ ] Hosted text labelling and evaluation. Waiting for access to an OpenAI-compatible classifier.
 - [ ] Android Chrome and iOS Safari verification on a deployed HTTPS URL. Requires deployment and physical devices.
 - [ ] Automatic Git-triggered deployments. The CLI deployed production successfully. Vercel requires the account owner to authorize a GitHub Login Connection before linking the private repository.
@@ -30,4 +31,4 @@
 
 ## Deferred to protect P0
 
-Additional scenarios, Tamil, analytics, streaming speech, shared storage, extensive audio evaluation infrastructure, and post-release engagement tasks. The small dev/holdout text suite is ready to run when the classifier is configured. Human audio evaluation and device latency remain pending.
+Additional scenarios, analytics, streaming speech, shared storage, extensive audio evaluation infrastructure, and post-release engagement tasks. The small dev/holdout text suite is ready to run when the classifier is configured. Human audio evaluation and device latency remain pending.

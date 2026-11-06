@@ -20,7 +20,7 @@ export function Reveal({ locale, outcome, next, focus }: { locale: Locale; outco
     <span className="eyebrow">{c.revealTag}</span><h1>{c[outcome]}</h1><p>{c[messages[outcome]]}</p>
     <button type="button" className="btn primary" onClick={next}>{c.debrief}<Icon name="arrow" size={18}/></button>
     <a className="quiet-link" href="https://cybercrime.gov.in/" target="_blank" rel="noreferrer">
-      {locale === "hi" ? "साइबर धोखाधड़ी की रिपोर्ट करें" : "Report real cyber fraud"}<Icon name="arrow-up" size={15}/>
+      {c.report}<Icon name="arrow-up" size={15}/>
     </a>
   </section>;
 }
@@ -79,7 +79,7 @@ export function Debrief({ locale, session, result, next, reset, focus }: {
         <p>{text(turn)}</p>
         <div className="trace-tags">
           <span>{turn.classification.source}</span>
-          {turn.classification.source === "llm" && <span>{locale === "hi" ? "लेबल का भरोसा" : "Label confidence"} {turn.classification.confidence.toFixed(2)}</span>}
+          {turn.classification.source === "llm" && <span>{c.confidence} {turn.classification.confidence.toFixed(2)}</span>}
           {turn.stt && <><span>{turn.stt.model}</span><span className="request-id" title={turn.stt.gnaniRequestId}>ID {turn.stt.gnaniRequestId}</span>
             {turn.stt.detectedLanguage && <span>{turn.stt.detectedLanguage}</span>}</>}
           {turn.classification.reasons.map((reason) => <span key={reason}>{reason.replaceAll("_", " ")}</span>)}

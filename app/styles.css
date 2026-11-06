@@ -43,9 +43,12 @@ h1, h2, p { margin-top: 0; }
 .hero h1 { font-size: clamp(2.65rem, 10.3vw, 6.8rem); line-height: .99; letter-spacing: -.085em; margin: 14px 0 19px; font-weight: 850; }
 .hero h1 em { color: var(--accent); font-style: normal; }
 [lang="hi"] h1, [lang="hi"] h2 { letter-spacing: -.03em; line-height: 1.23; }
+.site:is([lang="ta"], [lang="te"]) { font-family: "Nirmala UI", "Tamil Sangam MN", "Telugu Sangam MN", system-ui, sans-serif; }
+.site:is([lang="ta"], [lang="te"]) :is(h1, h2) { letter-spacing: normal; line-height: 1.24; }
+.site:is([lang="ta"], [lang="te"]) .hero h1 { font-size: clamp(1.8rem, 7vw, 3.6rem); }
 .hero-lead { color: var(--muted); max-width: 48ch; font-size: clamp(1rem, 2vw, 1.22rem); margin-bottom: 20px; }
 .language { display: flex; gap: 9px; align-items: center; margin-bottom: 15px; color: #6d6378; }
-.language-pills { display: inline-flex; border: 1px solid var(--line); padding: 3px; border-radius: 999px; background: #fffdf9; }
+.language-pills { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--line); padding: 3px; border-radius: 18px; background: #fffdf9; }
 .language-pills button { border: 0; padding: 5px 13px; min-height: 44px; border-radius: 999px; color: #51465d; background: transparent; font-size: .86rem; font-weight: 750; }
 .language-pills button[aria-pressed="true"] { background: var(--plum); color: white; }
 .hero-actions, .result-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }

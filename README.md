@@ -1,6 +1,6 @@
 # ScamSuno
 
-An educational scam-call simulation in English and Hindi. Answer a fictional call from Kalpanik Bank, decide how to respond, then review the caller’s red flags and your decisions.
+An educational scam-call simulation in English, Hindi, Tamil and Telugu. Answer a fictional call from Kalpanik Bank, decide how to respond, then review the caller’s red flags and your decisions.
 
 **[Try ScamSuno](https://scamsuno.vercel.app)**
 
@@ -23,11 +23,11 @@ Open [ScamSuno locally](http://127.0.0.1:3000). With empty credentials, continue
 ## Live voice
 
 1. Put `GNANI_API_KEY` in the ignored `.env.local` file. Copy the structure from `.env.example` if needed. Keep keys in server environment variables.
-2. Run `pnpm probe`. It requests real Timbre WAV and MP3 and sends the generated WAV to real Prisma. It also accepts optional English and Hindi WAV paths after the command. Results go to `evidence/day0/probe.json`.
-3. Review Hindi caller lines and listen to the synthesized voice. Run `pnpm audio:gen` after the probe confirms the model and output format. Add `--v25` or `--wav` when the probe supports that choice. Run `pnpm check:audio` before release.
+2. Run `pnpm probe`. It requests real Timbre WAV and MP3 and sends the generated WAV to real Prisma. It accepts optional WAV paths in English, Hindi, Tamil and Telugu order. Results go to `evidence/day0/probe.json`.
+3. Review caller lines and listen to the synthesized voice. Run `pnpm audio:gen` after the probe confirms the model and output format. Add `--v25` or `--wav` when the probe supports that choice. Run `pnpm check:audio` before release.
 4. Configure `LLM_BASE_URL`, `LLM_API_KEY`, `LLM_MODEL` and `LLM_PROVIDER_NAME` for an HTTPS OpenAI-compatible classifier. Set `CLASSIFIER_MODE=buttons` to use explicit quick replies with voice transcription available independently.
 
-`pnpm test:live` verifies the real STT route with a Timbre-generated scripted clip for each language. FFmpeg is used locally to decode the fixture before encoding browser-format WAV. Production recording uses the browser encoder directly.
+`pnpm test:live` verifies the real STT route with a Timbre-generated scripted clip for each language. Pass the HTTPS site URL to verify a deployment. FFmpeg is used locally to decode the fixture before encoding browser-format WAV. Production recording uses the browser encoder directly.
 
 The configured STT path uses Prisma v3.0 with Prisma v2.5 fallback for documented model or scope failures. The UI shows the model and request ID returned by Prisma after a voice reply is confirmed. Timbre runs during asset generation. The manifest records the exact model, voice, caption and checksum for each generated file. [Gnani API quick start](https://docs.gnani.ai/api/introduction/quick-start)
 

@@ -2,7 +2,7 @@
 
 ## Verified locally
 
-Five automated Chromium journeys passed on November 6, 2026. They use a 390 × 844 viewport, a generated input waveform and labelled mock STT. They cover all four endings, mic denial, the real AudioWorklet capture, debrief and PNG download. This evidence is separate from the real-device gate.
+Seven automated Chromium journeys passed on November 6, 2026. They use a 390 × 844 viewport, a generated input waveform and labelled mock STT. They cover all four endings, mic denial, the real AudioWorklet capture, debrief and PNG download. The Tamil and Telugu tests follow language selection through the localized call, debrief and shared page. This evidence is separate from the real-device gate.
 
 ## Verified on production
 
@@ -10,7 +10,7 @@ A 390 × 844 Chromium browser completed the English disclosure path on the publi
 
 ## Release checks
 
-- [ ] Android Chrome on deployed HTTPS, live English and Hindi microphone flows.
+- [ ] Android Chrome on deployed HTTPS, live microphone flows in all four languages.
 - [ ] iOS Safari on deployed HTTPS, audio starts after Answer, microphone flow completes, PNG opens or saves.
 - [ ] Social in-app browser, mic denial or unsupported message, complete captions and quick replies.
 - [ ] Phone with microphone permission denied, complete a call using quick replies.

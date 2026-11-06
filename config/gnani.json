@@ -10,7 +10,7 @@
     "model": "timbre-v3.0",
     "fallbackModel": "timbre-v2.5",
     "voice": "Avinash",
-    "fallbackVoices": { "en": "Girish", "hi": "Deepak" },
+    "fallbackVoices": { "en": "Girish", "hi": "Deepak", "ta": "Vedika", "te": "Varuni" },
     "sampleRate": 24000,
     "bitrate": "64k"
   }

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { locales, SCENARIO, states } from "@/domain/scenario";
+import { locales, SCENARIO, states, type Locale } from "@/domain/scenario";
 import { readWav, RECORD_SECONDS, WAV_LIMIT } from "@/domain/wav";
 import { GnaniError, mockMode, speechKey, transcribe } from "@/server/gnani/client";
 import { boundedBody, failure, reply, withinLimit } from "@/server/http";
@@ -34,8 +34,12 @@ export async function POST(request: Request) {
     const configuredLimit = Number(process.env.STT_RATE_LIMIT_PER_10MIN);
     const limit = Number.isSafeInteger(configuredLimit) && configuredLimit > 0 && configuredLimit <= 100 ? configuredLimit : 20;
     if (!withinLimit(request, "stt", limit)) return failure("RATE_LIMITED", "Too many recordings. Wait or pick a reply.", 429, true);
+    const fixture: Record<Locale, string> = {
+      en: "I'll call my bank myself.", hi: "मैं खुद बैंक को फ़ोन करूँगी।",
+      ta: "நானே என் வங்கிக்கு அழைப்பேன்.", te: "నేనే నా బ్యాంకుకు కాల్ చేస్తాను.",
+    };
     const result = mock
-      ? { transcript: request.headers.get("x-mock-transcript") ?? (locale === "hi" ? "मैं खुद बैंक को फ़ोन करूँगी।" : "I'll call my bank myself."),
+      ? { transcript: request.headers.get("x-mock-transcript") ?? fixture[locale],
         model: "mock", request_id: `mock-${crypto.randomUUID()}`, detected_language_code: undefined, usedFallback: false, truncated: false }
       : await transcribe(wav, locale);
     const transcript = result.transcript.trim();

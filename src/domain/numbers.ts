@@ -1,22 +1,24 @@
 const words = [
-  "zero oh शून्य जीरो ज़ीरो shunya", "one एक ek", "two दो do", "three तीन teen",
-  "four चार chaar char", "five पांच पाँच paanch panch", "six छह छः छे chhe che",
-  "seven सात saat", "eight आठ aath", "nine नौ nau",
+  "zero oh शून्य जीरो ज़ीरो shunya பூஜ்ஜியம் சுழியம் ஜீரோ సున్నా జీరో",
+  "one एक ek ஒன்று ஒண்ணு ఒకటి", "two दो do இரண்டு ரெண்டு రెండు", "three तीन teen மூன்று மூணு మూడు",
+  "four चार chaar char நான்கு நாலு నాలుగు", "five पांच पाँच paanch panch ஐந்து அஞ்சு ஐదు",
+  "six छह छः छे chhe che ஆறு ఆరు", "seven सात saat ஏழு ఏడు", "eight आठ aath எட்டு ఎనిమిది", "nine नौ nau ஒன்பது తొమ్మిది",
 ];
 const digitWords = new Map(words.flatMap((group, value) =>
   group.split(" ").map((word) => [word.normalize("NFC"), String(value)] as const)));
 const joiners = /^(?:[\s,–—-]+|\s+(?:and|then|aur|फिर|और)\s+)$/iu;
 const bareJoiners = /^[\s,–—-]+$/u;
+const digitStarts = [0x30, 0x0966, 0x0be6, 0x0c66, 0xff10];
 
 export function normalize(text: string) {
   return text.normalize("NFC").replace(/[\u200B-\u200D\uFEFF]/gu, "").trim().replace(/\s+/gu, " ");
 }
 
 function numericValue(token: string) {
-  if (/^[0-9०-९௦-௯０-９]+$/u.test(token)) {
+  if (/^[0-9०-९௦-௯౦-౯０-９]+$/u.test(token)) {
     return Array.from(token, (digit) => {
       const code = digit.charCodeAt(0);
-      return String(code - (code >= 0xff10 ? 0xff10 : code >= 0x0be6 ? 0x0be6 : code >= 0x0966 ? 0x0966 : 48));
+      return String(code - digitStarts.findLast((start) => start <= code)!);
     }).join("");
   }
   return digitWords.get(token.toLowerCase().normalize("NFC"));

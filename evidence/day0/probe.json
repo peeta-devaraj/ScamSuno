@@ -1,11 +1,11 @@
 {
-  "timestamp": "2026-11-06T14:34:58.820Z",
+  "timestamp": "2026-11-06T15:03:17.968Z",
   "complete": true,
   "checks": [
     {
       "name": "en timbre-v3.0 WAV",
       "ok": true,
-      "elapsedMs": 1991,
+      "elapsedMs": 1203,
       "model": "timbre-v3.0",
       "voice": "Avinash",
       "contentType": "audio/wav",
@@ -14,59 +14,125 @@
     {
       "name": "en timbre-v3.0 MP3",
       "ok": true,
-      "elapsedMs": 738,
+      "elapsedMs": 653,
       "contentType": "audio/mpeg",
-      "bytes": 13248
+      "bytes": 15168
     },
     {
       "name": "en prisma-v3.0 Timbre round trip",
       "ok": true,
-      "elapsedMs": 477,
+      "elapsedMs": 1537,
       "model": "prisma-v3.0",
-      "requestId": "c43bb2ee-bfdd-4da0-929a-b4ada63d32ea",
+      "requestId": "4e09f586-83fe-4b80-af7f-6753e7e55b1e",
       "language": "en-IN",
       "transcript": "I will call the bank myself."
     },
     {
       "name": "en prisma-v2.5 Timbre round trip",
       "ok": true,
-      "elapsedMs": 408,
+      "elapsedMs": 1349,
       "model": "prisma-v2.5",
-      "requestId": "b7035555-785b-480c-950d-82b3e96aa395",
+      "requestId": "cb99acc0-da82-4002-a135-cf6ec5c5744f",
       "transcript": "i will call the bank myself"
     },
     {
       "name": "hi timbre-v3.0 WAV",
       "ok": true,
-      "elapsedMs": 1667,
+      "elapsedMs": 930,
       "model": "timbre-v3.0",
       "voice": "Avinash",
       "contentType": "audio/wav",
-      "bytes": 58924
+      "bytes": 61484
     },
     {
       "name": "hi timbre-v3.0 MP3",
       "ok": true,
-      "elapsedMs": 575,
+      "elapsedMs": 916,
       "contentType": "audio/mpeg",
-      "bytes": 14592
+      "bytes": 13824
     },
     {
       "name": "hi prisma-v3.0 Timbre round trip",
       "ok": true,
-      "elapsedMs": 407,
+      "elapsedMs": 1188,
       "model": "prisma-v3.0",
-      "requestId": "b0e5c29a-57ff-46ad-b977-26594488f4a8",
+      "requestId": "ec71bb71-4830-4295-aaf6-9aecc1646018",
       "language": "hi-IN",
       "transcript": "मैं खुद bank को phone करूँगी।"
     },
     {
       "name": "hi prisma-v2.5 Timbre round trip",
       "ok": true,
-      "elapsedMs": 426,
+      "elapsedMs": 1370,
       "model": "prisma-v2.5",
-      "requestId": "82e81275-87a3-4be1-826c-0aa43555b76d",
+      "requestId": "82a4a24c-c624-4230-80f5-b061b581af6f",
       "transcript": "मैं खुद बैंक को फोन करूंगी।"
+    },
+    {
+      "name": "ta timbre-v3.0 WAV",
+      "ok": true,
+      "elapsedMs": 1089,
+      "model": "timbre-v3.0",
+      "voice": "Avinash",
+      "contentType": "audio/wav",
+      "bytes": 74284
+    },
+    {
+      "name": "ta timbre-v3.0 MP3",
+      "ok": true,
+      "elapsedMs": 774,
+      "contentType": "audio/mpeg",
+      "bytes": 18432
+    },
+    {
+      "name": "ta prisma-v3.0 Timbre round trip",
+      "ok": true,
+      "elapsedMs": 719,
+      "model": "prisma-v3.0",
+      "requestId": "4165282b-dba6-417b-923e-8bca48fd8151",
+      "language": "ta-IN",
+      "transcript": "நானே வங்கிக்கு அழைத்துச் சரிபார்ப்பேன்."
+    },
+    {
+      "name": "ta prisma-v2.5 Timbre round trip",
+      "ok": true,
+      "elapsedMs": 913,
+      "model": "prisma-v2.5",
+      "requestId": "ab87348b-a4a7-437d-8870-07a1319dd476",
+      "transcript": "நானே வங்கிக்கு அழைத்துச் சரிபார்ப்பேன்"
+    },
+    {
+      "name": "te timbre-v3.0 WAV",
+      "ok": true,
+      "elapsedMs": 958,
+      "model": "timbre-v3.0",
+      "voice": "Avinash",
+      "contentType": "audio/wav",
+      "bytes": 71724
+    },
+    {
+      "name": "te timbre-v3.0 MP3",
+      "ok": true,
+      "elapsedMs": 963,
+      "contentType": "audio/mpeg",
+      "bytes": 18432
+    },
+    {
+      "name": "te prisma-v3.0 Timbre round trip",
+      "ok": true,
+      "elapsedMs": 768,
+      "model": "prisma-v3.0",
+      "requestId": "3716a814-a559-40cc-8965-12ff190ae59b",
+      "language": "te-IN",
+      "transcript": "నేనే bank కు call చేసి తెలుసుకుంటాను."
+    },
+    {
+      "name": "te prisma-v2.5 Timbre round trip",
+      "ok": true,
+      "elapsedMs": 637,
+      "model": "prisma-v2.5",
+      "requestId": "dcb6bf97-fc2e-4031-af0a-b058fb8109b5",
+      "transcript": "నేనే బ్యాంకు కాల్ చేసి తెలుసుకుంటాను"
     }
   ]
 }

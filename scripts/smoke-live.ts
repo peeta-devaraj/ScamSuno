@@ -23,9 +23,18 @@ async function main() {
   }
   if (!speechKey() || process.env.GNANI_MODE === "mock") throw new Error("Live mode and Gnani credentials are required");
   const checks = [];
-  const phrases = { en: "I will call my bank myself.", hi: "मैं अपने बैंक के आधिकारिक ऐप में खुद जाँच करूँगी।" };
-  const url = "http://localhost";
-  const turnRequest = (payload: object) => turn(new Request(url, { method: "POST", body: JSON.stringify(payload) }));
+  const phrases = {
+    en: "I will call my bank myself.", hi: "मैं अपने बैंक के आधिकारिक ऐप में खुद जाँच करूँगी।",
+    ta: "நானே வங்கிக்கு அழைத்துச் சரிபார்ப்பேன்.", te: "నేనే బ్యాంకుకు కాల్ చేసి తెలుసుకుంటాను.",
+  };
+  const expected = { en: /\bbank\b/i, hi: /बैंक|\bbank\b/i, ta: /வங்கி|பேங்க்|\bbank\b/i, te: /బ్యాంకు|బ్యాంక్|\bbank\b/i };
+  const remote = process.argv[2] ? new URL(process.argv[2]) : null;
+  if (remote && (remote.protocol !== "https:" || remote.username || remote.password)) throw new Error("An HTTPS origin is required");
+  const request = (path: string, body: BodyInit) => new Request(new URL(path, remote ?? "http://localhost"), {
+    method: "POST", body, redirect: "error",
+    ...(typeof body === "string" ? { headers: { "Content-Type": "application/json" } } : {}),
+  });
+  const turnRequest = (payload: object) => turn(request("/api/turn", JSON.stringify(payload)));
   for (const locale of locales) {
     const result = await timbre(phrases[locale], locale, "timbre-v3.0", "wav");
     const form = new FormData();
@@ -33,12 +42,12 @@ async function main() {
     form.set("scenarioId", "kyc_freeze");
     form.set("stateId", "INTRO");
     form.set("audio", new Blob([browserWav(result.audio)], { type: "audio/wav" }), "reply.wav");
-    const response = await stt(new Request(url, { method: "POST", body: form }));
+    const req = request("/api/stt", form);
+    const response = await (remote ? fetch(req) : stt(req));
     const output = await response.json();
-    const word = locale === "en" ? /\bbank\b/i : /बैंक|\bbank\b/i;
-    const ok = response.ok && word.test(output.transcript) && Boolean(output.proof && output.stt?.gnaniRequestId);
+    const ok = response.ok && expected[locale].test(output.transcript) && Boolean(output.proof && output.stt?.gnaniRequestId);
     let verified: boolean | null = null;
-    if (ok && llmConfig()) {
+    if (ok && !remote && llmConfig()) {
       const started = await (await turnRequest({ action: "start", scenarioId: "kyc_freeze", locale, sessionId: crypto.randomUUID() })).json();
       const reply = await turnRequest({ action: "reply", session: started.session, reply: {
         inputMode: "voice", text: output.transcript, stt: output.stt, proof: output.proof,
@@ -50,11 +59,13 @@ async function main() {
       proofIssued: Boolean(output.proof), classifierVerified: verified });
   }
   await mkdir("evidence/day0", { recursive: true });
-  await writeFile("evidence/day0/route-smoke.json", JSON.stringify({
-    timestamp: new Date().toISOString(), input: "Timbre-generated scripted WAV, decoded and re-encoded by the app's browser PCM encoder", checks,
+  const report = remote ? "evidence/day0/deployed-language-smoke.json" : "evidence/day0/route-smoke.json";
+  await writeFile(report, JSON.stringify({
+    timestamp: new Date().toISOString(), origin: remote?.origin,
+    input: "Timbre-generated scripted WAV, decoded and re-encoded by the app's browser PCM encoder", checks,
   }, null, 2) + "\n");
   if (checks.some((item) => !item.ok || item.classifierVerified === false)) process.exitCode = 1;
-  console.log(`Live /api/stt smoke ${checks.every((item) => item.ok) ? "passed" : "incomplete"}. See evidence/day0/route-smoke.json.`);
+  console.log(`Live /api/stt smoke ${checks.every((item) => item.ok) ? "passed" : "incomplete"}. See ${report}.`);
 }
 
 main().catch((error: unknown) => {

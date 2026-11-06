@@ -1,5 +1,6 @@
 import { z } from "zod";
 import config from "../../../config/gnani.json";
+import type { Locale } from "../../domain/scenario";
 
 const baseUrl = "https://api.vachana.ai";
 const retries = new Set([429, 500, 502, 503, 504]);
@@ -8,7 +9,6 @@ const knownCodes = new Set([...fallbackCodes, "EMPTY_AUDIO", "AUDIO_CONVERSION_E
   "UNSUPPORTED_AUDIO_FORMAT", "MAX_AUDIO_DURATION_EXCEEDED", "INVALID_FORMAT", "INVALID_LANGUAGE_CODE",
   "MISSING_API_KEY", "INVALID_API_KEY", "RATE_LIMITED", "UPSTREAM_TIMEOUT", "INSUFFICIENT_CREDITS"]);
 
-export type SpeechLocale = "en" | "hi";
 export type PrismaModel = "prisma-v3.0" | "prisma-v2.5";
 export type TimbreModel = "timbre-v3.0" | "timbre-v2.5";
 
@@ -75,12 +75,12 @@ const prismaResponse = z.object({
   truncated: z.boolean().optional(),
 });
 
-export async function prisma(wav: Uint8Array, locale: SpeechLocale,
+export async function prisma(wav: Uint8Array, locale: Locale,
   model: PrismaModel, deadline = Date.now() + 20_000, transport = fetch) {
   return gnani("/stt/v3", (headers) => {
     const form = new FormData();
     form.set("audio_file", new Blob([Uint8Array.from(wav)], { type: "audio/wav" }), "reply.wav");
-    form.set("language_code", locale === "en" ? "en-IN" : model === "prisma-v3.0" ? "hi-IN,en-IN" : "hi-IN");
+    form.set("language_code", locale !== "en" && model === "prisma-v3.0" ? `${locale}-IN,en-IN` : `${locale}-IN`);
     form.set("format", config.stt.format);
     if (model === "prisma-v3.0") {
       form.set("model", model);
@@ -100,7 +100,7 @@ export async function prisma(wav: Uint8Array, locale: SpeechLocale,
 
 let fallbackUntil = 0;
 
-export async function transcribe(wav: Uint8Array, locale: SpeechLocale, transport = fetch) {
+export async function transcribe(wav: Uint8Array, locale: Locale, transport = fetch) {
   const deadline = Date.now() + 20_000;
   if (Date.now() >= fallbackUntil) {
     try {
@@ -116,9 +116,9 @@ export async function transcribe(wav: Uint8Array, locale: SpeechLocale, transpor
   return { ...await prisma(wav, locale, config.stt.fallbackModel as PrismaModel, deadline, transport), usedFallback: true };
 }
 
-export async function timbre(text: string, locale: SpeechLocale, model: TimbreModel,
+export async function timbre(text: string, locale: Locale, model: TimbreModel,
   container: "mp3" | "wav", transport = fetch) {
-  const language = locale === "en" ? "en-IN" : "hi-IN";
+  const language = `${locale}-IN`;
   const voice = model === "timbre-v3.0" ? config.tts.voice : config.tts.fallbackVoices[locale];
   return gnani("/api/v1/tts/inference", (headers) => {
     headers.set("Content-Type", "application/json");

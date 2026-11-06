@@ -9,13 +9,13 @@ export function Chrome({ children, locale = "en", mock = false, compact = false 
   const c = copy[locale];
   return <div lang={locale} className={compact ? "site compact" : "site"}>
     <header className="site-header"><div className="shell nav-inner">
-      <Link className="brand" href={locale === "hi" ? "/?l=hi" : "/"} aria-label="ScamSuno home">
+      <Link className="brand" href={`/?l=${locale}`} aria-label={`ScamSuno · ${c.home}`}>
         <span className="brand-icon"><Icon name="wave" size={24}/></span><span>Scam<span>Suno</span></span>
       </Link>
       <span className="ribbon"><Icon name="shield" size={15}/>{c.ribbon}</span>
       <Link href="/about" className="nav-about">{c.about}<Icon name="arrow-up" size={14}/></Link>
     </div></header>
-    {mock && <div className="mock" role="status">MOCK MODE · {locale === "hi" ? "परीक्षण के लिए" : "Development fixtures"}</div>}
+    {mock && <div className="mock" role="status">MOCK MODE{locale !== "en" && ` · ${c.mock}`}</div>}
     {children}
   </div>;
 }

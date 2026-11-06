@@ -1,6 +1,7 @@
 import { loadEnvFile } from "node:process";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { GnaniError, prisma, speechKey, timbre, type PrismaModel, type TimbreModel } from "../src/server/gnani/client";
+import { locales } from "../src/domain/scenario";
 
 try { loadEnvFile(".env.local"); } catch (error) {
   if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw new Error("Could not load .env.local");
@@ -29,11 +30,13 @@ async function main() {
     }
   }
   let complete = true;
-  const locales = ["en", "hi"] as const;
-  const phrases = { en: "I will call the bank myself.", hi: "मैं खुद बैंक को फ़ोन करूँगी।" };
+  const phrases = {
+    en: "I will call the bank myself.", hi: "मैं खुद बैंक को फ़ोन करूँगी।",
+    ta: "நானே வங்கிக்கு அழைத்துச் சரிபார்ப்பேன்.", te: "నేనే బ్యాంకుకు కాల్ చేసి తెలుసుకుంటాను.",
+  };
   const ttsModels: TimbreModel[] = ["timbre-v3.0", "timbre-v2.5"];
   const sttModels: PrismaModel[] = ["prisma-v3.0", "prisma-v2.5"];
-  for (const locale of locales) {
+  for (const [index, locale] of locales.entries()) {
     let audio: Uint8Array | undefined;
     for (const model of ttsModels) {
       const result = await check(`${locale} ${model} WAV`, () => timbre(phrases[locale], locale, model, "wav"),
@@ -44,7 +47,7 @@ async function main() {
         (value) => ({ contentType: value.contentType, bytes: value.audio.length }));
       break;
     }
-    const file = process.argv[locale === "en" ? 2 : 3];
+    const file = process.argv[index + 2];
     const input = file ? await readFile(file) : audio;
     let transcribed = false;
     if (input) {

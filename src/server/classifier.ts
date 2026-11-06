@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { bareCode, normalize, numberRuns } from "../domain/numbers";
 import type { Classification } from "../domain/engine";
-import { intents, type Button, type Intent } from "../domain/scenario";
+import { intents, type Button, type Intent, type Locale } from "../domain/scenario";
 
 const contract = z.object({
   intent: z.enum(intents), verify: z.boolean(), confidence: z.number().min(0).max(1), evidence: z.string().max(200),
@@ -18,10 +18,13 @@ HANG_UP: says they are ending the call.
 ACKNOWLEDGE: neutral listening or hesitation, e.g. "okay", "haan", "ek minute", "hello?".
 UNCLEAR: unrelated, unintelligible, contradictory, or uncertain.
 
-Use the whole reply, including negation in English, Hindi and Hinglish. A quoted, hypothetical, repeated, questioned,
+Use the whole reply, including negation in English, Hindi, Hinglish, Tamil and Telugu. Expect code-switching and transliteration. A quoted, hypothetical, repeated, questioned,
 or expressly withheld code is not a disclosure. Never infer compliance from a number or an acknowledgement in a sentence.
 "I'm not giving you 482197" => REFUSE. "Did you say '482197'?" => QUESTION.
 "मैं ४८२१९७ नहीं बताऊँगी" => REFUSE. "haan ek minute" => ACKNOWLEDGE.
+"நான் குறியீட்டைச் சொல்ல மாட்டேன்" => REFUSE. "నేను కోడ్ చెప్పను" => REFUSE.
+"நானே வங்கிக்கு அழைத்துச் சரிபார்ப்பேன்" => REFUSE with verify=true.
+"నేనే బ్యాంకుకు కాల్ చేసి తెలుసుకుంటాను" => REFUSE with verify=true.
 "theek hai, lekin pehle main bank ke app se check karungi" => REFUSE with verify=true.
 "okay, I'll tell you my OTP now" => COMPLY when the demand is otp.
 "I'm hanging up and calling the number on my card" => HANG_UP with verify=true.
@@ -58,12 +61,12 @@ export function classifyButton(id: Button, demand: "none" | "otp") {
   return label(byButton[id], "button", { verify: id === "verify_self" });
 }
 
-type Context = { demand: "none" | "otp"; lastLineEn: string };
+type Context = { demand: "none" | "otp"; lastLineEn: string; locale?: Locale };
 
 async function ask(text: string, context: Context, cfg: NonNullable<ReturnType<typeof llmConfig>>, transport: typeof fetch) {
   const messages = [{ role: "system", content: prompt }, { role: "user", content: JSON.stringify({
     scenario_summary: "Fictional bank caller applies pressure to get a one-time code.",
-    caller_last_line_en: context.lastLineEn, active_demand: context.demand, reply_transcript: text,
+    caller_last_line_en: context.lastLineEn, active_demand: context.demand, call_locale: context.locale, reply_transcript: text,
   }) }];
   const requestedMs = Number(process.env.LLM_TIMEOUT_MS);
   const signal = AbortSignal.timeout(Number.isSafeInteger(requestedMs) && requestedMs >= 500 && requestedMs <= 8000 ? requestedMs : 4000);
@@ -106,8 +109,8 @@ export async function classify(input: string, context: Context, transport = fetc
     if (result.intent === "COMPLY" && (context.demand === "none" ||
         numberRuns(text).reduce((sum, run) => sum + run.digits.length, 0) >= 4 ||
         (text.match(/\p{Nd}/gu)?.length ?? 0) >= 4 ||
-        /^(?:ok(?:ay)?|haan?|हाँ|हां|theek hai|ठीक है|ek minute|एक मिनट)[.!।\s]*$/iu.test(text) ||
-        /\b(?:not|never|won['’]?t|refuse|nahi+n?|nahin|mat)\b|नहीं|नही|मत/u.test(text.toLowerCase()))) {
+        /^(?:ok(?:ay)?|haan?|हाँ|हां|theek hai|ठीक है|ek minute|एक मिनट|சரி|ஒரு நிமிடம்|సరే|ఒక్క నిమిషం)[.!।\s]*$/iu.test(text) ||
+        /\b(?:not|never|won['’]?t|refuse|nahi+n?|nahin|mat)\b|नहीं|नही|मत|மாட்டேன்|முடியாது|வேண்டாம்|சொல்லலை|చెప్పను|ఇవ్వను|వద్దు|కుదరదు/u.test(text.toLowerCase()))) {
       return label("UNCLEAR", "guard", { reasons: ["ambiguous_disclosure"] });
     }
     const intent = confidence >= (result.intent === "COMPLY" ? 0.8 : 0.6) ? result.intent : "UNCLEAR";

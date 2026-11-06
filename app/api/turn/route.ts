@@ -77,7 +77,7 @@ export async function POST(request: Request) {
       return failure("VOICE_CONFIRMATION_EXPIRED", "Record your reply again or switch to typing.", 400);
     }
     const lastLine = lines[session.lastCallerLineIds.at(-1)!].en;
-    const judgement = await classify(userReply.text, { demand, lastLineEn: lastLine });
+    const judgement = await classify(userReply.text, { demand, lastLineEn: lastLine, locale: session.locale });
     if (judgement.degraded) return stateResponse(session, true, true);
     const next = step(session, judgement, userReply);
     return stateResponse(next, !llmConfig() || (next.unclear[next.stateId] ?? 0) >= 2);
