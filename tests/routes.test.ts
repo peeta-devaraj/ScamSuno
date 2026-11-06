@@ -5,7 +5,7 @@ import { POST as turnRoute } from "../app/api/turn/route";
 import { GET as healthRoute } from "../app/api/health/route";
 import { encodeWav } from "../src/domain/wav";
 import { classify, classifyButton } from "../src/server/classifier";
-import { prisma, timbre, transcribe } from "../src/server/gnani/client";
+import { mockMode, prisma, timbre, transcribe } from "../src/server/gnani/client";
 
 const path = "http://localhost";
 const wav = encodeWav(new Float32Array(16_000), 16_000);
@@ -81,9 +81,14 @@ test("Prisma sends documented multipart fields and records upstream metadata", a
 
 test("mock voice is labelled, confirms with signed metadata, and rejects forged replies", async (t) => {
   setupLLM(t);
-  const previous = process.env.GNANI_MODE;
+  const previous = { GNANI_MODE: process.env.GNANI_MODE, VERCEL_ENV: process.env.VERCEL_ENV };
   process.env.GNANI_MODE = "mock";
-  t.after(() => { if (previous === undefined) delete process.env.GNANI_MODE; else process.env.GNANI_MODE = previous; });
+  process.env.VERCEL_ENV = "development";
+  t.after(() => {
+    for (const [key, value] of Object.entries(previous)) {
+      if (value === undefined) delete process.env[key]; else process.env[key] = value;
+    }
+  });
   assert.equal((await healthRoute().json()).mode, "mock");
   const form = new FormData();
   form.set("audio", new Blob([wav], { type: "audio/wav" }), "reply.wav");
@@ -101,6 +106,18 @@ test("mock voice is labelled, confirms with signed metadata, and rejects forged 
   assert.equal(accepted.session.turns[0].inputMode, "voice");
   assert.equal(accepted.session.turns[0].stt.model, "mock");
   assert.equal((await turn({ action: "hangup", session: accepted.session })).status, 409);
+});
+
+test("Vercel production rejects mock mode", (t) => {
+  const previous = { GNANI_MODE: process.env.GNANI_MODE, VERCEL_ENV: process.env.VERCEL_ENV };
+  t.after(() => {
+    for (const [key, value] of Object.entries(previous)) {
+      if (value === undefined) delete process.env[key]; else process.env[key] = value;
+    }
+  });
+  process.env.GNANI_MODE = "mock";
+  process.env.VERCEL_ENV = "production";
+  assert.throws(mockMode, /mock is forbidden/);
 });
 
 test("typed refusal and verification pass through the normal route; provider failure leaves the turn open", async (t) => {
