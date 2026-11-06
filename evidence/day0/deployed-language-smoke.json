@@ -1,0 +1,43 @@
+{
+  "timestamp": "2026-11-06T15:07:12.802Z",
+  "origin": "https://scamsuno.vercel.app",
+  "input": "Timbre-generated scripted WAV, decoded and re-encoded by the app's browser PCM encoder",
+  "checks": [
+    {
+      "locale": "en",
+      "ok": true,
+      "status": 200,
+      "model": "prisma-v3.0",
+      "requestId": "cb9ba69a-d9e8-450e-98fe-1256c4a61782",
+      "proofIssued": true,
+      "classifierVerified": null
+    },
+    {
+      "locale": "hi",
+      "ok": true,
+      "status": 200,
+      "model": "prisma-v3.0",
+      "requestId": "12572a4a-d999-40d8-b1b0-f7ffa699d7cb",
+      "proofIssued": true,
+      "classifierVerified": null
+    },
+    {
+      "locale": "ta",
+      "ok": true,
+      "status": 200,
+      "model": "prisma-v3.0",
+      "requestId": "67911da6-8e70-4ec7-93d3-b0f7257db06c",
+      "proofIssued": true,
+      "classifierVerified": null
+    },
+    {
+      "locale": "te",
+      "ok": true,
+      "status": 200,
+      "model": "prisma-v3.0",
+      "requestId": "ca52bedd-304a-4f05-98a0-dd1464f1e745",
+      "proofIssued": true,
+      "classifierVerified": null
+    }
+  ]
+}

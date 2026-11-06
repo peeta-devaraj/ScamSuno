@@ -6,6 +6,8 @@ The REST request and response shapes follow the official [Prisma documentation](
 
 The [deployed browser smoke](deployed-smoke.json) used a Timbre-generated microphone fixture with the public app. It verified real caller playback, live Prisma, confirmation, the debrief request ID and a PNG result.
 
+The [deployed speech route checks](deployed-language-smoke.json) used scripted fixtures in all four languages. The [Tamil and Telugu production browser checks](deployed-localized-browser.json) used real Timbre caller audio and quick replies.
+
 - [x] Timbre v3.0 with Avinash returned both WAV and MP3 in all four languages.
 - [x] Prisma v3.0 and the default v2.5 returned model and request IDs for one synthetic clip per language.
 - [x] Both models returned the intended short phrases with script and punctuation variations. Prisma v3.0 used Latin script for some words in the Telugu probe.

@@ -20,6 +20,7 @@
 - [x] Deploy [ScamSuno](https://scamsuno.vercel.app) to Vercel production.
 - [x] Complete the production Chromium journey with live Prisma, actual Timbre playback, a confirmed voice reply, the debrief trace and a PNG card. The microphone input was synthetic.
 - [x] Add Tamil and Telugu alongside English and Hindi. Verify all 60 caller clips, four live STT round trips and seven Chromium journeys.
+- [x] Deploy the four-language update. Verify the public STT route in each language and complete both new localized browser journeys with quick replies.
 
 ## Release gates
 

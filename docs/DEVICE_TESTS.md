@@ -8,6 +8,8 @@ Seven automated Chromium journeys passed on November 6, 2026. They use a 390 × 
 
 A 390 × 844 Chromium browser completed the English disclosure path on the public URL. It played an actual Timbre caller clip, recorded a synthesized test phrase through the browser’s synthetic microphone, confirmed a live Prisma reply, displayed the genuine model and request ID in the debrief, and fetched the PNG card. [Observed results](../evidence/day0/deployed-smoke.json)
 
+The deployed Tamil and Telugu browser journeys used quick replies and actual localized caller audio. Both reached independent verification and opened the localized debrief and shared page. [Browser results](../evidence/day0/deployed-localized-browser.json)
+
 ## Release checks
 
 - [ ] Android Chrome on deployed HTTPS, live microphone flows in all four languages.

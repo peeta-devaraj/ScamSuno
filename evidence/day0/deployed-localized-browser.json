@@ -1,0 +1,30 @@
+{
+  "timestamp": "2026-11-06T15:07:40.940Z",
+  "origin": "https://scamsuno.vercel.app",
+  "browser": "Chrome desktop, 390 × 844 viewport",
+  "mode": "live",
+  "callerModel": [
+    "timbre-v3.0"
+  ],
+  "shippedClips": 60,
+  "results": [
+    {
+      "locale": "ta",
+      "actualCallerAudio": true,
+      "replyMode": "quick_reply",
+      "outcome": "END_VERIFIED",
+      "localizedDebrief": true,
+      "localizedSharePage": true,
+      "cardPng": true
+    },
+    {
+      "locale": "te",
+      "actualCallerAudio": true,
+      "replyMode": "quick_reply",
+      "outcome": "END_VERIFIED",
+      "localizedDebrief": true,
+      "localizedSharePage": true,
+      "cardPng": true
+    }
+  ]
+}
