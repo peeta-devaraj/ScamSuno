@@ -2,7 +2,11 @@
 
 An educational scam-call simulation in English and Hindi. Answer a fictional call from Kalpanik Bank, decide how to respond, then review the caller’s red flags and your decisions.
 
+**[Try ScamSuno](https://scamsuno.vercel.app)**
+
 The build includes Timbre-generated caller audio, captions, quick replies, four endings, a scored debrief, and a downloadable result card. Live Prisma transcription and free-form reply labelling use server credentials. See the [release checklist](docs/PROGRESS.md) and [Gnani verification evidence](evidence/day0/SUMMARY.md).
+
+Production currently offers live Prisma with quick replies for free-form input. The hosted classifier is awaiting credentials.
 
 ## Run locally
 

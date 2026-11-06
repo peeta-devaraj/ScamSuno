@@ -16,13 +16,16 @@
 - [x] Verify live Prisma through the application STT route with browser-format WAV.
 - [x] Generate the complete Timbre audio manifest and verify all asset checksums.
 - [x] Create the Vercel project and configure encrypted Gnani credentials with explicit authorization.
+- [x] Push the implementation to the private GitHub repository and pass GitHub Actions.
+- [x] Deploy [ScamSuno](https://scamsuno.vercel.app) to Vercel production.
+- [x] Complete the production Chromium journey with live Prisma, actual Timbre playback, a confirmed voice reply, the debrief trace and a PNG card. The microphone input was synthetic.
 
 ## Release gates
 
 - [ ] Fluent Hindi listening review and actual phone verification.
 - [ ] Hosted text labelling and evaluation. Waiting for access to an OpenAI-compatible classifier.
 - [ ] Android Chrome and iOS Safari verification on a deployed HTTPS URL. Requires deployment and physical devices.
-- [ ] Vercel production and deployed smoke tests.
+- [ ] Automatic Git-triggered deployments. The CLI deployed production successfully. Vercel requires the account owner to authorize a GitHub Login Connection before linking the private repository.
 - [ ] Record the real demo and complete the public post and submission steps after the live device gate.
 
 ## Deferred to protect P0

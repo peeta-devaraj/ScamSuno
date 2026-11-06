@@ -1,0 +1,18 @@
+{
+  "timestamp": "2026-11-06T14:52:04.709Z",
+  "site": "https://scamsuno.vercel.app",
+  "browser": "Chrome desktop, 390 × 844 viewport",
+  "fixture": "Timbre-generated spoken code played through Chromium's synthetic microphone",
+  "mode": "live",
+  "callerModel": [
+    "timbre-v3.0"
+  ],
+  "servedCallerAudio": true,
+  "sttModel": "prisma-v3.0",
+  "gnaniRequestId": "da78a34b-c4d3-4fe6-b11f-c7f12357102a",
+  "confirmedInBrowser": true,
+  "outcome": "END_SCAMMED",
+  "traceVerified": true,
+  "cardPng": true,
+  "classifier": "buttons"
+}
