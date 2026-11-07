@@ -8,6 +8,14 @@ The build includes Timbre-generated caller audio, captions, quick replies, four 
 
 Production currently offers live Prisma with quick replies for free-form input. The hosted classifier is awaiting credentials.
 
+## Isolated V2 development
+
+V1 is preserved at the immutable `v1-stable` release. This worktree uses `feature/scamsuno-v2`; production promotion requires explicit user approval. See [the tested recovery procedure](docs/V1_PRESERVATION.md), [V2 progress](docs/IMPLEMENTATION_PROGRESS.md) and [architecture](docs/DYNAMIC_VOICE_ARCHITECTURE.md). Run `pnpm check:v1` after each major milestone.
+
+V2 currently has a fixture-tested conversation controller, bounded memory, separate caller/evaluator adapter contracts, safety validation and prepared-turn integration. It has no connected live model, durable store or V2 voice UI yet. The original application routes remain the V1 experience in this branch.
+
+Development must use free services only. Create a key on the [Groq Free plan](https://console.groq.com/keys) and put it in this worktree's ignored `.env.local` as `LLM_API_KEY`; never paste keys into chat. Groq's [free limits](https://console.groq.com/docs/rate-limits) vary by model/account. The local setup uses `https://api.groq.com/openai/v1` and provisionally `openai/gpt-oss-20b`, pending actual account access and Tamil/Telugu evaluation. Keep speech and V2 live admission disabled until the durable quota gate passes. Do not upgrade plans or add payment methods.
+
 ## Run locally
 
 Use Node.js 24 and pnpm 11.25.0. The lockfile pins the dependency versions.
