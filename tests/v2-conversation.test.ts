@@ -83,9 +83,12 @@ test("cancelled generation cannot return a prepared stale response", async () =>
   const s = startConversation(id, "en", now);
   const aborter = new AbortController();
   let calls = 0;
+  let started!: () => void;
+  const entered = new Promise<void>((resolve) => { started = resolve; });
   const promise = prepareConversationTurn(s, operation(s, { origin: "typed", text: "hello" }), {
-    async execute() { calls++; await new Promise((resolve) => setTimeout(resolve, 30)); return "{}"; },
+    async execute() { calls++; started(); await new Promise((resolve) => setTimeout(resolve, 30)); return "{}"; },
   }, { source: "fixture", now, signal: aborter.signal });
+  await entered;
   aborter.abort();
   await assert.rejects(promise, /ABORTED/);
   assert.equal(s.turn, 0);

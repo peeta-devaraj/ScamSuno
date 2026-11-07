@@ -16,7 +16,7 @@ export type PreparedTurn = {
  */
 export async function prepareConversationTurn(
   storedSession: ConversationSession, operation: TurnOperation, gateway: ConversationGateway,
-  options: { source: "hosted" | "fixture"; now: number; signal?: AbortSignal },
+  options: { source: "hosted" | "fixture"; now: number; signal?: AbortSignal; assertActive?: () => Promise<void> },
 ): Promise<PreparedTurn> {
   const parsedSession = SessionSchema.safeParse(storedSession), parsedOperation = OperationSchema.safeParse(operation);
   if (!parsedSession.success || !Number.isSafeInteger(options.now) || options.now < storedSession.updatedAt) {
@@ -33,6 +33,7 @@ export async function prepareConversationTurn(
   }
   let candidate: unknown = null;
   if (op.reply.origin !== "button") {
+    await options.assertActive?.();
     try { candidate = await requestEvaluation(s, op.reply, gateway, options.signal); }
     catch (error) {
       if (options.signal?.aborted || (error instanceof ConversationModelError && error.code === "ABORTED")) {
@@ -41,10 +42,12 @@ export async function prepareConversationTurn(
       return { session: s, callerSource: "authored_fallback", status: "evaluation_unavailable" };
     }
   }
+  await options.assertActive?.();
   let next = advanceConversation(s, op, candidate, options.source, options.now);
   if (next.ending || next.observations.at(-1)?.assessment.intent === "UNCLEAR") {
     return { session: next, callerSource: "authored_fallback", status: "ready" };
   }
+  await options.assertActive?.();
   try {
     const dialogue = await requestCaller(next, op.reply, gateway, options.signal);
     const attached = attachCaller(next, dialogue, options.source);

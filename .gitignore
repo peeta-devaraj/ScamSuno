@@ -8,5 +8,6 @@ next-env.d.ts
 playwright-report/
 test-results/
 .playwright-fixtures/
+.v2-data/
 evidence/day0/input/
 evidence/day0/probe.wav
