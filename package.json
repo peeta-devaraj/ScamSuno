@@ -15,6 +15,7 @@
     "probe": "tsx scripts/probe-gnani.ts",
     "audio:gen": "tsx scripts/audio.ts",
     "check:audio": "tsx scripts/audio.ts --check",
+    "check:v1": "node scripts/check-v1.mjs",
     "eval:text": "tsx scripts/eval-text.ts",
     "verify": "pnpm typecheck && pnpm test && pnpm build"
   },
