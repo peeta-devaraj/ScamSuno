@@ -8,6 +8,7 @@ import { databaseWrite } from "../v2/database";
 import { advanceSession, endSession, startSession, verifySession } from "./controller";
 import { InternalSessionSchema, type StoredSession } from "./public-session";
 import { v3EnabledInTransaction } from "./control";
+import { retainReplyText } from './privacy';
 
 const LEASE_MS = 60_000;
 const uuid = z.uuid(), secretShape = /^[a-f0-9]{64}$/;
@@ -39,8 +40,8 @@ function safeState(candidate: StoredSession) {
   if (!parsed.success) return fail("V3_INVALID_STATE");
   const s = parsed.data;
   return InternalSessionSchema.parse({ ...s, lastCaller: maskNumbers(s.lastCaller),
-    history: s.history.map((h) => ({ ...h, caller: maskNumbers(h.caller), participant: maskNumbers(h.participant) })),
-    observations: s.observations.map((o) => ({ ...o, evidence: maskNumbers(o.evidence) })),
+    history: s.history.map((h) => ({ ...h, caller: maskNumbers(h.caller), participant: retainReplyText(h.participant) })),
+    observations: s.observations.map((o) => ({ ...o, evidence: retainReplyText(o.evidence) })),
   });
 }
 function state(value: unknown) {

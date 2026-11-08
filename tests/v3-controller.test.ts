@@ -222,3 +222,30 @@ test("neutral generated clarification remains available to every scenario in all
     assert.equal(attachCaller(prepared, { locale, text, action: "continue" }, "hosted").source, "hosted", text);
   }
 });
+
+test('no scenario can claim that inbound voice or the content panel authenticates identity',()=>{
+ for(const index of [0,1,2])for(const [locale,text] of [
+  ['en','This call proves who I am.'],['en','Your identity has been checked through this call.'],
+  ['en','The panel proves the identity of the caller.'],
+  ['hi','इस कॉल से मेरी पहचान साबित होती है।'],
+  ['ta','இந்த அழைப்பு என் அடையாளத்தை நிரூபிக்கிறது.'],
+  ['te','ఈ కాల్ నా గుర్తింపును నిరూపిస్తుంది.'],
+ ] as const){
+  const s=start(index,locale),n=advanceSession(s,operation(s),null,NOW+1);
+  const attached=attachCaller(n,{locale,text,action:'continue'},'fixture');
+  assert.equal(attached.source,'authored_fallback',text);assert.equal(attached.reason,'scenario_boundary',text);
+ }
+});
+test('identity boundaries do not ban independent checking or negate legitimate content corroboration',()=>{
+ for(const index of [0,1,2])for(const [locale,text] of [
+  ['en','This call does not prove who I am.'],
+  ['hi','इस कॉल से मेरी पहचान साबित नहीं होती।'],
+  ['ta','இந்த அழைப்பு என் அடையாளத்தை நிரூபிக்காது.'],
+  ['te','ఈ కాల్ నా గుర్తింపును నిరూపించదు.'],
+ ] as const){
+  const s=start(index,locale),n=advanceSession(s,operation(s),null,NOW+1);
+  assert.equal(attachCaller(n,{locale,text,action:'continue'},'fixture').source,'fixture',text);
+ }
+ const s=start(0),n=advanceSession(s,operation(s),null,NOW+1);
+ assert.equal(attachCaller(n,{locale:'en',text:'The panel confirms this public notice. Please check it independently.',action:'continue'},'fixture').source,'fixture');
+});

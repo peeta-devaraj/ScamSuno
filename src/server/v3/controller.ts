@@ -8,6 +8,7 @@ import { validateDecisionEvidence, summarizeDecisions } from "./evaluation";
 import { InternalSessionSchema, type StoredSession } from "./public-session";
 import { getScenario, selectScenario, scenarioIds } from "./scenarios";
 import { categoryLabel, presentDecisions } from './debrief-copy';
+import { retainReplyText } from './privacy';
 
 export class V3ControllerError extends Error {
   constructor(readonly code: "V3_INVALID_STATE" | "V3_INVALID_OPERATION" | "V3_STALE_TURN" | "V3_SESSION_ENDED" | "V3_DEBRIEF_UNAVAILABLE") {
@@ -21,8 +22,8 @@ function checkedState(input: StoredSession, now: number) {
 }
 function retained(input: StoredSession) {
   return InternalSessionSchema.parse({ ...input, lastCaller: maskNumbers(input.lastCaller),
-    history: input.history.map((h) => ({ ...h, caller: maskNumbers(h.caller), participant: maskNumbers(h.participant) })),
-    observations: input.observations.map((o) => ({ ...o, evidence: maskNumbers(o.evidence) })),
+    history: input.history.map((h) => ({ ...h, caller: maskNumbers(h.caller), participant: retainReplyText(h.participant) })),
+    observations: input.observations.map((o) => ({ ...o, evidence: retainReplyText(o.evidence) })),
   });
 }
 
@@ -91,10 +92,31 @@ const pressureCue = /\b(?:urgent|urgency|immediately|right now|at once|must|comp
 const restrictionCue = /\b(?:freeze|frozen|block|blocked|stop|stopped|suspend|suspended|close|closed|disable|disabled|disconnect|deactivate|restriction|restricted|cut off|band ho)\b|बंद|ब्लॉक|फ्रीज|पाबंदी|रोक|निलंब|निष्क्रिय|முடக்|நிறுத்த|தடை|செயலிழ|மூட|துண்டி|ఆపివే|నిలిపివే|స్తంభి|పరిమితి|మూసివే|నిష్క్రియ|బ్లాక్/iu;
 const conclusiveClaim = /\b(?:verified|confirmed|proved|proven|definitely|certainly|guaranteed|guarantee|absolutely|pakka)\b|\b(?:identity|source|provenance)\b.{0,50}\b(?:certain|sure|established)\b|पुष्ट|प्रमाणित|सत्यापित|पहचान.*साबित|निश्चित|पक्का|உறுதிப்படுத்த|உறுதியான|நிச்சயமாக|சரிபார்க்கப்பட்ட|நம்பகமான|నిర్ధారించబడ|ధృవీకరించబడ|నిర్ధారిత|ఖచ్చితంగా|నమ్మదగిన/iu;
 const severeThreat = /\b(?:arrest|jail|prison|punish|penalty|fine|legal action|sue|harm|hurt|kill|threaten)\b|गिरफ्तार|गिरफ़्तार|जेल|सज़ा|सजा|जुर्माना|கைது|சிறை|தண்டனை|அபராதம்|அச்சுறுத்|అరెస్ట్|జైలు|శిక్ష|జరిమానా|బెదిరి/iu;
+const identityClauses = (text: string) => text.split(/[.!?;,।]|\bbut\b|लेकिन|ஆனால்|కానీ/iu);
+function negatesIdentityAssertion(clause: string) {
+  return /\b(?:not|never|cannot|can['’]t|doesn['’]t|won['’]t)\b.{0,30}\b(?:prove\w*|confirm\w*|verif\w*|validat\w*|establish\w*|authenticat\w*)\b/iu.test(clause) ||
+    /पहचान.{0,30}(?:नहीं|नही)/u.test(clause) ||
+    /நிரூபிக்காது|உறுதிப்படுத்தாது|சரிபார்க்காது/u.test(clause) ||
+    /నిరూపించదు|నిర్ధారించదు|ధృవీకరించదు/u.test(clause);
+}
+// No caller category may turn an incoming voice or content-check panel into
+// identity authentication. These lexical tripwires are not a semantic proof.
+function claimsInboundAuthentication(text: string) {
+  const clauses = identityClauses(text);
+  return clauses.some(clause => {
+    const english = /\b(?:call|voice|panel|app)\b.{0,60}\b(?:proves?|confirms?|verif\w*|validat\w*|establish\w*|authenticat\w*)\b.{0,70}(?:who\s+i\s+am|\bidentity\b|\bcaller\b|\bme\b)|\b(?:identity|caller)\b.{0,40}\b(?:checked|confirmed|verified|authenticated)\b.{0,50}\b(?:call|voice|panel|app)\b/iu.test(clause);
+    const englishNegated = /\b(?:not|never|cannot|can['’]t|doesn['’]t|won['’]t)\b.{0,30}\b(?:prove\w*|confirm\w*|verif\w*|validat\w*|establish\w*|authenticat\w*)\b/iu.test(clause);
+    const hindi = /(?:कॉल|आवाज़|पैनल|ऐप).{0,50}(?:पहचान|कॉलर).{0,30}(?:साबित|पुष्ट|सत्यापित)/u.test(clause) && !/नहीं|नही/u.test(clause);
+    const tamil = /(?:அழைப்பு|குரல்|பலகை|செயலி).{0,50}(?:அடையாள|அழைத்தவர்).{0,30}(?:நிரூபி|உறுதிப்|சரிபார்)/u.test(clause) && !/நிரூபிக்காது|உறுதிப்படுத்தாது|சரிபார்க்காது|முடியாது|அல்ல/u.test(clause);
+    const telugu = /(?:కాల్|గొంతు|ప్యానెల్|యాప్).{0,50}(?:గుర్తిం|కాలర్|వ్యక్తి).{0,30}(?:నిరూపి|నిర్ధారి|ధృవీకరి)/u.test(clause) && !/నిరూపించదు|నిర్ధారించదు|ధృవీకరించదు|కాదు|లేదు/u.test(clause);
+    return (english && !englishNegated) || hindi || tamil || telugu;
+  });
+}
 function contradictsScenario(s: StoredSession, text: string) {
+  if (claimsInboundAuthentication(text)) return true;
   if (severeThreat.test(text)) return true;
   if (s.scenarioId !== "kyc_pressure" && (pressureCue.test(text) || restrictionCue.test(text))) return true;
-  return s.scenarioId === "unverified_notice" && conclusiveClaim.test(text);
+  return s.scenarioId === "unverified_notice" && identityClauses(text).some(clause => conclusiveClaim.test(clause) && !negatesIdentityAssertion(clause));
 }
 
 /** V2 safety validation is reused; explicit source describes actual adapter origin. */
