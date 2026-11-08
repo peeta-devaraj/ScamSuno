@@ -1,5 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { before, after } from "node:test";
+
+// Hosted builds supply VERCEL; these local protocol fixtures set deployment mode explicitly.
+const hostVercel = process.env.VERCEL;
+before(() => { delete process.env.VERCEL; });
+after(() => { if (hostVercel === undefined) delete process.env.VERCEL; else process.env.VERCEL = hostVercel; });
 import { POST as sttRoute } from "../app/api/stt/route";
 import { POST as turnRoute } from "../app/api/turn/route";
 import { GET as healthRoute } from "../app/api/health/route";

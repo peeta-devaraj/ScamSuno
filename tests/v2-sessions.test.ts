@@ -107,9 +107,10 @@ test("transaction failure rolls back writes without exposing bound text or SQL e
 });
 
 test("Vercel rejects ephemeral file databases and missing remote credentials", (t) => {
-  const keys = ["VERCEL", "V2_DATABASE_URL", "V2_DATABASE_AUTH_TOKEN"];
+  const keys = ["VERCEL", "V2_DATABASE_URL", "V2_DATABASE_AUTH_TOKEN", "TURSO_DATABASE_URL", "TURSO_AUTH_TOKEN"];
   const before = Object.fromEntries(keys.map((k) => [k, process.env[k]]));
   t.after(() => { for (const key of keys) if (before[key] === undefined) delete process.env[key]; else process.env[key] = before[key]; });
+  delete process.env.TURSO_DATABASE_URL; delete process.env.TURSO_AUTH_TOKEN;
   process.env.VERCEL = "1"; process.env.V2_DATABASE_URL = "file:test.db";
   assert.throws(databaseFromEnvironment, { code: "INVALID_STORE_CONFIG" });
   process.env.V2_DATABASE_URL = "libsql://example.turso.io"; delete process.env.V2_DATABASE_AUTH_TOKEN;

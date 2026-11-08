@@ -3,10 +3,10 @@ import test from "node:test";
 import { v2Database } from "../src/server/v2/runtime";
 
 test("a failed runtime database initialization can recover and successful initialization is single-flight", async (t) => {
-  const keys = ["V2_DATABASE_URL", "V2_DATABASE_AUTH_TOKEN", "VERCEL"];
+  const keys = ["V2_DATABASE_URL", "V2_DATABASE_AUTH_TOKEN", "TURSO_DATABASE_URL", "TURSO_AUTH_TOKEN", "VERCEL"];
   const previous = Object.fromEntries(keys.map((key) => [key, process.env[key]]));
   t.after(() => { for (const key of keys) if (previous[key] === undefined) delete process.env[key]; else process.env[key] = previous[key]; });
-  delete process.env.V2_DATABASE_URL;
+  for (const key of keys) delete process.env[key];
   await assert.rejects(v2Database(), { code: "STORE_NOT_CONFIGURED" });
   delete process.env.VERCEL;
   process.env.V2_DATABASE_URL = "file::memory:";
