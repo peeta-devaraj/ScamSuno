@@ -10,7 +10,7 @@ V3 development is isolated on `codex/scamsuno-v3`; canonical V1 and the preserve
 
 The complete implementation includes private `/admin/v3` durable pause, feature rollback, masked retained replies, signed transcript confirmation and privacy-safe public responses. The latest integrated checks passed 255 tests, type checking and production build; 23 browser journeys passed using explicit fixtures. Human phone and live V3 provider trials are deferred at the user's request. No educational-effectiveness or recognition-accuracy claim is established.
 
-[Private V3 Preview](https://scamsuno-v2-preview-ndzi4m344-peetadevaraj-2614s-projects.vercel.app/v3) is published behind Vercel authentication with live calls paused. It intentionally shows unavailable until testing resumes.
+[Current private V3 Preview](https://scamsuno-v3-eq3rs68d4-peetadevaraj-2614s-projects.vercel.app/v3) runs in the dedicated `scamsuno-v3` project with its own $0 database and sensitive Preview configuration. Real Tamil/Telugu typed conversations now pass; speech and physical-phone acceptance remain pending. Test access uses an expiring bounded ledger allowance, so the page becomes unavailable when that allowance expires or is exhausted. See [resource isolation and current window](docs/V3_ISOLATION.md). Earlier V3-on-V2-project URLs are historical and closed.
 
 See [V3 progress](docs/V3_PROGRESS.md), [deployment and operating instructions](docs/V3_DEPLOYMENT.md), [scenario design](docs/V3_SCENARIO_DESIGN.md), [rubric](docs/V3_EVALUATION_RUBRIC.md), [observed test results](docs/V3_TEST_RESULTS.md) and [demo plan](docs/V3_DEMO_PLAN.md). Private preview provider traffic stays paused until the later test window. Production promotion still requires explicit approval.
 

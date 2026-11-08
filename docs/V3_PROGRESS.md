@@ -2,6 +2,8 @@
 
 ## Current checkpoint
 
+Latest: V1's automatic Git deployment is frozen and its production remains healthy. V3 has its own project, $0 database and sensitive Preview secrets. Hosted build passed 263 tests after privacy/identity/clarification fixes. Actual deployed Tamil/Telugu typed conversations, verification and debrief passed with eight Groq requests and zero speech requests. A six-speech-request window was opened until 7:12 p.m. IST on November 8; the user deferred phone testing. See V3_ISOLATION.md. Earlier publication/deferred-testing entries below are historical checkpoints.
+
 - [x] Read the complete V3 specification and inspect both existing worktrees.
 - [x] Original main and V2 worktrees were clean. V1 is `b3462ac`; V2 is `83e0d61`. No uncommitted changes were overwritten.
 - [x] Created isolated `codex/scamsuno-v3` worktree from V2; frozen dependencies installed without upgrades.

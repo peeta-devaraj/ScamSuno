@@ -1,5 +1,13 @@
 # V3 verification evidence
 
+## Dedicated-project live typed checkpoint
+
+Application `20d8a4b` deployed in the dedicated `scamsuno-v3` project at `dpl_Fd5Tt4mKBjDUc1BHRq4RywfhGJFH`; hosted build passed **263 tests** and compiled successfully. The local broad run passed 261 then-present tests; the final two clarification cases passed in the focused follow-up and the hosted full run. Credential scanning passed 254 source/bundle files against both V2 and new V3 secret values.
+
+At `2026-11-08T11:46:53.641Z`, actual deployed API journeys completed two typed turns each in Tamil and Telugu. All four caller replies were `hosted` and `ready`; both sessions kept hidden assignment private until End, completed the explicit trusted panel and produced debriefs. Tamil drew the unresolved scenario; Telugu drew fraudulent. Secret protection stayed `not_tested`, while independent verification, calibrated response and participant exit were `observed_safe`. Eight actual Groq requests and **zero Gnani calls** were used. Inputs were authored fictional text, not human microphone evidence. All three assignments remain covered by reproducible fixtures; live legitimate-category coverage, live speech and real phones remain pending.
+
+Additional regressions redact explicit credential values before storage/model context, reject caller-identity authentication claims across all scenarios and recognise ordinary clarification questions without granting verification. No benchmark claim is made. See V3_ISOLATION.md for the bounded allowance and independent resource layout.
+
 ## Complete development checkpoint
 
 The final integrated `pnpm verify` passed **255 tests**, type checking and production build. All **23 browser journeys** passed (14 preserved V1/V2 journeys and nine V3 journeys); the nine V3 cases passed again after adding stronger checks that End is initially visible in mobile viewports. Tests use explicit fixtures, not live V3 providers. Tamil screenshots were visually reviewed without horizontal overflow. A credential-value scan passed 251 source/browser-bundle files.

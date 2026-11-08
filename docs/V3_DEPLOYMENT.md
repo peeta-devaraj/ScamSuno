@@ -2,7 +2,11 @@
 
 Use Node 24 and the frozen pnpm lockfile. V3 code is on `codex/scamsuno-v3`. Do not merge or promote to production without explicit user approval.
 
-## Isolated Preview
+## Current dedicated project
+
+V3 now has its own project `scamsuno-v3`, separate database and Preview secrets. Current private URL: https://scamsuno-v3-eq3rs68d4-peetadevaraj-2614s-projects.vercel.app/v3 . The application remains Preview-only; the main V3 project alias serves only the approved static bootstrap. V1 automatic Git deployment is disconnected and its original URL remains unchanged. See V3_ISOLATION.md for exact resource/deployment IDs, measured live typed checks, temporary allowance and rollback.
+
+## Earlier development Preview (historical)
 
 Published application commit: `9da08bbed0490944a997124d6f89493a8a65b96e`.
 
@@ -30,4 +34,4 @@ Rollback means pause V3, retain its tables/data, and use the preserved V2 Previe
 
 ## Remaining acceptance
 
-Live V3 speech, deployed conversations, real phones, pilot outcomes and demo recording are deferred, not passed. Android Chrome is available with the user for a later Tamil/Telugu check; iPhone availability is unconfirmed. Follow V3_DEMO_PLAN.md then record actual evidence in V3_TEST_RESULTS.md.
+Real deployed typed conversations now pass in Tamil and Telugu; live V3 speech, real phones, pilot outcomes and demo recording remain pending. The user deferred phone testing. Android Chrome is available for a later Tamil/Telugu check; iPhone availability is unconfirmed. Follow V3_DEMO_PLAN.md then record actual evidence in V3_TEST_RESULTS.md.
