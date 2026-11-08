@@ -4,13 +4,21 @@ An educational scam-call simulation in English, Hindi, Tamil and Telugu. Answer 
 
 **[Try ScamSuno](https://scamsuno.vercel.app)**
 
+## Trust or Trap — V3
+
+V3 development is isolated on `codex/scamsuno-v3`; canonical V1 and the preserved V2 preview are unchanged. The new `/v3` mode mixes three fictional caller scenarios and hides their assignment until the debrief. Tamil, Telugu, Hindi and English support free-form voice/text, independent simulated verification and nonnumeric evidence-based feedback. Caller generation reuses V2's bounded model/speech transports, with V3-owned sessions and atomic credit controls.
+
+The complete implementation includes private `/admin/v3` durable pause, feature rollback, masked retained replies, signed transcript confirmation and privacy-safe public responses. The latest integrated checks passed 255 tests, type checking and production build; 23 browser journeys passed using explicit fixtures. Human phone and live V3 provider trials are deferred at the user's request. No educational-effectiveness or recognition-accuracy claim is established.
+
+See [V3 progress](docs/V3_PROGRESS.md), [deployment and operating instructions](docs/V3_DEPLOYMENT.md), [scenario design](docs/V3_SCENARIO_DESIGN.md), [rubric](docs/V3_EVALUATION_RUBRIC.md), [observed test results](docs/V3_TEST_RESULTS.md) and [demo plan](docs/V3_DEMO_PLAN.md). Private preview provider traffic stays paused until the later test window. Production promotion still requires explicit approval.
+
 The build includes Timbre-generated caller audio, captions, quick replies, four endings, a scored debrief, and a downloadable result card. Live Prisma transcription and free-form reply labelling use server credentials. See the [release checklist](docs/PROGRESS.md) and [Gnani verification evidence](evidence/day0/SUMMARY.md).
 
 V1 production currently offers live Prisma with quick replies for free-form input. Its hosted classifier is not configured. V2 is developed separately and has its own server-only Groq credential.
 
 ## Isolated V2 development
 
-V1 is preserved at the immutable `v1-stable` release. This worktree uses `feature/scamsuno-v2`; production promotion requires explicit user approval. See [the tested recovery procedure](docs/V1_PRESERVATION.md), [V2 progress](docs/IMPLEMENTATION_PROGRESS.md) and [architecture](docs/DYNAMIC_VOICE_ARCHITECTURE.md). Run `pnpm check:v1` after each major milestone.
+V1 is preserved at the immutable `v1-stable` release. V2 remains in the separate `feature/scamsuno-v2` worktree and `v2-verified-2026-11-08` recovery reference. Production promotion requires explicit user approval. See [the tested recovery procedure](docs/V1_PRESERVATION.md), [V2 progress](docs/IMPLEMENTATION_PROGRESS.md) and [architecture](docs/DYNAMIC_VOICE_ARCHITECTURE.md). Run `pnpm check:v1` after each major milestone.
 
 V2 has a bounded controller, independent caller/evaluator contracts, durable server sessions, a quota-admitted Groq gateway, runtime Prisma/Timbre routes and private `/admin/usage`. The mobile `/v2` UI supports four languages, confirmed voice input, typed fallback, captions, End Call and evidence-based results. Browser acceptance and deployment checks are in progress; this is not yet a production release.
 

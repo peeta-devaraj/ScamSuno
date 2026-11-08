@@ -7,6 +7,7 @@ import { OperationSchema, type TurnOperation } from "../../domain/v2/contracts";
 import { databaseWrite } from "../v2/database";
 import { advanceSession, endSession, startSession, verifySession } from "./controller";
 import { InternalSessionSchema, type StoredSession } from "./public-session";
+import { v3EnabledInTransaction } from "./control";
 
 const LEASE_MS = 60_000;
 const uuid = z.uuid(), secretShape = /^[a-f0-9]{64}$/;
@@ -54,6 +55,8 @@ function sameDigest(stored: unknown, given: string) {
 
 export async function initializeSessions(client: Client) {
   await write(client, async (tx) => {
+    await tx.execute("CREATE TABLE IF NOT EXISTS v3_runtime_control (singleton INTEGER PRIMARY KEY CHECK(singleton=1),enabled INTEGER NOT NULL CHECK(enabled IN (0,1)))");
+    await tx.execute("INSERT OR IGNORE INTO v3_runtime_control(singleton,enabled) VALUES (1,1)");
     await tx.execute(`CREATE TABLE IF NOT EXISTS v3_sessions (
       session_id TEXT PRIMARY KEY,owner_hash TEXT NOT NULL,state_json TEXT NOT NULL,
       turn_number INTEGER NOT NULL,ended INTEGER NOT NULL DEFAULT 0,
@@ -89,6 +92,7 @@ export async function readStoredSession(client: Client, sessionId: string, secre
 }
 export async function hasActiveTurnLease(tx: Transaction, context: { sessionId: string; turnOperationId: string }, now: number): Promise<boolean> {
   clock(now);
+  if (!await v3EnabledInTransaction(tx)) return false;
   if (!uuid.safeParse(context.sessionId).success || !uuid.safeParse(context.turnOperationId).success) return false;
   const result = await tx.execute({ sql: `SELECT s.ended,s.lease_operation,s.lease_until,s.expires_at,s.turn_number,o.status,o.expected_turn
     FROM v3_sessions s JOIN v3_turn_operations o ON o.session_id=s.session_id WHERE s.session_id=? AND o.operation_id=?`,

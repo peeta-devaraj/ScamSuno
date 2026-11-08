@@ -11,16 +11,20 @@
 - [x] V1 health at 2026-11-08T08:59:32.110Z retained exact commit, four locales and 60 clips.
 - [x] Fresh V2 baseline: type checking, 172 tests, production build, all 14 browser journeys (50.8 seconds), audio checks and protected deployed checks passed before application edits.
 - [x] Three server-only scenarios and strict public DTO implemented in all four locales; assignment, privacy and deterministic fixture tests passed.
-- [x] Pure scenario controller, independent nonnumeric evaluation, explicit trusted-panel action and ended-only debrief implemented and tested. Persistence/API/UI integration remains pending.
+- [x] Scenario controller, independent nonnumeric evaluation, explicit trusted-panel action and ended-only localized debrief integrated with persistence, HTTP and UI.
 - [x] Additive V3 persistence implemented with hashed ownership, expected-turn leases, idempotency, End-wins, masked retention and separate verification events. Thirteen focused persistence tests passed, including actual file reopen and unchanged-state recovery after evaluation failure. No remote V3 migration was run.
 - [x] Scenario-aware caller/evaluator prompts reuse the V2 gateway interface; evaluator input excludes hidden assignment. Fixture text orchestration covers all three categories in all four locales with unsafe-generation fallback and cancellation checks. These are not real hosted V3 conversations.
-- [ ] Persistent V3 text journeys, voice reuse and mobile UI.
-- [ ] Fresh billing reconciliation, isolated private Preview, bounded real voice and phone acceptance.
-- [ ] Honest pilot/demo evidence; production promotion remains unauthorized.
+- [x] Persistent V3 text API and signed voice routes reuse V2 model/Prisma/Timbre transports with unchanged V2 defaults and V3 atomic storage guards.
+- [x] Four-language mobile UI, mode selection, independent verification during/after End, transcript correction and server-localized debrief implemented.
+- [x] Scenario-specific pressure/claim tripwires, V3-only durable pause across retained deployments, private administration and ledger-based entry readiness implemented.
+- [x] Latest integrated `pnpm verify`: 255 tests, type checking and production build passed. All 23 browser journeys passed; final nine V3 journeys also passed after stronger End visibility assertions. Credential scan passed 251 source/bundle files.
+- [ ] Complete private deployment publication and record its exact URL.
+- [ ] Live V3 provider trials, Android/iPhone acceptance and pilot/demo recording deferred at the user's request on November 8. Do not represent fixtures as real calls.
+- [ ] Production promotion remains unauthorized.
 
 Recovery directory: `../scamsuno-v2-recovery-2026-11-08` beside the V2/V3 worktrees. CHECKPOINT.json records digests and successful database recovery. Retain both old worktrees and all deployments. No V3 live provider requests have been made.
 
-Implementation checkpoint: integrated regression/typecheck/build passed; final V3-only suite passed 51 tests after the last persistence recovery change. See V3_TEST_RESULTS.md for exact run boundaries. Next executable task is V3 HTTP ownership/DTO integration followed by the shared guarded transport hooks and mobile interface. No playable V3 URL exists yet.
+Development is complete; remaining work is deployment publication and later acceptance/demo work. No live V3 provider calls have been made. Private deployment will keep provider admission closed; a disabled screen is intentional until the later live test window.
 
 ## Fresh official credit observation
 

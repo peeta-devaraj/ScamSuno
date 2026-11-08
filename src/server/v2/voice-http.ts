@@ -1,12 +1,11 @@
 import type { Client } from "@libsql/client";
 import { z } from "zod";
 import { readWav, RECORD_SECONDS, WAV_LIMIT } from "../../domain/wav";
-import type { ConversationSession } from "../../domain/v2/contracts";
 import { boundedBody, failure, reply, withinLimit } from "../http";
 import { sessionOwner } from "./conversation-http";
 import { databaseWrite } from "./database";
 import { readStoredSession } from "./sessions";
-import type { Synthesis, Transcription } from "./speech";
+import type { Synthesis, Transcription, SpeechStorage, SpeechSessionView } from "./speech";
 import { currentSpeechSession } from "./speech-session";
 import { mintVoiceProof, voiceProofReady } from "./voice-proof";
 
@@ -18,6 +17,11 @@ export type VoiceHttpDependencies = {
   speech: (client: Client, context: SpeechContext) => {
     transcribe: (wav: Uint8Array, signal?: AbortSignal) => Promise<Transcription>;
     synthesize: (signal?: AbortSignal) => Promise<Synthesis>;
+  };
+  storage?: {
+    sessionOwner: typeof sessionOwner;
+    readStoredSession: (client: Client, sessionId: string, secret: string) => Promise<unknown>;
+    currentSpeechSession: SpeechStorage["currentSpeechSession"];
   };
 };
 const TranscriptionSchema = z.object({
@@ -44,24 +48,25 @@ function trustedOrigin(request: Request) {
 }
 function safeFailure(error: unknown) {
   const code = error && typeof error === "object" && "code" in error ? error.code : "";
-  if (code === "V2_SESSION_NOT_FOUND") return failure(code, "Start a practice call to use voice.", 401);
-  if (code === "V2_SPEECH_SESSION_INACTIVE" || code === "V2_SPEECH_DUPLICATE" || code === "V2_STALE_TURN" || code === "V2_SESSION_ENDED") {
+  if (code === "V2_SESSION_NOT_FOUND" || code === "V3_SESSION_NOT_FOUND") return failure(code, "Start a practice call to use voice.", 401);
+  if (code === "V2_SPEECH_SESSION_INACTIVE" || code === "V2_SPEECH_DUPLICATE" || code === "V2_STALE_TURN" || code === "V2_SESSION_ENDED" || code === "V3_STALE_TURN" || code === "V3_SESSION_ENDED") {
     return failure(code, "This call changed. Continue with its current turn or start a new call.", 409);
   }
   if (code === "V2_SPEECH_INVALID_REQUEST") return invalid();
   return unavailable();
 }
 async function authorized(deps: VoiceHttpDependencies, request: Request, context: SpeechContext) {
-  const secret = sessionOwner(request, context.sessionId);
+  const store = deps.storage ?? { sessionOwner, readStoredSession, currentSpeechSession };
+  const secret = store.sessionOwner(request, context.sessionId);
   if (!secret) throw new VoiceHttpError("V2_SESSION_NOT_FOUND");
   const client = await deps.database();
-  await readStoredSession(client, context.sessionId, secret);
-  const session = await databaseWrite(client, (tx) => currentSpeechSession(tx, context, Date.now()));
+  await store.readStoredSession(client, context.sessionId, secret);
+  const session = await databaseWrite(client, (tx) => store.currentSpeechSession(tx, context, Date.now()));
   if (!session) throw new VoiceHttpError("V2_SPEECH_SESSION_INACTIVE");
   return { client, secret, session };
 }
-async function stillCurrent(client: Client, context: SpeechContext, captured: ConversationSession) {
-  const current = await databaseWrite(client, (tx) => currentSpeechSession(tx, context, Date.now()));
+async function stillCurrent(client: Client, context: SpeechContext, captured: SpeechSessionView, reader: SpeechStorage["currentSpeechSession"] = currentSpeechSession) {
+  const current = await databaseWrite(client, (tx) => reader(tx, context, Date.now()));
   if (!current || current.locale !== captured.locale || current.lastCaller !== captured.lastCaller || current.updatedAt !== captured.updatedAt) {
     throw new VoiceHttpError("V2_SPEECH_SESSION_INACTIVE");
   }
@@ -107,7 +112,7 @@ export function createVoiceHandlers(deps: VoiceHttpDependencies) {
       if (kind === "stt") {
         const parsed = TranscriptionSchema.safeParse(await speech.transcribe(wav!, request.signal));
         if (!parsed.success) return unavailable();
-        await stillCurrent(client, context, session);
+        await stillCurrent(client, context, session, deps.storage?.currentSpeechSession);
         if (request.signal.aborted) return unavailable();
         const { transcript, model, requestId, detectedLanguage } = parsed.data;
         const confirmation = transcript.trim() ? mintVoiceProof(secret, { sessionId: context.sessionId,
@@ -120,7 +125,7 @@ export function createVoiceHandlers(deps: VoiceHttpDependencies) {
       const shape = result.audio instanceof Uint8Array && result.audio.byteLength <= 2_000_000 ? readWav(result.audio) : null;
       if (!shape || shape.sampleRate !== 16_000 || result.contentType !== "audio/wav" ||
           !/^timbre-v(?:3\.0|2\.5)$/.test(result.model)) return unavailable();
-      await stillCurrent(client, context, session);
+      await stillCurrent(client, context, session, deps.storage?.currentSpeechSession);
       if (request.signal.aborted) return unavailable();
       return new Response(Uint8Array.from(result.audio), { headers: { "Content-Type": "audio/wav", "Cache-Control": "no-store",
         "X-Content-Type-Options": "nosniff", "X-Gnani-Model": result.model, "X-ScamSuno-Mode": mode, "X-Educational-Simulation": "true" } });

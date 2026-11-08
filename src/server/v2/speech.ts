@@ -1,5 +1,6 @@
 import { createHash, randomUUID } from "node:crypto";
-import type { Client } from "@libsql/client";
+import type { Client, Transaction } from "@libsql/client";
+import type { Locale } from "../../domain/scenario";
 import { z } from "zod";
 import config from "../../../config/gnani.json";
 import { readWav } from "../../domain/wav";
@@ -14,6 +15,11 @@ export class SpeechError extends Error {
 }
 export type Transcription = { transcript: string; model: string; requestId: string; detectedLanguage?: string };
 export type Synthesis = { audio: Uint8Array; contentType: "audio/wav"; model: string; voice: string };
+export type SpeechSessionView = { locale: Locale; turn: number; lastCaller: string; updatedAt: number; ending: string | null };
+export type SpeechStorage = {
+  currentSpeechSession: (tx: Transaction, context: { sessionId: string; expectedTurn: number }, now: number) => Promise<SpeechSessionView | null>;
+  enabled?: () => boolean;
+};
 type Stage = "stt" | "tts";
 const fail = (code: SpeechErrorCode): never => { throw new SpeechError(code); };
 const ContextSchema = z.object({ sessionId: z.uuid(), expectedTurn: z.number().int().min(0).max(10), operationId: z.uuid() }).strict();
@@ -133,6 +139,7 @@ async function parseAudio(response: Response, signal: AbortSignal): Promise<Outc
 /** Authenticated server routes supply the identity; callers cannot supply text, locale, or models. */
 export function createSpeechGateway(
   client: Client, context: { sessionId: string; expectedTurn: number; operationId: string }, transport: typeof fetch = fetch,
+  storage: SpeechStorage = { currentSpeechSession },
 ) {
   const parsed = ContextSchema.safeParse(context);
   if (!parsed.success) return fail("V2_SPEECH_INVALID_REQUEST");
@@ -141,9 +148,9 @@ export function createSpeechGateway(
     parse: (response: Response, signal: AbortSignal) => Promise<Outcome<T>>): Promise<T> {
     checkedSignal(signal);
     const key = speechKey(stage);
-    if (!key) return fail("V2_SPEECH_DISABLED");
+    if (!key || storage.enabled?.() === false) return fail("V2_SPEECH_DISABLED");
     let session;
-    try { session = await databaseWrite(client, (tx) => currentSpeechSession(tx, identity, Date.now())); }
+    try { session = await databaseWrite(client, (tx) => storage.currentSpeechSession(tx, identity, Date.now())); }
     catch { return fail("V2_SPEECH_FAILED"); }
     if (!session) return fail("V2_SPEECH_SESSION_INACTIVE");
     const attemptId = randomUUID();
@@ -167,15 +174,15 @@ export function createSpeechGateway(
         });
       } catch { return fail("V2_SPEECH_FAILED"); }
     }
-    if (signal?.aborted || speechKey(stage) !== key) {
+    if (signal?.aborted || speechKey(stage) !== key || storage.enabled?.() === false) {
       await settle("released");
       return fail(signal?.aborted ? "V2_SPEECH_CANCELLED" : "V2_SPEECH_DISABLED");
     }
     let dispatch;
     try {
       dispatch = await markDispatched(client, attemptId, undefined, async (tx, now) => {
-        if (signal?.aborted || speechKey(stage) !== key) return false;
-        const current = await currentSpeechSession(tx, identity, Math.max(now, Date.now()));
+        if (signal?.aborted || speechKey(stage) !== key || storage.enabled?.() === false) return false;
+        const current = await storage.currentSpeechSession(tx, identity, Math.max(now, Date.now()));
         return Boolean(current && current.locale === session.locale && current.lastCaller === session.lastCaller &&
           current.updatedAt === session.updatedAt);
       });

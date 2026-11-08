@@ -1,5 +1,13 @@
 # V2 credit admission
 
+## V3 fresh observation — November 8, about 09:11 UTC
+
+The refreshed official signed-in usage page at `https://app.gnani.ai/voice/usage` showed 123 requests (27 STT, 96 TTS), 13.30 credits consumed and latest remaining ledger balance 4,986.70. The increase over the earlier 109 requests is four STT and ten TTS, matching the fourteen tracked V2 attempts in aggregate. No V3 calls have been dispatched. This observation does not establish individual request attribution or a contractual worst-case price.
+
+The existing ledger is shared conservatively across V2/V3 session IDs. It must not reset daily spending when moving modes or refreshing a floor. With fourteen recorded Gnani calls on November 8, a policy capped at twenty calls per UTC day can admit at most six more that day. Do not raise or silently reset that ceiling to run a larger scenario matrix. Use fixture tests broadly and a small real voice window, then refresh official records before further testing. Keep V1's reserve and demo headroom.
+
+The [official Prisma page](https://www.gnani.ai/resources/prisma-v3) states usage-based billing by audio duration but does not establish this account's exact credit conversion. Sample debit amounts are observed costs, not a universal bound. Request caps and ample headroom reduce exposure; they are not a mathematical credit guarantee. All live policy changes remain explicit, bounded and logged without secrets.
+
 Live V2 calls are currently closed. The preservation checkpoint consumed zero Gnani requests, and recovery deployments have speech disabled with no provider key. Later bounded V2 tests recorded 14 Gnani attempts and 22 Groq attempts; see [test evidence](TEST_RESULTS.md). Provider attempts and billed credits are separate measurements.
 
 At approximately **2026-11-07 05:58 UTC**, the signed-in official Gnani dashboard was inspected through its visible UI. Usage (all services, sources and keys, October 7–November 7) displayed **11.23 credits consumed**, **109 requests**, **23 STT** and **86 TTS**. Billing displayed **4,988 credits left** as an integer. The sidebar displayed 4.9k / 5k. Visible recent ledger entries included a remaining balance of 4,988.77, matching the arithmetic 5,000 − 11.23; this is not an independently fetched exact live balance. Use the conservative displayed **4,988** for this reconciliation snapshot and refresh before admitting live V2 traffic. This read made no inference requests and changed no account settings.

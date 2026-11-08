@@ -1,6 +1,7 @@
 import { health } from "@/server/health";
 import { Home } from "@/components/home";
 import { isLocale } from "@/domain/scenario";
+import { trustOrTrapEnabled } from '@/server/v3/config';
 
 export const dynamic = "force-dynamic";
 
@@ -8,5 +9,5 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ l
   const params = await searchParams;
   const initial = isLocale(params.l) ? params.l : null;
   const status = health();
-  return <Home initial={initial} mock={status.mode === "mock"} provider={status.classifier.provider}/>;
+  return <Home initial={initial} mock={status.mode === "mock"} provider={status.classifier.provider} trustOrTrap={trustOrTrapEnabled()}/>;
 }

@@ -92,6 +92,7 @@ async function providerContent(response: Response, signal: AbortSignal): Promise
 /** Every call spends at most one admitted provider attempt. Replays cannot redispatch. */
 export function createHostedGateway(
   client: Client, context: { sessionId: string; turnOperationId: string }, transport: typeof fetch = fetch,
+  storage: { hasActiveTurnLease: typeof hasActiveTurnLease; enabled?: () => boolean } = { hasActiveTurnLease },
 ): ConversationGateway {
   const identity = ContextSchema.safeParse(context);
   if (!identity.success) return fail("V2_HOSTED_INVALID_REQUEST");
@@ -99,7 +100,7 @@ export function createHostedGateway(
     async execute(candidate, signal) {
       if (signal?.aborted) return fail("V2_HOSTED_CANCELLED");
       const config = hostedConfiguration();
-      if (!config) return fail("V2_HOSTED_DISABLED");
+      if (!config || storage.enabled?.() === false) return fail("V2_HOSTED_DISABLED");
       const parsed = RequestSchema.safeParse(candidate);
       if (!parsed.success) return fail("V2_HOSTED_INVALID_REQUEST");
       const request = parsed.data;
@@ -123,14 +124,14 @@ export function createHostedGateway(
           });
         } catch { return fail("V2_HOSTED_FAILED"); }
       }
-      if (signal?.aborted || !hostedConfiguration()) {
+      if (signal?.aborted || !hostedConfiguration() || storage.enabled?.() === false) {
         await settle("released");
         return fail(signal?.aborted ? "V2_HOSTED_CANCELLED" : "V2_HOSTED_DISABLED");
       }
       let dispatch;
       try {
         dispatch = await markDispatched(client, attemptId, undefined,
-          (tx, now) => hasActiveTurnLease(tx, identity.data, Math.max(now, Date.now())));
+          async (tx, now) => storage.enabled?.() !== false && storage.hasActiveTurnLease(tx, identity.data, Math.max(now, Date.now())));
       } catch {
         // Only a still-reserved attempt can be released. An uncertain committed
         // dispatch remains held by the ledger even when this cleanup fails.

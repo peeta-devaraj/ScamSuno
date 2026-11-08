@@ -1,5 +1,13 @@
 # V3 verification evidence
 
+## Complete development checkpoint
+
+The final integrated `pnpm verify` passed **255 tests**, type checking and production build. All **23 browser journeys** passed (14 preserved V1/V2 journeys and nine V3 journeys); the nine V3 cases passed again after adding stronger checks that End is initially visible in mobile viewports. Tests use explicit fixtures, not live V3 providers. Tamil screenshots were visually reviewed without horizontal overflow. A credential-value scan passed 251 source/browser-bundle files.
+
+Coverage now includes V3 HTTP privacy/ownership, all scenarios, scenario-specific pressure rejection, shared voice adapters, signed voice confirmation, real SQLite persistence, atomic quota/lease/pause guards, V3-only durable rollback, private administration, typed edits, microphone denial, late response/End races, post-End verification, four locales and mobile debrief. The built route list includes `/v3`, `/api/v3/conversation`, `/api/v3/stt`, `/api/v3/tts` and `/admin/v3`.
+
+The user deferred further live-provider and physical-device testing on November 8. No V3 provider call, human microphone result, pilot result or effectiveness benchmark is claimed. Earlier checkpoint details below remain historical evidence.
+
 Before V3 application implementation on November 8, the exact preserved V2 source passed type checking, all 172 tests, production build, 14 browser journeys in 50.8 seconds, and static audio checks. Browser tests use explicit fixtures and generated signal audio; they are not physical-phone or live conversation evidence.
 
 The read-only remote V2 snapshot contained seven tables. A separate in-memory SQLite restoration recreated the tables/indexes and reproduced every row. Source bundle verification and DPAPI encrypt/decrypt readback passed. V1 health retained its exact preserved commit. Protected V2 pages/admin returned expected 200/401 responses and paid endpoints remained 503/closed. These checks consumed zero provider requests.

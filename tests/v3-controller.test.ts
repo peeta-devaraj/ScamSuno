@@ -154,3 +154,71 @@ test("generated explicit category labels and internal answer identifiers never b
     assert.equal(attached.session.lastCaller, prepared.lastCaller);
   }
 });
+
+test("routine and unresolved scenarios reject generated pressure and unsupported service restrictions", () => {
+  const captions = [
+    ["en", "Your service will stop unless you agree immediately."],
+    ["hi", "आपको अभी सहमत होना होगा।"],
+    ["hi", "आपकी सेवा बंद कर दी जाएगी।"],
+    ["hi", "यह update abhi maan lo, warna service band ho jayegi."],
+    ["ta", "இந்தச் சேவைக்கு இப்போதே ஒப்புதல் கொடுக்க வேண்டும்."],
+    ["ta", "உங்கள் சேவை நிறுத்தப்படும்."],
+    ["te", "మీరు ఇప్పుడే అంగీకరించాలి."],
+    ["te", "మీ సేవ నిలిపివేయబడుతుంది."],
+  ] as const;
+  for (const index of [0, 2]) for (const [locale, text] of captions) {
+    const s = start(index, locale), prepared = advanceSession(s, operation(s), null, NOW + 1);
+    const attached = attachCaller(prepared, { locale, text, action: "continue" }, "hosted");
+    assert.equal(attached.source, "authored_fallback", `${s.scenarioId}: ${text}`);
+    assert.equal(attached.reason, "scenario_boundary", text);
+    assert.equal(attached.session.lastCaller, prepared.lastCaller);
+  }
+});
+
+test("unresolved scenarios cannot generate conclusive verification in four locales or Hinglish", () => {
+  for (const [locale, text] of [
+    ["en", "This notice has definitely been confirmed."],
+    ["hi", "इस सूचना की पुष्टि हो चुकी है।"],
+    ["hi", "यह update pakka confirmed hai."],
+    ["ta", "இந்தச் செய்தி உறுதிப்படுத்தப்பட்டது."],
+    ["te", "ఈ సందేశం ఖచ్చితంగా నిర్ధారించబడింది."],
+  ] as const) {
+    const s = start(2, locale), prepared = advanceSession(s, operation(s), null, NOW + 1);
+    const attached = attachCaller(prepared, { locale, text, action: "continue" }, "hosted");
+    assert.equal(attached.source, "authored_fallback", text);
+    assert.equal(attached.reason, "scenario_boundary", text);
+  }
+});
+
+test("severe threats are rejected for every hidden assignment", () => {
+  for (const index of [0, 1, 2]) for (const [locale, text] of [
+    ["en", "You will go to jail for refusing this notice."],
+    ["hi", "आपको जेल जाना होगा।"],
+    ["ta", "உங்களுக்கு சிறைத் தண்டனை வரும்."],
+    ["te", "మీకు జైలు శిక్ష వస్తుంది."],
+  ] as const) {
+    const s = start(index, locale), prepared = advanceSession(s, operation(s), null, NOW + 1);
+    assert.equal(attachCaller(prepared, { locale, text, action: "continue" }, "hosted").reason, "scenario_boundary", text);
+  }
+});
+
+test("bounded KYC pressure remains permitted only in its reviewed scenario", () => {
+  const text = "I claim an urgent service restriction. You may ask me to explain this claim.";
+  for (const index of [0, 1, 2]) {
+    const s = start(index), prepared = advanceSession(s, operation(s), null, NOW + 1);
+    const attached = attachCaller(prepared, { locale: "en", text, action: "continue" }, "fixture");
+    assert.equal(attached.source, index === 1 ? "fixture" : "authored_fallback");
+  }
+});
+
+test("neutral generated clarification remains available to every scenario in all locales", () => {
+  for (const index of [0, 1, 2]) for (const [locale, text] of [
+    ["en", "What would you like me to explain about this service message?"],
+    ["hi", "इस सेवा संदेश के बारे में आप क्या समझना चाहेंगे?"],
+    ["ta", "இந்தச் செய்தியைப் பற்றி என்ன விளக்கம் வேண்டும்?"],
+    ["te", "ఈ సేవా సందేశం గురించి మీకు ఏ వివరణ కావాలి?"],
+  ] as const) {
+    const s = start(index, locale), prepared = advanceSession(s, operation(s), null, NOW + 1);
+    assert.equal(attachCaller(prepared, { locale, text, action: "continue" }, "hosted").source, "hosted", text);
+  }
+});

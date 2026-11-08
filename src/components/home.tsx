@@ -39,7 +39,7 @@ const landing = {
   },
 };
 
-export function Home({ initial, mock, provider }: { initial: Locale | null; mock: boolean; provider: string | null }) {
+export function Home({ initial, mock, provider, trustOrTrap = false }: { initial: Locale | null; mock: boolean; provider: string | null; trustOrTrap?: boolean }) {
   const [locale, setLocale] = useState<Locale>(initial ?? "en");
   useEffect(() => {
     if (initial) return;
@@ -66,6 +66,7 @@ export function Home({ initial, mock, provider }: { initial: Locale | null; mock
               onClick={() => pick(option)}>{languageNames[option]}</button>)}
           </div></div>
           <div className="hero-actions">
+            {trustOrTrap && <Link className="btn primary" href={`/v3?l=${locale}`}><Icon name="headphones" size={18}/>Trust or Trap<Icon name="arrow" size={18}/></Link>}
             <Link className="btn primary" href={`/play?s=kyc_freeze&l=${locale}`}><Icon name="phone" size={18}/>{c.start}<Icon name="arrow" size={18}/></Link>
             <Link className="quiet-link" href="/about">{c.about}<Icon name="arrow-up" size={15}/></Link>
           </div>
