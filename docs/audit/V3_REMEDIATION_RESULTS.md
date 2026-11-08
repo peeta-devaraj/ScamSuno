@@ -4,7 +4,9 @@ Branch: `codex/scamsuno-v3-p0`, separate `scamsuno-v3-remediation` worktree. Sou
 
 ## Private candidate
 
-Candidate publication is pending. All required local checks passed. The exact immutable Preview URL and application commit will be recorded here after publication. Do not test the historical pre-remediation URL as this candidate. Canonical V1 remains https://scamsuno.vercel.app and is explicitly labelled as the scripted fallback.
+**[Open the remediated private V3 Preview](https://scamsuno-v3-gy6v04bmg-peetadevaraj-2614s-projects.vercel.app/v3?l=ta)**. Application commit: `7fbf6f6`; deployment: `dpl_HkW2XC38QdT4YCwKM5dKS54V4MBM`, target Preview, observed Ready. All required local checks passed. This is the P0 candidate; do not substitute historical URLs. Canonical V1 remains https://scamsuno.vercel.app and is explicitly labelled as the scripted fallback.
+
+Authenticated deployed checks at `2026-11-08T15:57:27.373Z`: root returned 307 to `/v3?l=te`; V3 page returned 200 with generation/fallback labels; malformed conversation input returned 400 before inference. Evidence: evidence/p0-preview.json. V1 remained at its exact preserved commit after publication at `2026-11-08T15:57:28.226Z`, with 60 caller clips/four locales and zero provider calls (p0-v1-after-preview.log). These are HTTP checks, not physical-browser or phone acceptance. Production V3 remains the static bootstrap; no production promotion occurred.
 
 Live provider testing is **closed**. A read-only ledger observation at `2026-11-08T15:53:11.270Z` found admission false, six of six speech attempts and 24 of 24 model attempts consumed, zero active operations, and policy expiry `2026-11-08T13:42:50.703Z`. The current provider balance is **unknown**; no fresh Gnani dashboard reconciliation occurred. No policy was reset or extended and no provider call was made during remediation. Evidence: evidence/p0-budget.json.
 

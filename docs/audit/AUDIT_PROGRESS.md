@@ -42,3 +42,11 @@ Verified priorities: F05 scenario consistency and F06 privacy; F01 demo navigati
 Unresolved: no current deployed UI/authorization/config inspection, no fresh dashboard balance, no live API/physical microphone test, no latency measurement, no educational pilot, no vulnerability advisory scan, no fresh recovery exercise. External database cleanup is not ruled out. Historical provider/build claims remain separately attributed. No blockers require new credentials to read this report; future live acceptance needs an authorized bounded window and the participant's phone.
 
 Coverage goal deliberately narrowed per the user's resume instruction. Full production certification is not claimed. No specialist output used. Application tracked files must remain unchanged; only audit documents/evidence should appear in git status.
+
+## Subsequent authorized P0 remediation checkpoint
+
+The preceding audit-only constraints applied to the audit phase. The user subsequently authorized P0 implementation on an isolated branch. Worktree `scamsuno-v3-remediation`, branch `codex/scamsuno-v3-p0`, preserves pre-P0 e23a3a5 through tag `v3-pre-p0-2026-11-08` and verified complete `pre-p0.bundle` beside existing recovery artifacts. V1 b3462ac and V2 83e0d61 remain in their own worktrees.
+
+Implemented/tested F01/F05/F06; F02 checklist prepared, real-phone test pending. Required verification passed: typecheck, 269 unit/route tests and build; 24 browser fixtures; audio gate; V1 health gate before/after private publication; 10 focused P0 regressions. Read V3_REMEDIATION_RESULTS.md for exact commands/evidence/limitations and current URL. Application commit 7fbf6f6; new private Preview dpl_HkW2XC38QdT4YCwKM5dKS54V4MBM. No production promotion, provider calls or ledger policy resets.
+
+Fresh ledger read confirms old caps fully spent (6 speech/24 model), zero active, expired. Provider balance remains unknown without fresh provider observation. Next action: reconcile provider data, open a small bounded window without erasing spending holds, then participant performs documented Android Tamil/Telugu tests. No further code work or broader feature scope is implied. Preserve original audit evidence as historical; new p0-* evidence records remediation.
