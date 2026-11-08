@@ -1,0 +1,19 @@
+file:///C:/Users/peeta/.codex/visualizations/2026/11/06/01a1b12a-e778-7371-9a75-15adbb3d38fd/scamsuno-v3/node_modules/.pnpm/tsx@4.23.15/node_modules/tsx/dist/index-DE3OBZuV.mjs:2
+`;case 114:return"\r";case 120:return String.fromCharCode(Ee(2));case 117:return(function(){const e=L.charCodeAt(y);let r;return e===123?(++y,r=Ee(L.indexOf("}",y)-y),++y,r>1114111&&U()):r=Ee(4),r<=65535?String.fromCharCode(r):(r-=65536,String.fromCharCode(55296+(r>>10),56320+(1023&r)))})();case 116:return"	";case 98:return"\b";case 118:return"\v";case 102:return"\f";case 13:L.charCodeAt(y)===10&&++y;case 10:return"";case 56:case 57:U();default:if(s>=48&&s<=55){let e=L.substr(y-1,3).match(/^[0-7]+/)[0],r=parseInt(e,8);return r>255&&(e=e.slice(0,-1),r=parseInt(e,8)),y+=e.length-1,s=L.charCodeAt(y),e==="0"&&s!==56&&s!==57||U(),String.fromCharCode(r)}return ze(s)?"":String.fromCharCode(s)}}u(or,"k");function Ee(s){const e=y;let r=0,i=0;for(let o=0;o<s;++o,++y){let c,l=L.charCodeAt(y);if(l!==95){if(l>=97)c=l-97+10;else if(l>=65)c=l-65+10;else{if(!(l>=48&&l<=57))break;c=l-48}if(c>=16)break;i=l,r=16*r+c}else i!==95&&o!==0||U(),i=l}return i!==95&&y-e===s||U(),r}u(Ee,"l");function ze(s){return s===13||s===10}u(ze,"u");function U(){throw Object.assign(Error(`Parse error ${We}:${L.slice(0,y).split(`
+                                                                                                                                                                                                                                                                                                                    	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+
+Error: Parse error C:\Users\peeta\.codex\visualizations\2026\11\06\01a1b12a-e778-7371-9a75-15adbb3d38fd\scamsuno-v3\docs\audit\evidence\audit-probes.mjs:1:1
+    at o (file:///C:/Users/peeta/.codex/visualizations/2026/11/06/01a1b12a-e778-7371-9a75-15adbb3d38fd/scamsuno-v3/node_modules/.pnpm/tsx@4.23.15/node_modules/tsx/dist/index-DE3OBZuV.mjs:2:1060)
+    at parse (file:///C:/Users/peeta/.codex/visualizations/2026/11/06/01a1b12a-e778-7371-9a75-15adbb3d38fd/scamsuno-v3/node_modules/.pnpm/tsx@4.23.15/node_modules/tsx/dist/index-DE3OBZuV.mjs:1:18508)
+    at parseEsm (file:///C:/Users/peeta/.codex/visualizations/2026/11/06/01a1b12a-e778-7371-9a75-15adbb3d38fd/scamsuno-v3/node_modules/.pnpm/tsx@4.23.15/node_modules/tsx/dist/index-DE3OBZuV.mjs:4:176)
+    at transformDynamicImport (file:///C:/Users/peeta/.codex/visualizations/2026/11/06/01a1b12a-e778-7371-9a75-15adbb3d38fd/scamsuno-v3/node_modules/.pnpm/tsx@4.23.15/node_modules/tsx/dist/index-DE3OBZuV.mjs:13:8713)
+    at load (file:///C:/Users/peeta/.codex/visualizations/2026/11/06/01a1b12a-e778-7371-9a75-15adbb3d38fd/scamsuno-v3/node_modules/.pnpm/tsx@4.23.15/node_modules/tsx/dist/register-nyXW-TH3.mjs:2:6729)
+    at nextStep (node:internal/modules/customization_hooks:189:26)
+    at loadWithHooks (node:internal/modules/customization_hooks:374:18)
+    at #loadSync (node:internal/modules/esm/loader:812:14)
+    at ModuleLoader.load (node:internal/modules/esm/loader:780:26)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:526:31) {
+  idx: 0
+}
+
+Node.js v24.12.0

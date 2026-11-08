@@ -1,0 +1,43 @@
+# V3 remediation backlog
+
+Based on independent audit of 9bb000b, November 8, 2026. This file proposes work; no fixes have been applied. Preserve V1/V2 and the verified V3 reference. Application production promotion still requires explicit approval. Effort is a rough engineer estimate, not an assurance of completion. Detailed evidence, reproducibility and limitations are in ../../SCAMSUNO_V3_INDEPENDENT_AUDIT.md and evidence/audit-probes.log.
+
+## P0 — complete before calling the V3 submission ready
+
+- [ ] **F01 — Unambiguous V3 entry.** High demo impact. Owner area: README, src/components/v3-call.tsx:76,294-311 and release documentation. Reproduce by following README's primary Try link; it opens V1. Implement one clearly identified V3 submission/test entry and explicit generation-switch labels. Explain Vercel sign-in and closed-window state. Benefit: testers see the actual product. Estimate 2–4h; low code risk. Accept when a fresh phone tester reaches and identifies V3 without assistance, with signed-out judge access tested under approved settings. Do not remove V1 fallback or publish without authorization.
+
+- [ ] **F05 — Enforce scenario facts.** High severity. Owner: src/server/v3/controller.ts:115-135, scenarios.ts:30-35, caller.ts. Reproduce using scenario_contradiction in `pnpm exec tsx docs/audit/evidence/audit-probes.cjs`. Current validator accepts denial of an update in the scenario where it exists. Introduce bounded scenario-owned factual claims/dialogue acts; reject inconsistent generated content before synthesis. Benefit: verification and debrief remain defensible. Estimate 0.5–1.5 days; medium risk to naturalness. Accept paired contradiction/invention/negation tests for each category and priority language, plus no hidden-label disclosure. Existing safe refusal/End must stay valid.
+
+- [ ] **F06 — Withhold credential paraphrases before model/storage.** High privacy severity. Owner: src/server/v3/privacy.ts:8-23, caller.ts:36-49, sessions.ts:38-44. Reproduce synthetic credential_paraphrase probe; it remains in model payload. Broaden conservative withholding for ordinary paraphrases and supported-language variants; reduce retained free text where possible. Benefit: avoid unnecessary sensitive-content forwarding/retention. Estimate 4–8h for bounded improvement; medium over-redaction risk. Accept that synthetic values are absent from model payloads and SQLite state, including paraphrases, while safe refusal/quoted-number tests remain unscored or appropriately safe. Document residual limits honestly.
+
+- [ ] **F02 — Actual Android V3 voice acceptance.** High release risk, evidence gap. Owner: demo/test evidence; playwright.config.ts:7-35 and tests/browser/v3.spec.ts:8-49 establish why fixture passes are insufficient. Execute one bounded Tamil and one Telugu interaction on the exact V3 build, with native-speaker transcript and speech-quality feedback, End and debrief. Benefit: verify the core promise. Estimate 1–3h plus defects; low risk if bounded. Accept documented browser/device/build/locale, actual outcomes, provider usage delta and no fabricated accuracy/latency. Add local fixture tests only for bugs discovered. Do not count V1 screenshots or V2 synthetic audio as V3 acceptance.
+
+## P1 — highest value after P0; public-release prerequisites where noted
+
+- [ ] **F10 — Neutral V3 STT context.** Low/medium severity. Owner: config/gnani.json:5-7; src/server/v2/speech.ts:206-211. Current V3 inherits an OTP/KYC topic for all categories. Supply neutral mode-specific context while preserving V1/V2 configuration. Estimate 1–2h plus voice comparison; low risk. Accept request-fixture assertions and native-language validation without leaking category. Benefit: remove an avoidable recognition-context mismatch; do not promise accuracy gain without measurement.
+
+- [ ] **F03 — Preserve input on evaluator failure.** Medium severity. Owner: src/components/v3-call.tsx:162-168; src/server/v3/conversation.ts:17-20. Synthetic evaluator outage returns the unchanged state; UI clears draft/heard. Retain the reply and present retry, End, and optionally explicit unscored continuation. Estimate 3–6h; medium lifecycle risk. Accept injected outage/timeout checks preserving text and provenance, no invented grade, no automatic retry loop, and idempotent accounting. Benefit: free-tier interruption does not destroy the conversation.
+
+- [ ] **F09 — Multilingual channel-trust evidence.** Medium severity. Owner: src/server/v3/evaluation.ts:32,76-77. Reproduce the English/Telugu pair in audit-probes.log. Expand the evidence contract using native-reviewed equivalents and negative/conditional/quotation cases. Estimate 4–8h; medium false-positive risk. Accept consistent risk-or-uncertainty behavior across equivalent four-language cases. Benefit: priority-language users receive comparable feedback. Never solve by trusting all model outputs.
+
+- [ ] **F07 — Make reserve claims match accounting.** Medium private-demo severity/high public impact. Owner: src/server/v2/ledger.ts:135-137,190-199 and operating documentation. Request quotas do not continuously debit credit balance or include other projects' spending. Preserve current conservative holds and request caps. Reconcile the provider dashboard before/after the demo; document shared-account exposure. Derive credit allowances only from verified tariffs and bounded request sizes. Estimate 2–4h operations/documentation; ongoing account integration larger. Accept no unsupported balance guarantee, expiry and concurrency guards intact, no silent unknown-charge release. Benefit: protects demo budget without misstating account-wide protection.
+
+- [ ] **F08 — Content retention and durable start admission.** Medium severity; before broad public access. Owner: src/server/v3/sessions.ts:57-81,108-112; src/server/http.ts withinLimit. Add a documented retention period and controlled expiration cleanup for participant text, independent from durable billing/audit records. Add durable start limits if public. Estimate 4–8h; medium data-loss risk. Accept isolated cleanup tests proving active sessions, provider holds, reconciliation and necessary recovery metadata survive. Check for external cleanup before duplicating it. Benefit: limits accidental content retention and unpaid database growth.
+
+- [ ] **F04 — Safe natural clarification.** Medium severity. Owner: src/domain/v2/safety.ts:111-143 and src/server/v3/caller.ts:13-18. Existing guard forbids benign number articles and credential vocabulary; history reports a Hindi fallback. Add reviewed clarification acts and contextual safe handling only after F05. Estimate 0.5–1 day; medium/high safety regression risk. Accept benign multilingual responses, continued rejection of harmful requests, and observed fallback-source reporting without raw participant logs. Benefit: less repetitive caller behavior.
+
+- [ ] **Release documentation cleanup.** Supporting F01/F02/F07. Consolidate current build/link/access/readiness in README; mark historical test sections explicitly. Keep old evidence. Estimate 1–2h; low risk. Accept that current speech status, typed evidence, fixture evidence, test counts and quota expiry are not contradictory. This is not a new verified application defect ID.
+
+## P2 — defer beyond deadline unless P0/P1 gates pass early
+
+- Automatic interruption/streaming voice. Separate feature, not a current bug. Requires VAD, echo handling, cancellation semantics, partial-audio history, persistent transport, provider access/billing validation and real phones. Do not weaken credit/provenance controls to add it.
+- More distinct scenario families and richer ambiguous evidence; native-language realism review and small educational pilot. Preserve safe hang-up and avoid penalizing uncertainty.
+- V3 privacy-safe sharing, broader browser/device matrix, CI browser smoke checks, representative conversational evaluation and bounded fallback telemetry.
+
+## Verification handoff
+
+1. Preserve this audit and use a development branch/worktree; no production mutation implied.
+2. Reproduce relevant audit probes before editing. Convert confirmed cases into application regression tests during remediation; audit scripts themselves are observations.
+3. Run focused tests for each change; run repository-required `pnpm verify`, `pnpm test:e2e`, `pnpm check:audio` and zero-provider `pnpm check:v1` at the release checkpoint.
+4. Recheck the exact preview and phone journey after changes. No general accuracy claims from a few successful calls.
+5. Verify rollback/data preservation and fresh provider allowance. Request production approval only after the concrete candidate and acceptance evidence are ready.

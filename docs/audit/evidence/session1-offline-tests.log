@@ -1,0 +1,25 @@
+✔ normal call clarification is recognised in four locales and Hinglish without granting authentication or verification (13.9956ms)
+✔ clarification cannot launder quoted codes, unrelated questions, hypotheticals or injected instructions into safe feedback (0.4888ms)
+✔ explicit secret boundaries are supported in English, Hindi, Tamil, Telugu and Hinglish (1.6454ms)
+✔ model assertions, bare numbers, quoted/refused codes and conditional text never become unsafe disclosure (0.4774ms)
+✔ invalid schema, confidence, excerpts and injection abstain without retaining participant text (1.7469ms)
+✔ independent plans use actual official-channel action evidence and never impersonate completed checks (3.9969ms)
+✔ caller-provided channel reliance requires positive explicit intent and preserves negation (0.8239ms)
+✔ uncertainty and harmless cooperation are distinct from identity authentication (1.1836ms)
+✔ safe exit distinguishes stated intention from authenticated participant ending (0.5317ms)
+✔ button and confirmed voice inputs retain their origin without invented voice metadata (1.0796ms)
+✔ generic refusal is never a risk or evidence of an untested secret-protection skill (0.121ms)
+✔ same observable decisions have identical grades across all hidden scenario assignments (0.1739ms)
+✔ invalid reply/turn envelopes fail closed and summaries contain no raw evidence or numerical score (0.1724ms)
+✔ explicit credential-value discussion is omitted as a whole in supported scripts (3.2458ms)
+✔ plain refusal, quotation and independent-check semantics remain intact without a disclosed value (0.6017ms)
+✔ caller and evaluator never receive an explicit credential value; provenance is retained (6.2547ms)
+✔ controller and actual SQLite persistence omit synthetic credential values and keep unscored uncertainty (27.7818ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1018.5212
