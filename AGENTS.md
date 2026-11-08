@@ -1,5 +1,13 @@
 # ScamSuno repository guidance
 
+## V3 isolation
+
+- This worktree is `codex/scamsuno-v3`, based on preserved V2 commit `83e0d61`. The user's V3 specification supersedes the V2-only branch instruction below for this worktree.
+- V1/V2 preservation was independently rechecked before V3 application edits. Read docs/V3_PROGRESS.md and docs/V3_RECOVERY.md. Do not change the old worktrees, canonical production or existing V2 deployment/configuration.
+- Trust or Trap uses server-only scenario assignment and an explicit public response DTO. Never send hidden truth, answer keys or evaluation rubrics before the debrief.
+- V3 live calls stay disabled until billing and bounded admission are verified. Keep the existing V2 transport defaults and regression coverage when introducing adapters.
+- Production promotion requires explicit approval; physical-device and educational pilot results must be observed, never inferred from fixtures.
+
 ## V2 isolation and release gate
 
 - The V1 preservation checkpoint is complete. Read docs/V1_PRESERVATION.md before development.
