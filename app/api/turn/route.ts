@@ -54,6 +54,10 @@ function stateResponse(session: Session, showQuickReplies: boolean, stalled = fa
   });
 }
 
+function legacyClassifierReady() {
+  return !process.env.VERCEL && Boolean(llmConfig());
+}
+
 export async function POST(request: Request) {
   if (!withinLimit(request, "turn", 150)) return failure("RATE_LIMITED", "Too many requests. Please wait.", 429, true);
   try {
@@ -62,7 +66,7 @@ export async function POST(request: Request) {
     const decoded = input.safeParse(JSON.parse(new TextDecoder().decode(body)));
     if (!decoded.success) return failure("INVALID_TURN", "Could not read that reply.", 400);
     const data = decoded.data;
-    if (data.action === "start") return stateResponse(start(data.sessionId, data.locale), !llmConfig());
+    if (data.action === "start") return stateResponse(start(data.sessionId, data.locale), !legacyClassifierReady());
     const session: Session = data.session;
     if (session.terminal) return failure("SESSION_ENDED", "This call has already ended.", 409);
     if (session.turns.length >= MAX_TURNS || !session.lastCallerLineIds.length || session.endedBy !== null) {
@@ -71,8 +75,11 @@ export async function POST(request: Request) {
     const userReply = data.action === "hangup" ? { inputMode: "button", buttonId: "hang_up" } as const : data.reply;
     const demand = graph[session.stateId].demand;
     if (userReply.inputMode === "button") {
-      return stateResponse(step(session, classifyButton(userReply.buttonId, demand), { inputMode: "button", text: userReply.buttonId }), !llmConfig());
+      return stateResponse(step(session, classifyButton(userReply.buttonId, demand), { inputMode: "button", text: userReply.buttonId }), !legacyClassifierReady());
     }
+    // Preserve static/explicit-choice play here; all deployed paid classification
+    // is owned by the V2 session/ledger path, including on Git preview builds.
+    if (process.env.VERCEL) return stateResponse(session, true, true);
     if (userReply.inputMode === "voice" && !verifyProof(userReply.proof, session.locale, userReply.text, userReply.stt)) {
       return failure("VOICE_CONFIRMATION_EXPIRED", "Record your reply again or switch to typing.", 400);
     }
@@ -80,7 +87,7 @@ export async function POST(request: Request) {
     const judgement = await classify(userReply.text, { demand, lastLineEn: lastLine, locale: session.locale });
     if (judgement.degraded) return stateResponse(session, true, true);
     const next = step(session, judgement, userReply);
-    return stateResponse(next, !llmConfig() || (next.unclear[next.stateId] ?? 0) >= 2);
+    return stateResponse(next, !legacyClassifierReady() || (next.unclear[next.stateId] ?? 0) >= 2);
   } catch {
     return failure("INVALID_TURN", "Could not process that reply.", 400);
   }

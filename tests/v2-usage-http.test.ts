@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { createClient } from "@libsql/client";
 import { createUsageHandlers, renderUsage } from "../src/server/v2/usage-http";
-import { initializeLedger, reserveUsage, setPolicy, usageSummary, type UsagePolicy } from "../src/server/v2/ledger";
+import { initializeLedger, markDispatched, reserveUsage, setPolicy, settleUsage, usageSummary, type UsagePolicy } from "../src/server/v2/ledger";
 
 const now = Date.now();
 const policy: UsagePolicy = { enabled: true, killSwitch: false, reconciledAt: now - 1000, expiresAt: now + 60_000,
@@ -60,4 +60,38 @@ test("admin pause is same-origin, changes only the V2 policy and makes no provid
   assert.equal(summary.policy?.killSwitch, true);
   assert.equal(summary.policy?.verifiedCreditFloor, policy.verifiedCreditFloor);
   assert.equal(summary.recent.length, 0);
+});
+
+test("private recovery requires explicit billing review, retains unknown spending and closes all quotas", async (t) => {
+  const authorization = auth(t), client = createClient({ url: "file::memory:" }); t.after(() => client.close());
+  const then = Date.now() - 600_000;
+  await initializeLedger(client); await setPolicy(client, { ...policy, reconciledAt: then }, then);
+  const attemptId = crypto.randomUUID();
+  await reserveUsage(client, { attemptId, operationId: crypto.randomUUID(), sessionId: crypto.randomUUID(),
+    kind: "gnani_stt", model: "explicit-fixture", audioSeconds: 2 }, then);
+  await markDispatched(client, attemptId, then + 1);
+  await settleUsage(client, attemptId, "unknown", { latencyMs: 100 }, then + 2);
+  const handlers = createUsageHandlers(async () => client);
+  const form = new URLSearchParams({ action: "reconcile", reconciliationId: crypto.randomUUID(),
+    verifiedAt: new Date().toISOString(), verifiedCreditFloor: "4980", attemptId });
+  const request = (origin = "https://preview.invalid") => new Request("https://preview.invalid/admin/usage", {
+    method: "POST", headers: { authorization, origin, "content-type": "application/x-www-form-urlencoded" }, body: form.toString(),
+  });
+  assert.equal((await handlers.POST(request())).status, 400, "an unchecked review cannot acknowledge a charge");
+  form.set("providerReviewConfirmed", "yes");
+  assert.equal((await handlers.POST(request("https://untrusted.invalid"))).status, 403);
+  const view = await (await handlers.GET(new Request("https://preview.invalid/admin/usage", { headers: { authorization } }))).text();
+  assert.ok(view.includes("five-minute wait alone is not evidence"));
+  assert.equal((await handlers.POST(request())).status, 303);
+  assert.equal((await handlers.POST(request())).status, 303, "same review can be retried idempotently");
+  const after = await usageSummary(client, Date.now());
+  assert.equal(after.admissionOpen, false);
+  assert.equal(after.policy?.killSwitch, true);
+  assert.equal(after.policy?.maxGnaniRequests, 0);
+  assert.equal(after.policy?.maxLLMRequests, 0);
+  assert.equal(after.counters.active, 0);
+  assert.equal(after.counters.gnani.daily, 1);
+  assert.equal(after.recent[0].status, "unknown");
+  assert.equal(after.recent[0].actualCredits, null);
+  assert.equal(after.reconciliations.length, 1);
 });

@@ -1,6 +1,6 @@
 # Dynamic voice architecture
 
-Status: proposed V2 design, November 7, 2026. This document defines the intended boundaries; it does not assert the modules, quotas, live voice loop, or release gates already pass. Provider evidence and unresolved capabilities are in [voice research](REALTIME_VOICE_RESEARCH.md).
+Status: implemented REST architecture under acceptance, November 8, 2026. The controller, durable store, provider gateways, voice routes, signed confirmation, versioned shares and mobile UI are implemented. Real Tamil/Telugu synthetic API voice loops passed; complete browser, deployed and physical-device release checks remain pending. Streaming is proposed only. See [observed results](TEST_RESULTS.md) and [voice research](REALTIME_VOICE_RESEARCH.md).
 
 ## Delivery boundary
 
@@ -44,11 +44,17 @@ Use a unique operation ID and expected turn version to prevent replay and simult
 
 The browser has one active generation token and operation cancellation signal. End, retry, navigation, or a new turn invalidates old results and stops buffered playback. An aborted request may already have incurred a provider charge; cancellation is not a refund guarantee. Show listening, transcription, generation, and playback states only while those operations are active. Initially use push-to-talk and explicit transcript confirmation; this is not full-duplex voice.
 
+The owner cookie is opaque, random and HttpOnly; only its hash is stored. Voice confirmation uses a two-minute HMAC proof bound to owner, session, expected turn, locale, exact normalized transcript and Prisma metadata. Editing a recognized reply changes its origin to typed. Quotation/refusal text cannot be removed while reusing voice provenance. STT and TTS routes obtain locale and caller caption from the owned server session; browser-supplied captions, models or language overrides are rejected. Raw audio and playback blobs stay in memory.
+
+The remote store is the isolated Turso Starter database in Mumbai, linked only to the separate V2 project's Preview/Development. Runtime initialization adds V2 tables without changing V1 state. SQL transactions combine active turn/session checks with quota dispatch claims; a process-local queue is only a contention aid. The deployed legacy STT/classifier paths in this feature branch are closed to prevent provider calls outside the V2 ledger; the preserved V1 production source remains unchanged.
+
 ## Durable budget admission
 
 All paid paths, including retries and independently hosted evaluation, pass through server-side admission. A persistent transactional store must atomically reserve allowance, enforce session/day/concurrency limits, and claim an idempotency key before dispatch. Use a separate V2 namespace; a second key on the same Gnani account does not establish a separate credit pool.
 
 Record operation ID, pseudonymous session ID, time, operation/model, duration or text length, attempt count, status, and measured timing. Track `reserved`, `dispatched`, `settled`, and `unknown` outcomes. Release a reservation known not to have dispatched; retain conservative accounting for dispatched timeouts until reconciled. Do not store recordings, credentials, or participant text. Expiring worker leases must not erase uncertain spending.
+
+Implemented attempt terminal statuses are `succeeded`, `failed`, `released` and `unknown`; `settled` above describes the lifecycle step. Unknown outcomes retain concurrency until an explicit authenticated reconciliation acknowledges verified provider billing. That operation preserves outcomes and spending and always closes admission; it cannot reopen or refund. See [ledger schema](V2_LEDGER_SCHEMA.md) and [recovery procedure](LEDGER_RECOVERY.md).
 
 **Live V2 admission stays closed until a timestamped official balance reconciliation and conservative allowance are configured.** Preserve at least the brief's 1,000-credit reserve for V1. Without a verified billing conversion, enforce hard request/duration/text/session quotas and report credits as unknown, not an invented numeric balance. Also cap actual paid test runs. A local ledger cannot see V1 or dashboard calls automatically; reconciliation must account for them before increasing V2 allowance. Store outages and unreconciled/expired budget configuration fail closed. Secure `/admin/usage` on the server and keep Gnani/LLM expenses distinct.
 
@@ -59,3 +65,13 @@ Record operation ID, pseudonymous session ID, time, operation/model, duration or
 - **C: progressive playback.** Trial [Timbre SSE](https://docs.gnani.ai/api/TTS/tts-sse) after whole-response validation. Verify fragmented events, ordered decoding, first audible sample, cancellation, and mobile playback before advertising streaming.
 - **D: streaming input and interruption.** Add a credential-hiding proxy for [Prisma WebSocket](https://docs.gnani.ai/api/STT/stt-websocket), reconnect/version handling, silence finalization, echo control, and stale-buffer cancellation only if earlier gates are stable. Vercel supports sockets, but its example upgrade adapter remains experimental; validate the deployed runtime, not only local mocks. See the [official Next.js example](https://vercel.com/kb/guide/real-time-chat-websockets).
 - **Release:** run `pnpm verify`, `pnpm test:e2e`, and `pnpm check:audio`; verify runtime TTS separately from the static-audio manifest check. Record actual mobile-device coverage and remaining gaps. Recheck V1 accessibility after each major milestone. Verify rollback without changing production, then obtain explicit production-promotion approval.
+
+## Current evidence and remaining boundaries
+
+Voice confirmation now requires the dedicated server-only `V2_VOICE_PROOF_SECRET` plus session-owner binding. The owner cookie alone is insufficient to sign a transcript. Missing/invalid signing configuration disables live voice. Rotating the key invalidates outstanding two-minute confirmations; users can record again or submit edited text as typed. A regression test rejects the former cookie-only signature and a signature made with a different server key.
+
+The credit reserve check compares the recorded floor to the configured reserve and caps request counts. It does not deduct a verified worst-case batch price. Consequently it is a conservative exposure limit, not a mathematical guarantee of the reserve. Live release requires a fresh official billing review and a defensible batch margin; until then admission remains disabled with zero quotas.
+
+Gate A has focused fixture/unit coverage and the prior full 110-test checkpoint; the current complete verification is still required after integration. Gate B has real handler/API evidence in Tamil and Telugu using explicit synthetic speech, plus real multi-turn typed probes. It has not yet established human conversation quality, protected deployed-browser voice or physical-device behavior. The narrow Timbre unknown-length WAV normalization was prompted by observed HTTP-200 provider responses; strict browser/STT WAV validation remains unchanged.
+
+The official dashboard and V2 attempt counts are not fully reconciled. Keep live admission closed by default, preserve the V1 credit reserve policy, and do not interpret request quotas as a verified price conversion. Streaming gates C/D are deferred; no WebSocket server, full-duplex interruption or measured latency claim is part of this release state.

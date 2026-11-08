@@ -1,4 +1,6 @@
 .env*
+.vercel
+.v2-data
 .git
 .next
 node_modules

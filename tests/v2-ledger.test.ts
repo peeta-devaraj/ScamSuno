@@ -69,7 +69,8 @@ test("policy rejects reserve boundary, stale/future reconciliation, oversized qu
   for (const invalid of [policy({ verifiedCreditFloor: 1_000 }), policy({ reserveCredits: 999 }),
     policy({ reconciledAt: NOW + 1 }), policy({ expiresAt: NOW }), policy({ expiresAt: NOW + DAY + 1 }),
     policy({ maxGnaniRequests: 21 }), policy({ maxConcurrent: 3 }), policy({ maxSTTSeconds: 21 }),
-    policy({ maxTTSChars: 421 }), policy({ maxLLMRequests: 1, maxLLMRequestsPerDay: 2 }),
+    policy({ maxTTSChars: 421 }), policy({ maxLLMRequests: 101 }), policy({ maxLLMRequestsPerDay: 101 }),
+    policy({ maxLLMRequests: 1, maxLLMRequestsPerDay: 2 }),
     { ...policy(), actualCredits: 10 } as UsagePolicy]) {
     await assert.rejects(setPolicy(client, invalid, NOW), code("V2_INVALID_POLICY"));
   }

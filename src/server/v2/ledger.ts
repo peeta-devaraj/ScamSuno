@@ -3,8 +3,9 @@ import { z } from "zod";
 import { databaseWrite } from "./database";
 
 const DAY = 86_400_000;
+export const UNKNOWN_RECONCILIATION_COOLDOWN_MS = 5 * 60_000;
 export const LEDGER_LIMITS = Object.freeze({
-  providerRequests: 20, requestsPerSession: 40, concurrent: 2,
+  providerRequests: 20, llmRequests: 100, requestsPerSession: 40, concurrent: 2,
   sttSeconds: 20, ttsChars: 420, minimumReserve: 1_000, policyLifetimeMs: DAY,
 });
 const time = z.number().int().min(0).max(Number.MAX_SAFE_INTEGER);
@@ -12,13 +13,13 @@ const count = (max: number) => z.number().int().min(0).max(max);
 const positiveCount = (max: number) => z.number().int().min(1).max(max);
 const PolicySchema = z.object({
   enabled: z.boolean(), killSwitch: z.boolean(), reconciledAt: time, expiresAt: time,
-  verifiedCreditFloor: positiveCount(1_000_000_000), reserveCredits: z.number().int().min(1_000).max(1_000_000_000),
+  verifiedCreditFloor: count(1_000_000_000), reserveCredits: z.number().int().min(1_000).max(1_000_000_000),
   maxGnaniRequests: count(20), maxGnaniRequestsPerDay: count(20),
-  maxLLMRequests: count(20), maxLLMRequestsPerDay: count(20),
+  maxLLMRequests: count(100), maxLLMRequestsPerDay: count(100),
   maxRequestsPerSession: positiveCount(40), maxConcurrent: positiveCount(2),
   maxSTTSeconds: z.number().positive().max(20), maxTTSChars: positiveCount(420),
 }).strict().superRefine((p, ctx) => {
-  if (p.verifiedCreditFloor <= p.reserveCredits || p.expiresAt <= p.reconciledAt ||
+  if ((p.verifiedCreditFloor <= p.reserveCredits && (p.enabled || !p.killSwitch)) || p.expiresAt <= p.reconciledAt ||
       p.expiresAt - p.reconciledAt > DAY || p.maxGnaniRequestsPerDay > p.maxGnaniRequests ||
       p.maxLLMRequestsPerDay > p.maxLLMRequests) ctx.addIssue({ code: "custom", message: "V2_INVALID_POLICY" });
 });
@@ -43,6 +44,8 @@ export type UsageAttempt = {
   audioSeconds: number | null; textChars: number | null;
   reservedAt: number; policyReconciledAt: number; dispatchedAt: number | null; settledAt: number | null;
   status: UsageStatus; latencyMs: number | null; providerRequestId: string | null; statusCode: number | null; actualCredits: null;
+  /** An operator snapshot acknowledgement is not a provider outcome or a refund. */
+  acknowledgedAt?: number; reconciliationId?: string;
 };
 export type UsageTiming = { latencyMs?: number; providerRequestId?: string; statusCode?: number };
 const TimingSchema = z.object({ latencyMs: count(DAY).optional(),
@@ -51,7 +54,8 @@ const TimingSchema = z.object({ latencyMs: count(DAY).optional(),
 }).strict();
 export type LedgerErrorCode = "V2_INVALID_POLICY" | "V2_INVALID_ATTEMPT" | "V2_INVALID_TIME" |
   "V2_ADMISSION_CLOSED" | "V2_QUOTA_EXCEEDED" | "V2_IDENTITY_CONFLICT" | "V2_ATTEMPT_NOT_FOUND" |
-  "V2_INVALID_TRANSITION" | "V2_INVALID_SETTLEMENT" | "V2_STORE_UNAVAILABLE";
+  "V2_INVALID_TRANSITION" | "V2_INVALID_SETTLEMENT" | "V2_STORE_UNAVAILABLE" |
+  "V2_INVALID_RECONCILIATION" | "V2_RECONCILIATION_CONFLICT" | "V2_RECONCILIATION_NOT_READY";
 export class LedgerError extends Error {
   constructor(readonly code: LedgerErrorCode) { super(code); this.name = "LedgerError"; }
 }
@@ -87,7 +91,22 @@ export async function initializeLedger(client: Client): Promise<void> {
     )`);
     await tx.execute("CREATE INDEX IF NOT EXISTS v2_usage_time ON v2_usage_attempts (reserved_at)");
     await tx.execute("CREATE INDEX IF NOT EXISTS v2_usage_session ON v2_usage_attempts (session_id)");
+    await tx.execute(`CREATE TABLE IF NOT EXISTS v2_usage_reconciliations (
+      reconciliation_id TEXT PRIMARY KEY, verified_at INTEGER NOT NULL,
+      verified_credit_floor INTEGER NOT NULL, acknowledged_at INTEGER NOT NULL,
+      payload TEXT NOT NULL, applied_policy TEXT NOT NULL
+    )`);
+    await tx.execute(`CREATE TABLE IF NOT EXISTS v2_usage_unknown_acknowledgements (
+      attempt_id TEXT PRIMARY KEY, reconciliation_id TEXT NOT NULL,
+      verified_at INTEGER NOT NULL, acknowledged_at INTEGER NOT NULL
+    )`);
   });
+}
+
+async function persistPolicy(tx: Transaction, policy: UsagePolicy, configuredAt: number) {
+  const payload = JSON.stringify(policy);
+  await tx.execute({ sql: "INSERT INTO v2_usage_policy_history (configured_at,payload) VALUES (?,?)", args: [configuredAt, payload] });
+  await tx.execute({ sql: "INSERT INTO v2_usage_policy (singleton,payload) VALUES (1,?) ON CONFLICT(singleton) DO UPDATE SET payload=excluded.payload", args: [payload] });
 }
 
 async function policyFrom(tx: Transaction): Promise<UsagePolicy | null> {
@@ -108,9 +127,7 @@ export async function setPolicy(client: Client, candidate: UsagePolicy, now = Da
   return write(client, async (tx) => {
     const previous = await policyFrom(tx);
     if (previous && policy.reconciledAt < previous.reconciledAt) return fail("V2_INVALID_POLICY");
-    const payload = JSON.stringify(policy);
-    await tx.execute({ sql: "INSERT INTO v2_usage_policy_history (configured_at,payload) VALUES (?,?)", args: [now, payload] });
-    await tx.execute({ sql: "INSERT INTO v2_usage_policy (singleton,payload) VALUES (1,?) ON CONFLICT(singleton) DO UPDATE SET payload=excluded.payload", args: [payload] });
+    await persistPolicy(tx, policy, now);
     return policy;
   });
 }
@@ -130,6 +147,9 @@ function attemptFrom(row: Row): UsageAttempt {
     status: String(row.status) as UsageStatus, latencyMs: optionalNumber(row.latency_ms),
     providerRequestId: row.provider_request_id === null ? null : String(row.provider_request_id),
     statusCode: optionalNumber(row.status_code), actualCredits: null,
+    ...(row.acknowledged_at !== undefined && row.acknowledged_at !== null ? {
+      acknowledgedAt: Number(row.acknowledged_at), reconciliationId: String(row.reconciliation_id),
+    } : {}),
   };
 }
 
@@ -146,14 +166,20 @@ export type UsageCounters = {
 
 async function counters(tx: Transaction, policy: UsagePolicy | null, now: number, sessionId = ""): Promise<UsageCounters> {
   const dayStart = Math.floor(now / DAY) * DAY;
-  const result = await tx.execute({ sql: `SELECT
-    COALESCE(SUM(CASE WHEN kind IN ('gnani_stt','gnani_tts') AND (reserved_at >= ? OR status IN ('reserved','dispatched','unknown')) THEN 1 ELSE 0 END),0) AS gnani_total,
-    COALESCE(SUM(CASE WHEN kind IN ('caller','evaluator') AND (reserved_at >= ? OR status IN ('reserved','dispatched','unknown')) THEN 1 ELSE 0 END),0) AS llm_total,
+  const result = await tx.execute({ sql: `WITH attempts AS (
+    SELECT a.*, CASE WHEN a.status='unknown' AND EXISTS (
+      SELECT 1 FROM v2_usage_unknown_acknowledgements ack
+      WHERE ack.attempt_id=a.attempt_id AND ack.verified_at<=?
+    ) THEN 1 ELSE 0 END AS acknowledged
+    FROM v2_usage_attempts a WHERE a.status<>'released'
+    ) SELECT
+    COALESCE(SUM(CASE WHEN kind IN ('gnani_stt','gnani_tts') AND (reserved_at >= ? OR status IN ('reserved','dispatched') OR (status='unknown' AND acknowledged=0)) THEN 1 ELSE 0 END),0) AS gnani_total,
+    COALESCE(SUM(CASE WHEN kind IN ('caller','evaluator') AND (reserved_at >= ? OR status IN ('reserved','dispatched') OR (status='unknown' AND acknowledged=0)) THEN 1 ELSE 0 END),0) AS llm_total,
     COALESCE(SUM(CASE WHEN kind IN ('gnani_stt','gnani_tts') AND reserved_at >= ? AND reserved_at < ? THEN 1 ELSE 0 END),0) AS gnani_day,
     COALESCE(SUM(CASE WHEN kind IN ('caller','evaluator') AND reserved_at >= ? AND reserved_at < ? THEN 1 ELSE 0 END),0) AS llm_day,
-    COALESCE(SUM(CASE WHEN status IN ('reserved','dispatched','unknown') THEN 1 ELSE 0 END),0) AS active,
+    COALESCE(SUM(CASE WHEN status IN ('reserved','dispatched') OR (status='unknown' AND acknowledged=0) THEN 1 ELSE 0 END),0) AS active,
     COALESCE(SUM(CASE WHEN session_id = ? THEN 1 ELSE 0 END),0) AS session_count
-    FROM v2_usage_attempts WHERE status <> 'released'`, args: [policy?.reconciledAt ?? 0, policy?.reconciledAt ?? 0,
+    FROM attempts`, args: [policy?.reconciledAt ?? 0, policy?.reconciledAt ?? 0, policy?.reconciledAt ?? 0,
     dayStart, dayStart + DAY, dayStart, dayStart + DAY, sessionId] });
   const row = result.rows[0];
   return { gnani: { totalSinceReconciliation: Number(row.gnani_total), daily: Number(row.gnani_day) },
@@ -262,10 +288,89 @@ export async function settleUsage(
   });
 }
 
+const ReconciliationSchema = z.object({
+  reconciliationId: z.uuid().transform((id) => id.toLowerCase()),
+  verifiedAt: time, verifiedCreditFloor: count(1_000_000_000),
+  attemptIds: z.array(z.uuid().transform((id) => id.toLowerCase())).min(1).max(50)
+    .refine((ids) => new Set(ids).size === ids.length)
+    .transform((ids) => [...ids].sort()),
+  providerReviewConfirmed: z.literal(true),
+}).strict();
+export type UsageReconciliationInput = z.infer<typeof ReconciliationSchema>;
+export type UsageReconciliationRecord = UsageReconciliationInput & { acknowledgedAt: number };
+
+function reconciliationFrom(row: Row): { record: UsageReconciliationRecord; policy: UsagePolicy } {
+  try {
+    const record = ReconciliationSchema.safeParse(JSON.parse(String(row.payload)));
+    const policy = PolicySchema.safeParse(JSON.parse(String(row.applied_policy)));
+    if (!record.success || !policy.success || record.data.reconciliationId !== row.reconciliation_id ||
+        record.data.verifiedAt !== Number(row.verified_at) ||
+        record.data.verifiedCreditFloor !== Number(row.verified_credit_floor)) return fail("V2_STORE_UNAVAILABLE");
+    return { record: { ...record.data, acknowledgedAt: Number(row.acknowledged_at) }, policy: policy.data };
+  } catch { return fail("V2_STORE_UNAVAILABLE"); }
+}
+
+/**
+ * Authenticated operator action only. Before invoking, the operator must inspect
+ * official provider billing and verify this snapshot includes ALL uncertain charges.
+ * The five-minute cooldown is a minimum wait, not proof of provider completion.
+ * This acknowledges a liability in a new snapshot; it NEVER invents its outcome,
+ * credits a refund, erases an attempt, or opens paid admission.
+ */
+export async function reconcileUnknownUsage(
+  client: Client, candidate: UsageReconciliationInput, now = Date.now(),
+): Promise<{ acknowledged: number; policy: UsagePolicy; alreadyApplied: boolean }> {
+  checkedTime(now);
+  const parsed = ReconciliationSchema.safeParse(candidate);
+  if (!parsed.success) return fail("V2_INVALID_RECONCILIATION");
+  const input = parsed.data, payload = JSON.stringify(input);
+  return write(client, async (tx) => {
+    const previousAction = await tx.execute({ sql: "SELECT * FROM v2_usage_reconciliations WHERE reconciliation_id=?", args: [input.reconciliationId] });
+    if (previousAction.rows.length) {
+      if (String(previousAction.rows[0].payload) !== payload) return fail("V2_RECONCILIATION_CONFLICT");
+      const applied = reconciliationFrom(previousAction.rows[0]);
+      // A replay returns the original action snapshot and never overwrites a newer policy.
+      return { acknowledged: applied.record.attemptIds.length, policy: applied.policy, alreadyApplied: true };
+    }
+    const previous = await policyFrom(tx);
+    if (!previous || input.verifiedAt > now || now - input.verifiedAt >= DAY ||
+        input.verifiedAt < previous.reconciledAt || !Number.isSafeInteger(input.verifiedAt + DAY)) {
+      return fail("V2_INVALID_RECONCILIATION");
+    }
+    const placeholders = input.attemptIds.map(() => "?").join(",");
+    const selected = await tx.execute({ sql: `SELECT a.*, ack.attempt_id AS already_acknowledged
+      FROM v2_usage_attempts a LEFT JOIN v2_usage_unknown_acknowledgements ack ON ack.attempt_id=a.attempt_id
+      WHERE a.attempt_id IN (${placeholders})`, args: input.attemptIds });
+    if (selected.rows.length !== input.attemptIds.length || selected.rows.some((row) => row.status !== "unknown")) {
+      return fail("V2_INVALID_RECONCILIATION");
+    }
+    if (selected.rows.some((row) => row.already_acknowledged !== null)) return fail("V2_RECONCILIATION_CONFLICT");
+    if (selected.rows.some((row) => input.verifiedAt - Math.max(Number(row.reserved_at),
+      Number(row.dispatched_at ?? 0), Number(row.settled_at ?? 0)) < UNKNOWN_RECONCILIATION_COOLDOWN_MS)) {
+      return fail("V2_RECONCILIATION_NOT_READY");
+    }
+    const nextPolicy = PolicySchema.safeParse({ ...previous, enabled: false, killSwitch: true,
+      reconciledAt: input.verifiedAt, expiresAt: input.verifiedAt + DAY,
+      verifiedCreditFloor: input.verifiedCreditFloor,
+      maxGnaniRequests: 0, maxGnaniRequestsPerDay: 0, maxLLMRequests: 0, maxLLMRequestsPerDay: 0,
+    });
+    if (!nextPolicy.success) return fail("V2_INVALID_RECONCILIATION");
+    await tx.execute({ sql: `INSERT INTO v2_usage_reconciliations
+      (reconciliation_id,verified_at,verified_credit_floor,acknowledged_at,payload,applied_policy) VALUES (?,?,?,?,?,?)`,
+    args: [input.reconciliationId, input.verifiedAt, input.verifiedCreditFloor, now, payload, JSON.stringify(nextPolicy.data)] });
+    await tx.batch(input.attemptIds.map((attemptId) => ({ sql: `INSERT INTO v2_usage_unknown_acknowledgements
+      (attempt_id,reconciliation_id,verified_at,acknowledged_at) VALUES (?,?,?,?)`,
+    args: [attemptId, input.reconciliationId, input.verifiedAt, now] })));
+    await persistPolicy(tx, nextPolicy.data, now);
+    return { acknowledged: input.attemptIds.length, policy: nextPolicy.data, alreadyApplied: false };
+  });
+}
+
 export type UsageSummary = {
   asOf: number; policy: UsagePolicy | null; admissionOpen: boolean; actualCredits: null;
   counters: UsageCounters; byStatus: Record<UsageStatus, number>; byKind: Record<UsageKind, number>;
   recent: UsageAttempt[];
+  reconciliations: UsageReconciliationRecord[];
 };
 
 export async function usageSummary(client: Client, now: number): Promise<UsageSummary> {
@@ -280,8 +385,12 @@ export async function usageSummary(client: Client, now: number): Promise<UsageSu
       byStatus[String(row.status) as UsageStatus] += Number(row.count);
       byKind[String(row.kind) as UsageKind] += Number(row.count);
     }
-    const recent = await tx.execute("SELECT * FROM v2_usage_attempts ORDER BY reserved_at DESC,attempt_id LIMIT 50");
+    const recent = await tx.execute(`SELECT a.*,ack.acknowledged_at,ack.reconciliation_id FROM v2_usage_attempts a
+      LEFT JOIN v2_usage_unknown_acknowledgements ack ON ack.attempt_id=a.attempt_id
+      ORDER BY a.reserved_at DESC,a.attempt_id LIMIT 50`);
+    const reconciliations = await tx.execute("SELECT * FROM v2_usage_reconciliations ORDER BY acknowledged_at DESC,reconciliation_id LIMIT 10");
     return { asOf: now, policy, admissionOpen: isOpen(policy, now), actualCredits: null,
-      counters: usage, byStatus, byKind, recent: recent.rows.map(attemptFrom) };
+      counters: usage, byStatus, byKind, recent: recent.rows.map(attemptFrom),
+      reconciliations: reconciliations.rows.map((row) => reconciliationFrom(row).record) };
   });
 }

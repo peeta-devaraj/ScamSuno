@@ -6,6 +6,7 @@ export type PreparedTurn = {
   session: ConversationSession;
   callerSource: "hosted" | "fixture" | "authored_fallback";
   status: "ready" | "evaluation_unavailable" | "caller_fallback";
+  fallbackReason?: string;
 };
 
 /**
@@ -53,11 +54,12 @@ export async function prepareConversationTurn(
     const attached = attachCaller(next, dialogue, options.source);
     next = attached.session;
     return { session: next, callerSource: attached.source,
-      status: attached.source === "authored_fallback" ? "caller_fallback" : "ready" };
+      status: attached.source === "authored_fallback" ? "caller_fallback" : "ready",
+      ...(attached.reason ? { fallbackReason: attached.reason } : {}) };
   } catch (error) {
     if (options.signal?.aborted || (error instanceof ConversationModelError && error.code === "ABORTED")) {
       throw new ConversationModelError("ABORTED");
     }
-    return { session: next, callerSource: "authored_fallback", status: "caller_fallback" };
+    return { session: next, callerSource: "authored_fallback", status: "caller_fallback", fallbackReason: "model_request_failed" };
   }
 }

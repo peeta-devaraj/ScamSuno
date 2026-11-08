@@ -1,16 +1,20 @@
 import type { Client } from "@libsql/client";
 import { z } from "zod";
 import { locales } from "../../domain/scenario";
+import { encodeConversationShare } from "../../domain/share";
 import { conversationScore } from "../../domain/v2/controller";
 import { OperationSchema, type ConversationSession } from "../../domain/v2/contracts";
 import { boundedBody, failure, reply, withinLimit } from "../http";
 import type { ConversationGateway } from "./caller";
 import { prepareConversationTurn } from "./conversation";
-import { assertActiveTurn, claimTurn, commitTurn, createStoredSession, endStoredSession } from "./sessions";
+import { assertActiveTurn, claimTurn, commitTurn, createStoredSession, endStoredSession, readStoredSession } from "./sessions";
+import { verifyVoiceProof } from "./voice-proof";
 
 const inputSchema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("start"), locale: z.enum(locales) }).strict(),
-  z.object({ action: z.literal("reply"), operation: OperationSchema }).strict(),
+  z.object({ action: z.literal("reply"), operation: OperationSchema,
+    confirmation: z.object({ proof: z.string().regex(/^[a-f0-9]{64}$/), expiresAt: z.number().int().nonnegative() }).strict().optional(),
+  }).strict(),
   z.object({ action: z.literal("end"), sessionId: z.uuid() }).strict(),
 ]);
 export type ConversationHttpDependencies = {
@@ -19,7 +23,7 @@ export type ConversationHttpDependencies = {
   gateway: (client: Client, context: { sessionId: string; turnOperationId: string }) => ConversationGateway;
 };
 const cookieName = "scamsuno_v2";
-function owner(request: Request, sessionId: string) {
+export function sessionOwner(request: Request, sessionId: string) {
   const cookies = request.headers.get("cookie") ?? "";
   if (cookies.length > 8192) return null;
   const values = cookies.split(";").map((v) => v.trim()).filter((v) => v.startsWith(`${cookieName}=`));
@@ -30,7 +34,7 @@ function owner(request: Request, sessionId: string) {
 }
 function stateResponse(session: ConversationSession, mode: "live" | "fixture" | "disabled", status = "ready", callerSource = "authored_fallback") {
   return reply({ ok: true, mode, educationalSimulation: true, session, status, callerSource,
-    result: session.ending ? conversationScore(session) : null });
+    result: session.ending ? { ...conversationScore(session), shareToken: encodeConversationShare(session) } : null });
 }
 
 /** The factory is dependency-injected for explicit fixture tests. The deployed route supplies only live services. */
@@ -56,7 +60,7 @@ export function createConversationHandler(deps: ConversationHttpDependencies) {
         if (!withinLimit(request, "v2", 80)) return failure("V2_RATE_LIMITED", "Please wait before trying another call.", 429);
       }
       const sessionId = input.action === "start" ? null : input.action === "end" ? input.sessionId : input.operation.sessionId;
-      const secret = sessionId ? owner(request, sessionId) : null;
+      const secret = sessionId ? sessionOwner(request, sessionId) : null;
       if (input.action !== "start" && !secret) return failure("V2_SESSION_NOT_FOUND", "Start a new practice call to continue.", 401);
       const client = await deps.database();
       if (input.action === "start") {
@@ -66,9 +70,17 @@ export function createConversationHandler(deps: ConversationHttpDependencies) {
         return response;
       }
       if (input.action === "end") return stateResponse(await endStoredSession(client, sessionId!, secret!), enabled ? mode! : "disabled");
-      // Voice provenance must be bound to a server-issued transcription confirmation.
-      // Until that V2 route exists, a browser cannot claim that typed text was spoken.
-      if (input.operation.reply.origin === "voice") return failure("V2_VOICE_NOT_READY", "Use typing while voice preview is being connected.", 400);
+      const participant = input.operation.reply;
+      if (participant.origin === "voice") {
+        const stored = await readStoredSession(client, sessionId!, secret!);
+        const confirmation = input.confirmation;
+        if (!confirmation || !verifyVoiceProof(secret!, {
+          sessionId: sessionId!, expectedTurn: input.operation.expectedTurn, locale: stored.locale,
+          text: participant.text, model: participant.transcription.model, requestId: participant.transcription.requestId,
+        }, confirmation.proof, confirmation.expiresAt)) {
+          return failure("V2_VOICE_CONFIRMATION_INVALID", "Record again or send the edited reply as typed text.", 400);
+        }
+      } else if (input.confirmation) return failure("V2_INVALID_REQUEST", "Only unchanged recorded replies use voice confirmation.", 400);
       const claim = await claimTurn(client, secret!, input.operation);
       if (claim.kind !== "claimed") return stateResponse(claim.session, mode!);
       const prepared = await prepareConversationTurn(claim.session, input.operation, deps.gateway(client, {

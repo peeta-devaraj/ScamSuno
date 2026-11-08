@@ -1,9 +1,16 @@
 import assert from "node:assert/strict";
+import { before, after } from "node:test";
+
+// Dedicated synthetic server signing key; never a provider credential.
+const previousProofKey = process.env.V2_VOICE_PROOF_SECRET;
+before(() => { process.env.V2_VOICE_PROOF_SECRET = "c".repeat(64); });
+after(() => { if (previousProofKey === undefined) delete process.env.V2_VOICE_PROOF_SECRET; else process.env.V2_VOICE_PROOF_SECRET = previousProofKey; });
 import test from "node:test";
 import { createClient } from "@libsql/client";
 import { createConversationHandler } from "../src/server/v2/conversation-http";
 import { initializeSessions } from "../src/server/v2/sessions";
 import { withinLimit } from "../src/server/http";
+import { mintVoiceProof } from "../src/server/v2/voice-proof";
 
 const base = "https://preview.invalid";
 function post(body: unknown, cookie?: string, origin = base) {
@@ -123,4 +130,25 @@ test("a pending evaluation cannot start a caller request after authenticated End
   finish(JSON.stringify({ intent: "QUESTION", verify: false, confidence: 0.99, evidence: "Who are you?" }));
   assert.equal((await pending).status, 409);
   assert.deepEqual(requests, ["evaluator"]);
+});
+
+test("confirmed voice keeps its origin; edited or fabricated transcripts cannot reuse a proof", async (t) => {
+  const f = await fixture(t);
+  const localPost = (body: unknown, cookie?: string) => {
+    const request = post(body, cookie); request.headers.set("x-vercel-forwarded-for", "voice-proof-http-fixture"); return request;
+  };
+  const start = await f.handler(localPost({ action: "start", locale: "ta" }));
+  const cookie = start.headers.get("set-cookie")!.split(";")[0], { session } = await start.json();
+  const secret = cookie.slice(cookie.indexOf(".") + 1), text = "நீங்கள் யார்?";
+  const confirmation = mintVoiceProof(secret, { sessionId: session.sessionId, expectedTurn: 0, locale: "ta", text,
+    model: "prisma-v3.0", requestId: "confirmed-fixture" });
+  const operation = { sessionId: session.sessionId, expectedTurn: 0, operationId: crypto.randomUUID(),
+    reply: { origin: "voice", text, transcription: { provider: "gnani", model: "prisma-v3.0", requestId: "confirmed-fixture", confirmed: true } } };
+  const edited = await f.handler(localPost({ action: "reply", operation: { ...operation, reply: { ...operation.reply, text: "changed after recognition" } }, confirmation }, cookie));
+  assert.equal(edited.status, 400);
+  assert.equal(f.calls(), 0);
+  const accepted = await f.handler(localPost({ action: "reply", operation, confirmation }, cookie));
+  assert.equal(accepted.status, 200);
+  assert.equal((await accepted.json()).session.history[0].origin, "voice");
+  assert.equal(f.calls(), 2);
 });

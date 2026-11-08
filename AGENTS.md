@@ -6,7 +6,7 @@
 - Develop in feature/scamsuno-v2 in this worktree. Production promotion requires explicit user approval.
 - Run pnpm check:v1 after every major milestone and preserve v1-stable and all V1 recovery deployments.
 - The user's V2 specification authorizes bounded generated caller dialogue for the isolated V2 path. Apply independent validation before synthesis and retain fictional, educational content. This supersedes the scripted-only restriction below for that V2 path.
-- Keep V2 live testing closed until the official balance is reconciled and durable reserve protection is verified. This worktree has no copied provider credentials.
+- Keep V2 live testing closed except for explicitly bounded, reconciled probes behind the durable reserve policy. Credentials belong only in ignored local environment files or authorized server environments; never print their values.
 - Use previews for V2 acceptance. Record additive database migrations and tested data recovery before any production promotion.
 
 - Keep Gnani and classifier credentials in server environment variables. Never include credentials in source, browser bundles, logs or errors.

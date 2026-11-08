@@ -137,3 +137,22 @@ test("typed refusal and verification pass through the normal route; provider fai
   assert.equal(ending.session.turns[0].stt, undefined);
   assert.equal(ending.terminal, "END_VERIFIED");
 });
+
+test("deployed V2 closes legacy paid endpoints while keeping explicit-choice playback functional", async (t) => {
+  setupLLM(t);
+  const keys = ["VERCEL", "GNANI_MODE", "STT_ENABLED"];
+  const before = Object.fromEntries(keys.map((key) => [key, process.env[key]]));
+  t.after(() => { for (const key of keys) if (before[key] === undefined) delete process.env[key]; else process.env[key] = before[key]; });
+  process.env.VERCEL = "1"; process.env.GNANI_MODE = "live"; process.env.STT_ENABLED = "true";
+  let fetches = 0;
+  t.mock.method(globalThis, "fetch", async () => { fetches++; throw new Error("no legacy provider dispatch"); });
+  assert.equal((await sttRoute(new Request(path, { method: "POST" }))).status, 503);
+  const started = await (await turn({ action: "start", scenarioId: "kyc_freeze", locale: "ta", sessionId: crypto.randomUUID() })).json();
+  assert.equal(started.ui.showQuickReplies, true);
+  const typed = await (await turn({ action: "reply", session: started.session, reply: { inputMode: "typed", text: "I will verify independently" } })).json();
+  assert.equal(typed.stalled, true);
+  assert.equal(typed.session.turns.length, 0);
+  const chosen = await (await turn({ action: "reply", session: started.session, reply: { inputMode: "button", buttonId: "verify_self" } })).json();
+  assert.equal(chosen.terminal, "END_VERIFIED");
+  assert.equal(fetches, 0);
+});

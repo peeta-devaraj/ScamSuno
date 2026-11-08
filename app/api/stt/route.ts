@@ -12,6 +12,9 @@ const fields = z.tuple([z.enum(locales), z.literal(SCENARIO), z.enum(states)]);
 
 export async function POST(request: Request) {
   const mock = mockMode();
+  // The isolated V2 release admits paid traffic only through its durable routes.
+  // The preserved V1 deployment/tag retain their original live endpoint.
+  if (process.env.VERCEL) return failure("VOICE_REQUIRES_V2", "Open the conversational practice call to use voice.", 503);
   if (process.env.STT_ENABLED === "false") return failure("STT_DISABLED", "Voice is paused. You can still type or pick a reply.", 503);
   if (!mock && !speechKey()) return failure("STT_UNAVAILABLE", "Voice is unavailable. You can still type or pick a reply.", 503);
   try {

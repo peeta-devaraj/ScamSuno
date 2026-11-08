@@ -4,6 +4,8 @@ The [Gnani challenge page](https://www.gnani.ai/internship) lists November 10, 2
 
 ## Rehearsal
 
+For V2, use the isolated Preview URL's `/v2?l=ta` or `/v2?l=te` after its live acceptance gate is opened for a bounded rehearsal. Keep the visible educational label. State whether a recording uses human microphone input or synthetic loopback audio. Demonstrate transcript confirmation, an edited typed reply, immediate End, tested-only scoring and a reply-free share card. A closed Preview intentionally shows an unavailable screen linking to canonical V1. Do not present browser fixtures or the earlier synthetic API loopback as a deployed human call.
+
 1. Open ScamSuno, pick your language and start the KYC freeze call.
 2. Continue without the microphone and answer. For a dry run, choose go along, ask who is calling, ask for a moment, then say you will call the bank yourself.
 3. Open the debrief. Point out the artificial deadline, the code request and the caller’s attempt to discourage verification.
