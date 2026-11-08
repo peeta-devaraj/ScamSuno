@@ -247,5 +247,6 @@ test('identity boundaries do not ban independent checking or negate legitimate c
   assert.equal(attachCaller(n,{locale,text,action:'continue'},'fixture').source,'fixture',text);
  }
  const s=start(0),n=advanceSession(s,operation(s),null,NOW+1);
- assert.equal(attachCaller(n,{locale:'en',text:'The panel confirms this public notice. Please check it independently.',action:'continue'},'fixture').source,'fixture');
+ // Content corroboration belongs to the actual server verification panel, not an invented caller assertion.
+ assert.equal(attachCaller(n,{locale:'en',text:'The panel confirms this public notice. Please check it independently.',action:'continue'},'fixture').source,'authored_fallback');
 });

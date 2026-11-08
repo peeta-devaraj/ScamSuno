@@ -1,0 +1,81 @@
+✔ V3 evaluator is blind to hidden assignment and caller gets only permitted scenario facts (17.5419ms)
+✔ caller and evaluator reuse the injected gateway once each with separate purposes (1.6093ms)
+✔ ended context, invalid JSON and provider errors fail closed with no retries or private diagnostics (1.6616ms)
+✔ three controllers support free-form replies in all locales without a required secret (20.4865ms)
+✔ invalid clocks, stale envelopes, different sessions and ended turns cannot advance (4.7542ms)
+✔ expiry does not evaluate the late reply or fabricate a safe participant exit (1.5577ms)
+✔ bounded turns retain at most six masked history entries without awarding limit-based exit credit (5.4924ms)
+✔ generic refusals stop every category without claiming tested secret protection (4.5125ms)
+✔ explicit secret refusal is respected and shares the same evidence grade across categories (4.639ms)
+✔ speaking about verification never completes the independent server action (2.5081ms)
+✔ participant End is immediate and idempotent; checking later does not rewrite expiry or limit (0.4614ms)
+✔ button End and validated whole-reply exit preserve participant intent without invoking a model (1.48ms)
+✔ voice origin is preserved while raw numeric participant text and evidence are masked (2.4638ms)
+✖ generated dialogue checks previous presented caption, rejects unsafe text and reports actual source (14.4413ms)
+✔ debrief is unavailable until ended and separates scenario explanation from recorded evidence (0.8282ms)
+✔ generated explicit category labels and internal answer identifiers never become caller captions (9.0099ms)
+✔ routine and unresolved scenarios reject generated pressure and unsupported service restrictions (11.4309ms)
+✔ unresolved scenarios cannot generate conclusive verification in four locales or Hinglish (5.0571ms)
+✔ severe threats are rejected for every hidden assignment (4.4996ms)
+✔ bounded KYC pressure remains permitted only in its reviewed scenario (1.2332ms)
+✔ neutral generated clarification remains available to every scenario in all locales (4.9184ms)
+✔ no scenario can claim that inbound voice or the content panel authenticates identity (6.643ms)
+✖ identity boundaries do not ban independent checking or negate legitimate content corroboration (5.5931ms)
+✔ all three scenarios complete bounded multi-turn text preparation through the reused gateway contract (38.9167ms)
+✔ End winning during evaluation prevents caller dispatch; errors and unsafe output use honest fallbacks (6.0078ms)
+ℹ tests 25
+ℹ suites 0
+ℹ pass 23
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 835.6463
+
+✖ failing tests:
+
+test at tests\v3-controller.test.ts:121:1
+✖ generated dialogue checks previous presented caption, rejects unsafe text and reports actual source (14.4413ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'authored_fallback'
+  - 'hosted'
+  
+      at TestContext.<anonymous> (C:\Users\peeta\.codex\visualizations\2026\11\06\01a1b12a-e778-7371-9a75-15adbb3d38fd\scamsuno-v3-remediation\tests\v3-controller.test.ts:130:10)
+      at Test.runInAsyncScope (node:async_hooks:214:14)
+      at Test.run (node:internal/test_runner/test:1106:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+      at Test.postRun (node:internal/test_runner/test:1235:19)
+      at Test.run (node:internal/test_runner/test:1163:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'authored_fallback',
+    expected: 'hosted',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\v3-controller.test.ts:239:1
+✖ identity boundaries do not ban independent checking or negate legitimate content corroboration (5.5931ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'authored_fallback'
+  - 'fixture'
+  
+      at TestContext.<anonymous> (C:\Users\peeta\.codex\visualizations\2026\11\06\01a1b12a-e778-7371-9a75-15adbb3d38fd\scamsuno-v3-remediation\tests\v3-controller.test.ts:250:9)
+      at Test.runInAsyncScope (node:async_hooks:214:14)
+      at Test.run (node:internal/test_runner/test:1106:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+      at Test.postRun (node:internal/test_runner/test:1235:19)
+      at Test.run (node:internal/test_runner/test:1163:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'authored_fallback',
+    expected: 'fixture',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

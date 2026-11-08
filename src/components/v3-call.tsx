@@ -291,11 +291,11 @@ export function V3Call({ available, voiceAvailable, initialLocale = "ta", fixtur
     <p className={styles.panelBoundary}>{c.panelBoundary}</p>
   </aside>;
   return <div className={styles.page} lang={locale}>
-    <header className={styles.header}><Link className={styles.brand} href={v1Href}><Icon name="wave" size={22}/><span>Scam<em>Suno</em></span></Link>
+    <header className={styles.header}><Link className={styles.brand} data-testid="v3-brand" href={`/v3?l=${locale}`}><Icon name="wave" size={22}/><span>Scam<em>Suno</em></span></Link>
       <span className={styles.badge}><Icon name="shield" size={13}/>{c.simulation}</span></header>
     {fixtureMode && <p className={styles.fixture} role="status" data-testid="v3-fixture">{c.fixture}</p>}
     <main className={styles.shell}>
-      <nav className={styles.modeNav} aria-label={c.mode}><span aria-current="page">{c.trust}</span><Link href={`/v2?l=${locale}`}>{c.classic}</Link></nav>
+      <nav className={styles.modeNav} aria-label={c.mode}><span aria-current="page">V3 · {c.trust}</span><Link href={`/v2?l=${locale}`}>{c.classic}</Link></nav>
       {error && <div role="alert" className={styles.error}>{error}</div>}
       {!available ? <section className={styles.closed}><div className={styles.avatar}><Icon name="headphones" size={34}/></div>
         <span className={styles.eyebrow}>{c.preview}</span><h1>{c.unavailableTitle}</h1><p>{c.unavailableBody}</p>{languages}

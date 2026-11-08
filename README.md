@@ -1,22 +1,20 @@
-# ScamSuno
+# ScamSuno V3 — Trust or Trap
 
-An educational scam-call simulation in English, Hindi, Tamil and Telugu. Answer a fictional call from Kalpanik Bank, decide how to respond, then review the caller’s red flags and your decisions.
+An educational fictional-call simulation in Tamil, Telugu, Hindi and English. Ask your own questions, check a notice through the simulated trusted panel, end the call safely, then review evidence-based feedback. V3 uses turn-based voice: listen → record → confirm/send → hear the reply.
 
-**[Try ScamSuno](https://scamsuno.vercel.app)**
+**[V3 test link, verified build and current readiness](docs/audit/V3_REMEDIATION_RESULTS.md)** · **[Tamil/Telugu phone-test checklist](docs/audit/V3_DEVICE_ACCEPTANCE.md)**
 
-## Trust or Trap — V3
+V3's entry route is `/v3` on the dedicated private `scamsuno-v3` Preview. On deployments explicitly configured with `V3_TRUST_OR_TRAP_ENABLED=true`, `/` redirects to `/v3` and preserves a valid language choice. A Vercel sign-in prompt may appear. A paused page means the live allowance/configuration is closed; opening V1 does not test V3. Use the exact candidate link in the remediation results, not an older deployment URL.
 
-V3 development is isolated on `codex/scamsuno-v3`; canonical V1 and the preserved V2 preview are unchanged. The new `/v3` mode mixes three fictional caller scenarios and hides their assignment until the debrief. Tamil, Telugu, Hindi and English support free-form voice/text, independent simulated verification and nonnumeric evidence-based feedback. Caller generation reuses V2's bounded model/speech transports, with V3-owned sessions and atomic credit controls.
+**[V1 fallback — scripted practice](https://scamsuno.vercel.app)** remains separately available. It is the original experience, not the adaptive V3 test. Within V3, the other mode is explicitly labelled **V2 · Single-scenario practice**. The ScamSuno brand stays in V3.
 
-The complete implementation includes private `/admin/v3` durable pause, feature rollback, masked retained replies, signed transcript confirmation and privacy-safe public responses. The latest integrated checks passed 255 tests, type checking and production build; 23 browser journeys passed using explicit fixtures. Human phone and live V3 provider trials are deferred at the user's request. No educational-effectiveness or recognition-accuracy claim is established.
+## Current release boundary
 
-[Current private V3 Preview](https://scamsuno-v3-7pvoq66z3-peetadevaraj-2614s-projects.vercel.app/v3) runs in the dedicated `scamsuno-v3` project with its own $0 database and sensitive Preview configuration. Real Tamil/Telugu typed conversations now pass; speech and physical-phone acceptance remain pending. Test access uses an expiring bounded ledger allowance, so the page becomes unavailable when that allowance expires or is exhausted. See [resource isolation and current window](docs/V3_ISOLATION.md). Earlier V3-on-V2-project URLs are historical and closed.
+V1/V2 and the pre-remediation V3 recovery point are preserved. P0 changes are isolated on `codex/scamsuno-v3-p0`; application Production promotion requires explicit approval. Physical Tamil/Telugu phone acceptance remains **pending the participant's observed results**. Automated browser fixtures do not establish real microphone, recognition, caller-speech quality or educational effectiveness.
 
-See [V3 progress](docs/V3_PROGRESS.md), [deployment and operating instructions](docs/V3_DEPLOYMENT.md), [scenario design](docs/V3_SCENARIO_DESIGN.md), [rubric](docs/V3_EVALUATION_RUBRIC.md), [observed test results](docs/V3_TEST_RESULTS.md) and [demo plan](docs/V3_DEMO_PLAN.md). Private preview provider traffic stays paused until the later test window. Production promotion still requires explicit approval.
+Gnani's current remaining balance is **unknown unless reconciled against fresh provider data**. V1 and V3 share the provider account. Durable V3 controls limit request attempts, duration, text size and concurrency, but do not guarantee an account-wide credit reserve. A private Preview can be published with live admission closed; live phone testing requires a fresh reconciled bounded window. No streaming or automatic interruption is implemented.
 
-The build includes Timbre-generated caller audio, captions, quick replies, four endings, a scored debrief, and a downloadable result card. Live Prisma transcription and free-form reply labelling use server credentials. See the [release checklist](docs/PROGRESS.md) and [Gnani verification evidence](evidence/day0/SUMMARY.md).
-
-V1 production currently offers live Prisma with quick replies for free-form input. Its hosted classifier is not configured. V2 is developed separately and has its own server-only Groq credential.
+See [P0 remediation results](docs/audit/V3_REMEDIATION_RESULTS.md), [release checklist](docs/audit/V3_RELEASE_CHECKLIST.md), [scenario design](docs/V3_SCENARIO_DESIGN.md), [rubric](docs/V3_EVALUATION_RUBRIC.md), [independent audit](SCAMSUNO_V3_INDEPENDENT_AUDIT.md) and [resource isolation](docs/V3_ISOLATION.md). Older evidence below describes V1/V2 milestones and does not establish current V3 acceptance.
 
 ## Isolated V2 development
 

@@ -158,3 +158,15 @@ test("disabled V3 offers existing modes and makes no V3 API request", async ({ p
   await expect(page.getByTestId("v3-fixture")).toHaveCount(0);
   expect(calls).toBe(0);
 });
+
+
+test("V3 navigation names generations and keeps its brand inside V3", async ({ page }) => {
+  await fixtures(page); const c = uiCopy.en;
+  await page.goto("/v3?fixture=1&l=en");
+  await expect(page.getByTestId("v3-brand")).toHaveAttribute("href", "/v3?l=en");
+  await expect(page.locator('[aria-current="page"]')).toContainText("V3");
+  await expect(page.getByRole("link", {name:c.classic,exact:true})).toContainText("V2");
+  await expect(page.getByRole("link", {name:c.classic,exact:true})).toHaveAttribute("href", "/v2?l=en");
+  await expect(page.getByRole("link", {name:c.v1,exact:true})).toContainText("V1");
+  await expect(page.getByRole("link", {name:c.v1,exact:true})).toHaveAttribute("href", "https://scamsuno.vercel.app/?l=en");
+});

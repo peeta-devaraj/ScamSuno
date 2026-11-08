@@ -2,22 +2,23 @@ import { maskNumbers } from '../../domain/numbers';
 
 export const SENSITIVE_CONTENT_OMITTED = '[Sensitive information omitted]';
 
-// Conservative lexical detection of explicit credential-value disclosures, not
-// a general PII classifier. Unsupported spellings/obfuscations remain a limit.
-// Whole utterances are omitted so value tails cannot survive partial matching.
-const valueDisclosure = [
-  /\b(?:password|passcode|pin|otp|cvv|verification\s+code|security\s+code)\s*(?:is|are|equals?|:|=)\s*(?!(?:not|never|private|confidential|unknown|required|needed)\b)\S+/iu,
-  /\b(?:my|our)\s+(?:password|passcode|pin|otp|cvv)\s+[\p{N}]+/iu,
-  /\b(?:mera|meri)\s+(?:password|passcode|pin|otp|cvv|code)\s+(?:hai\s+)?(?!(?:nahi|nahin|mat|private)\b)\S+\s+hai\b/iu,
-  /\b(?:mera|meri)\s+(?:password|passcode|pin|otp|cvv|code)\s+hai\s+(?!(?:nahi|nahin)\b)\S+/iu,
-  /(?:पासवर्ड|पिन|ओटीपी|सीवीवी|सुरक्षा\s*कोड)\s*(?:है|हैं|:|=)\s*(?!नहीं|नही)\S+/u,
-  /(?:मेरा|मेरी)\s*(?:पासवर्ड|पिन|ओटीपी|सीवीवी|कोड)\s+(?!नहीं|नही|साझा)[^.!?।]{1,80}\s+(?:है|हैं)/u,
-  /(?:என்|எனது)\s*(?:கடவுச்சொல்|கடவுச்\s*சொல்|பின்|ஓ[.\s]*டி[.\s]*பி|குறியீடு)(?:\s*[:=]\s*|\s+)(?!பகிர|சொல்ல|தர|இல்லை|தேவையில்லை)\S+/u,
-  /(?:నా|నాది)\s*(?:పాస్[\s\u200c\u200d-]*వర్డ్|పిన్|ఓటీపీ|కోడ్)(?:\s*[:=]\s*|\s+)(?!ఇవ్వను|చెప్పను|పంచుకోను|కాదు|లేదు)\S+/u,
+// Withhold credential-bearing utterances by default, rather than trying to
+// identify every possible value syntax. Only whole, value-free reviewed forms
+// pass unchanged. A refusal followed by a value is still withheld, not graded as
+// unsafe. This is deliberately conservative, not a general PII/obfuscation filter.
+const credentialReference = /\b(?:pass\s*word|passcode|passphrase|pin|otp|cvv|credentials?|code|kadavuchol|kadavuchchol|kadavusol|kadavuchsol|passwordu|paasword|pasward)\b|\b(?:o[.\s]*t[.\s]*p|p[.\s]*i[.\s]*n|c[.\s]*v[.\s]*v)\b|पासवर्ड|पासकोड|पिन|ओटीपी|ओ[.\s]*टी[.\s]*पी|सीवीवी|कोड|கடவுச்?\s*சொல்|கடவுச்சொல்|பாஸ்வேர்ட்|பாஸ்வர்ட்|பின்|ஓ[.\s]*டி[.\s]*பி|குறியீ|పాస్[\s-]*వర్డ్|పాస్వర్డ్|పిన్|ఓటీపీ|ఓ[.\s]*టి[.\s]*పి|కోడ్/iu;
+const safeCredentialForms = [
+  /^(?:i\s+(?:(?:will not|won['’]t|never|do not|don['’]t)\s+(?:share|give|provide|tell|disclose)|refuse to\s+(?:share|give|provide|tell|disclose))\s+(?:my|the|any)\s+(?:password|passcode|pin|otp|cvv|code)|did you ask for my password|my password is not required)[.!?\s]*$/iu,
+  /^(?:मैं\s+(?:(?:अपना|मेरा)\s+)?(?:पासवर्ड|पिन|ओटीपी|कोड)\s+(?:साझा नहीं करूँगा|साझा नहीं करूंगा|नहीं बताऊँगा|नहीं बताऊंगा|नहीं दूँगा|नहीं दूंगा))[।.!\s]*$/u,
+  /^(?:நான்\s+|என்\s+)?(?:கடவுச்சொல்லைச்|கடவுச்சொல்லை|குறியீட்டைச்|குறியீட்டை)\s*(?:சொல்ல|பகிர|தர)\s*மாட்டேன்[.!\s]*$/u,
+  /^(?:(?:నా|నేను)\s+)?(?:పాస్[\s-]*వర్డ్|పాస్వర్డ్|పిన్|ఓటీపీ|కోడ్)\s*(?:చెప్పను|ఇవ్వను|పంచుకోను)[.!\s]*$/u,
+  /^(?:main\s+(?:(?:apna|mera)\s+)?(?:password|pin|otp|code)\s+nahi\s+(?:dunga|bataunga)|naan\s+(?:password|kadavuchol)\s+solla\s+maatten|nenu\s+(?:password|pin|otp|code)\s+cheppanu)[.!\s]*$/iu,
 ];
 export function redactExplicitSecrets(text: string): string {
-  const normalized = text.normalize('NFC');
-  return valueDisclosure.some(pattern => pattern.test(normalized)) ? SENSITIVE_CONTENT_OMITTED : text;
+  // Fold full-width characters and remove zero-width separators for detection.
+  const normalized = text.normalize('NFKC').replace(/\p{Cf}/gu, '').trim();
+  if (!credentialReference.test(normalized)) return text;
+  return safeCredentialForms.some(pattern => pattern.test(normalized)) ? text : SENSITIVE_CONTENT_OMITTED;
 }
 export function retainReplyText(text: string): string {
   return maskNumbers(redactExplicitSecrets(text));

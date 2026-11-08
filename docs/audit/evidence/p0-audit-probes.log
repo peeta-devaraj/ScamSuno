@@ -1,0 +1,8 @@
+{"probe":"scenario_contradiction","assigned":"routine_update","acceptedSource":"authored_fallback","caption":"This is a general service update. You can read it in the fictional app whenever convenient. No action is required during this call."}
+{"probe":"credential_paraphrase","syntheticValueSentToModel":false}
+{"probe":"immediate_hangup","category":0,"decisions":[{"id":"protect_secrets","status":"not_tested"},{"id":"verify_independently","status":"not_tested"},{"id":"calibrated_response","status":"not_tested"},{"id":"exit_safely","status":"observed_safe"}]}
+{"probe":"immediate_hangup","category":1,"decisions":[{"id":"protect_secrets","status":"not_tested"},{"id":"verify_independently","status":"not_tested"},{"id":"calibrated_response","status":"not_tested"},{"id":"exit_safely","status":"observed_safe"}]}
+{"probe":"immediate_hangup","category":2,"decisions":[{"id":"protect_secrets","status":"not_tested"},{"id":"verify_independently","status":"not_tested"},{"id":"calibrated_response","status":"not_tested"},{"id":"exit_safely","status":"observed_safe"}]}
+{"probe":"channel_trust_language","text":"I will use the link you sent.","observation":[{"turn":1,"origin":"typed","kind":"unsafe_commitment","evidence":"I will use the link you sent."}]}
+{"probe":"channel_trust_language","text":"నేను మీరు ఇచ్చిన లింక్‌ను ఉపయోగిస్తాను.","observation":[{"turn":1,"origin":"typed","kind":"uncertain","evidence":""}]}
+{"probe":"evaluator_outage","purposes":["evaluator"],"status":"evaluation_unavailable","turn":0}

@@ -1,0 +1,36 @@
+$ playwright test
+[WebServer] (node:30132) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:22160) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 24 tests using 1 worker
+
+(node:29364) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 tests\browser\call.spec.ts:27:7 › தமிழ் keeps the chosen locale from the landing page through the shared result (7.4s)
+  ok  2 tests\browser\call.spec.ts:27:7 › తెలుగు keeps the chosen locale from the landing page through the shared result (2.7s)
+  ok  3 tests\browser\call.spec.ts:55:5 › mobile visitor verifies independently, downloads a PNG and opens the share view (5.1s)
+  ok  4 tests\browser\call.spec.ts:90:5 › early hangup excludes the untested code and verification behaviours (785ms)
+  ok  5 tests\browser\call.spec.ts:99:5 › ambiguous typed reply falls back to choices; the call can end without a decision (5.3s)
+  ok  6 tests\browser\call.spec.ts:111:5 › Hindi flow records through AudioWorklet, confirms mock transcription and masks a code (5.5s)
+  ok  7 tests\browser\call.spec.ts:137:5 › microphone denial leaves the complete captions and quick replies path available (3.2s)
+  ok  8 tests\browser\v2.spec.ts:46:7 › explicit ta fixture completes a mobile typed call without pretending to be live (2.1s)
+  ok  9 tests\browser\v2.spec.ts:46:7 › explicit te fixture completes a mobile typed call without pretending to be live (1.4s)
+  ok 10 tests\browser\v2.spec.ts:75:5 › End stays available during a pending reply and a late response cannot reopen the call (876ms)
+  ok 11 tests\browser\v2.spec.ts:92:7 › actual browser recorder confirms fixture STT as voice with signed context (1.8s)
+  ok 12 tests\browser\v2.spec.ts:92:7 › actual browser recorder confirms fixture STT as typed after editing (1.6s)
+  ok 13 tests\browser\v2.spec.ts:115:5 › microphone denial leaves typing and End fully usable (758ms)
+  ok 14 tests\browser\v2.spec.ts:128:5 › closed preview offers V1 without credential jargon or provider requests (544ms)
+  ok 15 tests\browser\v3.spec.ts:55:7 › explicit ta mobile fixture keeps assignment private and reveals only after End (1.8s)
+  ok 16 tests\browser\v3.spec.ts:55:7 › explicit te mobile fixture keeps assignment private and reveals only after End (1.1s)
+  ok 17 tests\browser\v3.spec.ts:55:7 › explicit hi mobile fixture keeps assignment private and reveals only after End (1.1s)
+  ok 18 tests\browser\v3.spec.ts:88:5 › English fixture verifies independently while active without authenticating the caller (770ms)
+  ok 19 tests\browser\v3.spec.ts:101:5 › End wins over a pending reply and stale fixture output cannot reopen the call (814ms)
+  ok 20 tests\browser\v3.spec.ts:116:7 › real browser recorder preserves confirmed voice origin with fixture STT (1.6s)
+  ok 21 tests\browser\v3.spec.ts:116:7 › real browser recorder preserves typed origin after editing with fixture STT (1.6s)
+  ok 22 tests\browser\v3.spec.ts:138:5 › microphone denial leaves free-form typing and End available (831ms)
+  ok 23 tests\browser\v3.spec.ts:150:5 › disabled V3 offers existing modes and makes no V3 API request (559ms)
+  ok 24 tests\browser\v3.spec.ts:163:5 › V3 navigation names generations and keeps its brand inside V3 (580ms)
+
+  24 passed (56.3s)

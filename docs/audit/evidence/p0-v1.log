@@ -1,0 +1,17 @@
+$ node scripts/check-v1.mjs
+{
+  "ok": true,
+  "checkedAt": "2026-11-08T15:54:00.372Z",
+  "url": "https://scamsuno.vercel.app/api/health",
+  "build": "b3462ac0a9eeb809c7e870044baa291d4c1e378e",
+  "mode": "live",
+  "sttEnabled": true,
+  "callerClips": 60,
+  "locales": [
+    "en",
+    "hi",
+    "ta",
+    "te"
+  ],
+  "gnaniCalls": 0
+}

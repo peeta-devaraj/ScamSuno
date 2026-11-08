@@ -1,0 +1,18 @@
+✔ explicit V3 deployments redirect root to the V3 entry and preserve validated locales (1.7117ms)
+✔ flag-off deployments retain the V1 root component (1.1334ms)
+✔ contradiction, negation, invented evidence and suffixes cannot enter any scenario in four languages (115.8142ms)
+✔ explicit credential-value discussion is omitted as a whole in supported scripts (3.0629ms)
+✔ plain refusal, quotation and independent-check semantics remain intact without a disclosed value (0.6376ms)
+✔ multilingual credential paraphrases and refusal-plus-value tails are withheld in both payloads (7.6596ms)
+✔ withholding sensitive quotations never creates a risk grade, and reviewed refusals still support safe boundaries (4.0914ms)
+✔ caller and evaluator never receive an explicit credential value; provenance is retained (0.8209ms)
+✔ multilingual synthetic paraphrases cannot survive controller history, SQLite state or operation rows (36.9983ms)
+✔ controller and actual SQLite persistence omit synthetic credential values and keep unscored uncertainty (4.0608ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1201.0393

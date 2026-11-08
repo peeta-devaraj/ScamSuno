@@ -9,6 +9,7 @@ import { InternalSessionSchema, type StoredSession } from "./public-session";
 import { getScenario, selectScenario, scenarioIds } from "./scenarios";
 import { categoryLabel, presentDecisions } from './debrief-copy';
 import { retainReplyText } from './privacy';
+import { isApprovedResponse } from './approved-dialogue';
 
 export class V3ControllerError extends Error {
   constructor(readonly code: "V3_INVALID_STATE" | "V3_INVALID_OPERATION" | "V3_STALE_TURN" | "V3_SESSION_ENDED" | "V3_DEBRIEF_UNAVAILABLE") {
@@ -124,6 +125,12 @@ export function attachCaller(state: StoredSession, candidate: unknown, source: "
   { session: StoredSession; source: "hosted" | "fixture" | "authored_fallback"; reason?: string } {
   const s = checkedState(state, state.updatedAt);
   if (s.ending) return { session: retained(s), source: "authored_fallback", reason: "session_ended" };
+  // Only exact server-reviewed responses may carry scenario facts into captions/TTS.
+  // Validate the complete envelope first; no fixture/hosted bypass or extra suffix.
+  const approved = z.object({ locale: z.literal(s.locale), text: z.string(), action: z.literal('continue') }).strict().safeParse(candidate);
+  if (approved.success && isApprovedResponse(s.scenarioId, s.locale, approved.data.text)) {
+    return { session: retained({ ...s, lastCaller: approved.data.text }), source };
+  }
   const checked = validateDialogue(candidate, { locale: s.locale, lastCaller: s.history.at(-1)?.caller ?? s.lastCaller, ending: false }, source);
   if (!checked.ok) return { session: retained(s), source: "authored_fallback", reason: checked.reason };
   if (categoryDisclosure.test(checked.dialogue.text) || scenarioIds.some((id) => checked.dialogue.text.toLowerCase().includes(id))) {
@@ -132,7 +139,7 @@ export function attachCaller(state: StoredSession, candidate: unknown, source: "
   if (contradictsScenario(s, checked.dialogue.text)) {
     return { session: retained(s), source: "authored_fallback", reason: "scenario_boundary" };
   }
-  return { session: retained({ ...s, lastCaller: checked.dialogue.text }), source: checked.dialogue.source };
+  return { session: retained(s), source: 'authored_fallback', reason: 'unapproved_scenario_claim' };
 }
 
 /** Scenario explanation is not evidence the participant necessarily encountered.

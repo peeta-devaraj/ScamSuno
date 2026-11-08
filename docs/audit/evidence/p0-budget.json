@@ -1,0 +1,27 @@
+{
+  "at": "2026-11-08T15:53:11.270Z",
+  "remainingProviderBalance": "unknown; not freshly reconciled",
+  "admissionOpen": false,
+  "limits": {
+    "gnaniTotal": 6,
+    "gnaniPerDay": 6,
+    "modelTotal": 24,
+    "concurrent": 1,
+    "perSession": 20,
+    "sttSeconds": 15,
+    "ttsCharacters": 420,
+    "expiresAt": "2026-11-08T13:42:50.703Z"
+  },
+  "counters": {
+    "gnani": {
+      "totalSinceReconciliation": 6,
+      "daily": 6
+    },
+    "llm": {
+      "totalSinceReconciliation": 24,
+      "daily": 24
+    },
+    "active": 0,
+    "sessionRequests": 0
+  }
+}
