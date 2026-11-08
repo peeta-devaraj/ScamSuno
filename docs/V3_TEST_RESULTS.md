@@ -8,6 +8,8 @@ Coverage now includes V3 HTTP privacy/ownership, all scenarios, scenario-specifi
 
 The user deferred further live-provider and physical-device testing on November 8. No V3 provider call, human microphone result, pilot result or effectiveness benchmark is claimed. Earlier checkpoint details below remain historical evidence.
 
+The private publication `dpl_9beoLjFqAiVxGbrNr59pxHYso5sk` reached READY. Its hosted build passed all 255 tests and compiled successfully; no live scenario journey was run. V1 health after publication at 2026-11-08T10:43:28.744Z retained the exact production commit with zero provider calls. Live V3 flags remain disabled as documented in V3_DEPLOYMENT.md.
+
 Before V3 application implementation on November 8, the exact preserved V2 source passed type checking, all 172 tests, production build, 14 browser journeys in 50.8 seconds, and static audio checks. Browser tests use explicit fixtures and generated signal audio; they are not physical-phone or live conversation evidence.
 
 The read-only remote V2 snapshot contained seven tables. A separate in-memory SQLite restoration recreated the tables/indexes and reproduced every row. Source bundle verification and DPAPI encrypt/decrypt readback passed. V1 health retained its exact preserved commit. Protected V2 pages/admin returned expected 200/401 responses and paid endpoints remained 503/closed. These checks consumed zero provider requests.

@@ -10,6 +10,8 @@ V3 development is isolated on `codex/scamsuno-v3`; canonical V1 and the preserve
 
 The complete implementation includes private `/admin/v3` durable pause, feature rollback, masked retained replies, signed transcript confirmation and privacy-safe public responses. The latest integrated checks passed 255 tests, type checking and production build; 23 browser journeys passed using explicit fixtures. Human phone and live V3 provider trials are deferred at the user's request. No educational-effectiveness or recognition-accuracy claim is established.
 
+[Private V3 Preview](https://scamsuno-v2-preview-ndzi4m344-peetadevaraj-2614s-projects.vercel.app/v3) is published behind Vercel authentication with live calls paused. It intentionally shows unavailable until testing resumes.
+
 See [V3 progress](docs/V3_PROGRESS.md), [deployment and operating instructions](docs/V3_DEPLOYMENT.md), [scenario design](docs/V3_SCENARIO_DESIGN.md), [rubric](docs/V3_EVALUATION_RUBRIC.md), [observed test results](docs/V3_TEST_RESULTS.md) and [demo plan](docs/V3_DEMO_PLAN.md). Private preview provider traffic stays paused until the later test window. Production promotion still requires explicit approval.
 
 The build includes Timbre-generated caller audio, captions, quick replies, four endings, a scored debrief, and a downloadable result card. Live Prisma transcription and free-form reply labelling use server credentials. See the [release checklist](docs/PROGRESS.md) and [Gnani verification evidence](evidence/day0/SUMMARY.md).

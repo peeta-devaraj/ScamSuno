@@ -18,13 +18,13 @@
 - [x] Four-language mobile UI, mode selection, independent verification during/after End, transcript correction and server-localized debrief implemented.
 - [x] Scenario-specific pressure/claim tripwires, V3-only durable pause across retained deployments, private administration and ledger-based entry readiness implemented.
 - [x] Latest integrated `pnpm verify`: 255 tests, type checking and production build passed. All 23 browser journeys passed; final nine V3 journeys also passed after stronger End visibility assertions. Credential scan passed 251 source/bundle files.
-- [ ] Complete private deployment publication and record its exact URL.
+- [x] Published Vercel-authenticated private Preview `dpl_9beoLjFqAiVxGbrNr59pxHYso5sk` from application commit `9da08bb`. Hosted build also passed all 255 tests and compiled successfully. Live calls remain paused.
 - [ ] Live V3 provider trials, Android/iPhone acceptance and pilot/demo recording deferred at the user's request on November 8. Do not represent fixtures as real calls.
 - [ ] Production promotion remains unauthorized.
 
 Recovery directory: `../scamsuno-v2-recovery-2026-11-08` beside the V2/V3 worktrees. CHECKPOINT.json records digests and successful database recovery. Retain both old worktrees and all deployments. No V3 live provider requests have been made.
 
-Development is complete; remaining work is deployment publication and later acceptance/demo work. No live V3 provider calls have been made. Private deployment will keep provider admission closed; a disabled screen is intentional until the later live test window.
+Development and private publication are complete. Preview: https://scamsuno-v2-preview-ndzi4m344-peetadevaraj-2614s-projects.vercel.app/v3 . Later live acceptance/demo work is deferred. No live V3 provider calls have been made. Provider admission remains closed; a disabled screen is intentional until the later live test window. V1 health remained unchanged after publication at 2026-11-08T10:43:28.744Z.
 
 ## Fresh official credit observation
 

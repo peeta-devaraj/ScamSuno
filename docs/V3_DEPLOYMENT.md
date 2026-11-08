@@ -4,6 +4,12 @@ Use Node 24 and the frozen pnpm lockfile. V3 code is on `codex/scamsuno-v3`. Do 
 
 ## Isolated Preview
 
+Published application commit: `9da08bbed0490944a997124d6f89493a8a65b96e`.
+
+Private URL: https://scamsuno-v2-preview-ndzi4m344-peetadevaraj-2614s-projects.vercel.app/v3
+
+Deployment: `dpl_9beoLjFqAiVxGbrNr59pxHYso5sk`, environment Preview, READY, Vercel authentication enabled. Hosted build passed 255 tests and compiled successfully at 10:42 UTC on November 8. This records publication, not live-voice acceptance.
+
 Use a new immutable Preview deployment in the existing isolated `scamsuno-v2-preview` project (`prj_aOSnJ1cGJfTcgKRkYWdq5howq9Wm`). This reuses already-authorized encrypted Preview credentials and the $0 Starter database without changing project environment variables or either retained V2/V1 deployment. V3 uses only additive `v3_` tables plus the existing shared usage ledger. Its deployment URL is separate from V2's verified URL; the canonical project alias remains the approved static placeholder.
 
 The V3 publication sets `V3_TRUST_OR_TRAP_ENABLED=true` as a deployment-only override for mode discovery. `V2_LIVE_ENABLED=false` and the killed quota-zero ledger keep provider calls closed. `/v3` intentionally shows unavailable until an approved bounded test window is configured. Production settings and aliases remain unchanged.
