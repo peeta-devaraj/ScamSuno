@@ -8,6 +8,8 @@ At `2026-11-08T11:46:53.641Z`, actual deployed API journeys completed two typed 
 
 Additional regressions redact explicit credential values before storage/model context, reject caller-identity authentication claims across all scenarios and recognise ordinary clarification questions without granting verification. No benchmark claim is made. See V3_ISOLATION.md for the bounded allowance and independent resource layout.
 
+Controlled server-seeded legitimate-scenario probes also completed two English/Hindi typed turns per locale with corroborating panel facts and correct ended debriefs. Initial English caller sources were fallback/hosted; initial Hindi sources were fallback/fallback. A separate Hindi diagnostic captured a harmless article (एक) causing `number_content`; the prompt was refined to avoid that word, and the next diagnostic returned hosted output. The guard was not relaxed. This is a selected sample, not a measured fallback rate or language-quality guarantee. Total V3 model attempts reached eighteen, speech attempts remained zero, and the final Preview build (`45adf40`, `dpl_5ehwAwkDqHmerBYC7SikSK2JySUB`) passed 263 tests. Phone testing was deferred by the user.
+
 ## Complete development checkpoint
 
 The final integrated `pnpm verify` passed **255 tests**, type checking and production build. All **23 browser journeys** passed (14 preserved V1/V2 journeys and nine V3 journeys); the nine V3 cases passed again after adding stronger checks that End is initially visible in mobile viewports. Tests use explicit fixtures, not live V3 providers. Tamil screenshots were visually reviewed without horizontal overflow. A credential-value scan passed 251 source/browser-bundle files.

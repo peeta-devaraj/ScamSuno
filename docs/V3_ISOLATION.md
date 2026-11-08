@@ -10,7 +10,7 @@ V2 remains in `scamsuno-v2-preview` (`prj_aOSnJ1cGJfTcgKRkYWdq5howq9Wm`) with it
 - Database: `scamsuno-v3-ledger`, `store_zkG1YzuI4XDKGsas`, Turso Starter $0/month, Mumbai. Connected only to V3 Preview/Development; URL/token differ from V2.
 - Credentials: existing Gnani/Groq keys configured as sensitive Preview-only variables; independently generated V3 admin password and voice-proof signing key. No production provider/database credentials.
 - Approved bootstrap only: `dpl_GdXrhZSY2nKZs7WXneprxHfbevYs` at https://scamsuno-v3.vercel.app. Vercel required the new project's first deployment to occupy its Production slot. The user approved this inert static page, not application promotion.
-- Current live-capable private Preview: `dpl_Fd5Tt4mKBjDUc1BHRq4RywfhGJFH`, application commit `20d8a4b`, https://scamsuno-v3-eq3rs68d4-peetadevaraj-2614s-projects.vercel.app/v3 . Protected by Vercel authentication. This is not production.
+- Current live-capable private Preview: `dpl_5ehwAwkDqHmerBYC7SikSK2JySUB`, application commit `45adf40`, https://scamsuno-v3-7pvoq66z3-peetadevaraj-2614s-projects.vercel.app/v3 . Protected by Vercel authentication. This is not production. The earlier `20d8a4b` live Preview is retained on the same bounded database/control.
 
 Vercel automation bypass access used for authenticated checks stays in memory and is not published. The account's Gnani balance is still shared even though project configuration/data are isolated.
 
@@ -19,6 +19,10 @@ Vercel automation bypass access used for authenticated checks stays in memory an
 The new remote store passed owned session/readback, End and explicit post-End verification with an educational fixture and zero provider calls. Hosted build passed 263 tests. Real deployed Tamil and Telugu typed journeys each committed two turns with two validated hosted caller responses, completed independent verification and ended with a debrief. Both kept secret protection untested and recorded safe verification/clarification/exit. The assigned categories happened to be unresolved and fraudulent; this is not live coverage of every category. All three categories have reproducible fixture coverage.
 
 These checks used eight actual Groq requests and zero Gnani requests. Speech/physical phones remain pending. No fluency, recognition-accuracy, latency or educational-effectiveness benchmark is claimed.
+
+Additional explicitly server-seeded legitimate-scenario probes completed two English and two Hindi typed turns, trusted-panel corroboration and End. Initial English used one fallback; initial Hindi used two. A separate Hindi diagnostic observed a benign article (एक) rejected by the number guard. The caller prompt was refined without weakening that guard; one further quota-admitted Hindi caller probe passed as hosted. These controlled probes are not normal random-assignment user journeys and are not a multilingual accuracy benchmark.
+
+Latest readback at `2026-11-08T11:58:34.437Z`: eighteen V3 model attempts, zero V3 speech attempts, zero active operations, admission open inside the original window. The latest hosted build passed all 263 tests. V1 health at 11:58:40 UTC retained the exact preserved commit.
 
 ## Bounded test window
 

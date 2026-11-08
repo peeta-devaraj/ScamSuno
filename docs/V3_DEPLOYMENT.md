@@ -4,7 +4,7 @@ Use Node 24 and the frozen pnpm lockfile. V3 code is on `codex/scamsuno-v3`. Do 
 
 ## Current dedicated project
 
-V3 now has its own project `scamsuno-v3`, separate database and Preview secrets. Current private URL: https://scamsuno-v3-eq3rs68d4-peetadevaraj-2614s-projects.vercel.app/v3 . The application remains Preview-only; the main V3 project alias serves only the approved static bootstrap. V1 automatic Git deployment is disconnected and its original URL remains unchanged. See V3_ISOLATION.md for exact resource/deployment IDs, measured live typed checks, temporary allowance and rollback.
+V3 now has its own project `scamsuno-v3`, separate database and Preview secrets. Current private URL: https://scamsuno-v3-7pvoq66z3-peetadevaraj-2614s-projects.vercel.app/v3 . The application remains Preview-only; the main V3 project alias serves only the approved static bootstrap. V1 automatic Git deployment is disconnected and its original URL remains unchanged. See V3_ISOLATION.md for exact resource/deployment IDs, measured live typed checks, temporary allowance and rollback.
 
 ## Earlier development Preview (historical)
 
