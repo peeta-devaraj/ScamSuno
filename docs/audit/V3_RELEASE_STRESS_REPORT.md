@@ -35,3 +35,20 @@ This is a local stress run on Windows with desktop Chromium, mobile viewports, f
 The focused rerun passed all 36 tests. The three baseline probes now show zero closed-policy writes, no raw number in either model payload, and HTTP 503 on the V2 start route under V3 settings. The first focused run caught a Telugu joiner normalization mismatch, which the passing rerun covers. [Focused log](evidence/release-focused.log) · [Initial log](evidence/release-focused-initial.log) · [Probe rerun](evidence/release-after-probes.log)
 
 The static audio check passed. V1 health returned the preserved build and zero provider requests. [Audio log](evidence/release-audio.log) · [V1 health log](evidence/release-v1.log)
+
+## Final local verification
+
+- `pnpm verify` passed type checking, all 274 unit and route tests, and the production build. Unit execution took 136.32 seconds on this run. [Verification log](evidence/release-verify.log)
+- `pnpm test:e2e` passed all 27 browser journeys in 1.1 minutes. A Turbopack dev-cache panic interrupted the first rerun. The fresh-cache run then exposed two ambiguous alert selectors that also matched Next's route announcer. The final run passed after narrowing the selectors. [Final browser log](evidence/release-after-browser.log) · [Cache failure](evidence/release-browser-cache-failure.log) · [Selector failure](evidence/release-browser-locator-failure.log)
+- At 10:03 a.m. IST on November 9, the V3 ledger reported closed admission and no active attempts. The expired window has six speech and 24 model attempts counted since reconciliation. A new calendar day resets daily counters only. The provider balance remains unknown. [Ledger snapshot](evidence/release-budget.json)
+
+## Private deployment and release decision
+
+Application commit `3e7ab99` is Ready on the dedicated protected V3 Preview, deployment `dpl_4StB9xtdBiA3yd7BGcQybE52tx8j`. At 10:06 a.m. IST on November 9, deployed checks observed the English root redirect, English selected on V3, and the Telugu return link on V2. Both pages returned 200 after authorized access. The V2 and closed-policy V3 start requests returned 503. An unauthenticated request redirected to access protection. No model or speech request was dispatched. [Preview](https://scamsuno-v3-qlpi5j2w7-peetadevaraj-2614s-projects.vercel.app/v3) · [HTTP evidence](evidence/release-preview.json)
+
+This candidate has passed the local release checks and protected deployment smoke checks. Public release remains gated by these items:
+
+1. Obtain fresh Gnani balance and usage figures. The signed-in browser still denies dashboard observation under its saved site permission. The ledger provides request counts and expiry, with no current provider balance.
+2. Before reopening the ledger, account for immutable older previews that share it. Verify the candidate's provider admission boundary and configure a short window with six speech attempts for the two minimal exchanges. Preserve earlier holds and verify the window closes. Use the exact [Tamil/Telugu device checklist](V3_DEVICE_ACCEPTANCE.md).
+3. Record actual Android Chrome recognition, caller audio, End and debrief results in Tamil and Telugu. Run a signed-out judge-access rehearsal under approved settings. iPhone and broader device acceptance remain open.
+4. Establish an operator cleanup cadence for idle periods, confirm backup retention and verify recovery. Check the [release checklist](V3_RELEASE_CHECKLIST.md) and obtain explicit production approval after the physical-device evidence is available.

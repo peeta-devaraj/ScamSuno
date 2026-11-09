@@ -2,11 +2,11 @@
 
 An educational fictional-call simulation in Tamil, Telugu, Hindi and English. Ask your own questions, check a notice through the simulated trusted panel, end the call safely, then review evidence-based feedback. V3 uses turn-based voice: listen → record → confirm/send → hear the reply.
 
-**[Open the V3 private Preview](https://scamsuno-v3-gy6v04bmg-peetadevaraj-2614s-projects.vercel.app/v3?l=ta)** · **[Verified build and current readiness](docs/audit/V3_REMEDIATION_RESULTS.md)** · **[Tamil/Telugu phone-test checklist](docs/audit/V3_DEVICE_ACCEPTANCE.md)**
+**[Open the V3 private Preview](https://scamsuno-v3-qlpi5j2w7-peetadevaraj-2614s-projects.vercel.app/v3)** · **[Release stress report](docs/audit/V3_RELEASE_STRESS_REPORT.md)** · **[Tamil/Telugu phone-test checklist](docs/audit/V3_DEVICE_ACCEPTANCE.md)**
 
-V3's entry route is `/v3` on the dedicated private `scamsuno-v3` Preview. On deployments explicitly configured with `V3_TRUST_OR_TRAP_ENABLED=true`, `/` redirects to `/v3` and preserves a valid language choice. A Vercel sign-in prompt may appear. A paused page means the live allowance/configuration is closed; opening V1 does not test V3. Use the exact candidate link in the remediation results, not an older deployment URL.
+V3's entry route is `/v3` on the dedicated private `scamsuno-v3` Preview. English appears first and is selected by default. The V2 and V3 mode links carry your selected language in both directions. On a V3 deployment, `/` redirects to `/v3` and preserves a valid language choice. Sign in to Vercel if prompted. A paused page means live admission is closed.
 
-**[V1 fallback — scripted practice](https://scamsuno.vercel.app)** remains separately available. It is the original experience, not the adaptive V3 test. Within V3, the other mode is explicitly labelled **V2 · Single-scenario practice**. The ScamSuno brand stays in V3.
+V1 is available as the scripted fallback. Within V3, the other mode is labelled **V2 · Single-scenario practice**. The V2 page on this preview has a return link to V3. Live V2 practice uses its separate deployment so the V3 preview controls its own provider usage. [V1 fallback](https://scamsuno.vercel.app)
 
 ## Current release boundary
 
