@@ -1,0 +1,124 @@
+$ playwright test
+[WebServer] (node:22136) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:15504) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 27 tests using 1 worker
+
+(node:24432) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 tests\browser\call.spec.ts:27:7 › தமிழ் keeps the chosen locale from the landing page through the shared result (9.1s)
+  ok  2 tests\browser\call.spec.ts:27:7 › తెలుగు keeps the chosen locale from the landing page through the shared result (3.4s)
+  ok  3 tests\browser\call.spec.ts:55:5 › mobile visitor verifies independently, downloads a PNG and opens the share view (6.3s)
+  ok  4 tests\browser\call.spec.ts:90:5 › early hangup excludes the untested code and verification behaviours (1.1s)
+  ok  5 tests\browser\call.spec.ts:99:5 › ambiguous typed reply falls back to choices; the call can end without a decision (5.6s)
+  ok  6 tests\browser\call.spec.ts:111:5 › Hindi flow records through AudioWorklet, confirms mock transcription and masks a code (6.0s)
+  ok  7 tests\browser\call.spec.ts:137:5 › microphone denial leaves the complete captions and quick replies path available (2.9s)
+  ok  8 tests\browser\v2.spec.ts:46:7 › explicit ta fixture completes a mobile typed call without pretending to be live (2.6s)
+  ok  9 tests\browser\v2.spec.ts:46:7 › explicit te fixture completes a mobile typed call without pretending to be live (1.4s)
+  ok 10 tests\browser\v2.spec.ts:75:5 › End stays available during a pending reply and a late response cannot reopen the call (1.0s)
+  ok 11 tests\browser\v2.spec.ts:92:7 › actual browser recorder confirms fixture STT as voice with signed context (1.8s)
+  ok 12 tests\browser\v2.spec.ts:92:7 › actual browser recorder confirms fixture STT as typed after editing (2.0s)
+  ok 13 tests\browser\v2.spec.ts:115:5 › microphone denial leaves typing and End fully usable (971ms)
+  ok 14 tests\browser\v2.spec.ts:128:5 › closed preview offers V1 without credential jargon or provider requests (696ms)
+  ok 15 tests\browser\v3.spec.ts:62:7 › explicit ta mobile fixture keeps assignment private and reveals only after End (2.7s)
+  ok 16 tests\browser\v3.spec.ts:62:7 › explicit te mobile fixture keeps assignment private and reveals only after End (1.5s)
+  ok 17 tests\browser\v3.spec.ts:62:7 › explicit hi mobile fixture keeps assignment private and reveals only after End (1.4s)
+  ok 18 tests\browser\v3.spec.ts:95:5 › English fixture verifies independently while active without authenticating the caller (1.2s)
+  ok 19 tests\browser\v3.spec.ts:108:5 › English is first and V3 to V2 to V3 retains a selected locale on a narrow phone (1.4s)
+  x  20 tests\browser\v3.spec.ts:126:5 › same-turn verification and evaluator failure preserve the typed reply for retry (1.1s)
+(node:14948) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  21 tests\browser\v3.spec.ts:148:5 › expired voice proof keeps the transcript and offers an explicit typed submission (2.8s)
+(node:4464) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 22 tests\browser\v3.spec.ts:168:5 › End wins over a pending reply and stale fixture output cannot reopen the call (1.3s)
+  ok 23 tests\browser\v3.spec.ts:183:7 › real browser recorder preserves confirmed voice origin with fixture STT (1.8s)
+  ok 24 tests\browser\v3.spec.ts:183:7 › real browser recorder preserves typed origin after editing with fixture STT (2.0s)
+  ok 25 tests\browser\v3.spec.ts:205:5 › microphone denial leaves free-form typing and End available (869ms)
+  ok 26 tests\browser\v3.spec.ts:217:5 › disabled V3 offers existing modes and makes no V3 API request (611ms)
+  ok 27 tests\browser\v3.spec.ts:230:5 › V3 navigation names generations and keeps its brand inside V3 (717ms)
+
+
+  1) tests\browser\v3.spec.ts:126:5 › same-turn verification and evaluator failure preserve the typed reply for retry 
+
+    Error: expect(locator).toHaveText(expected) failed
+
+    Locator: getByRole('alert')
+    Expected: "Your reply was not assessed. The conversation has stayed at the same point."
+    Error: strict mode violation: getByRole('alert') resolved to 2 elements:
+        1) <div role="alert" class="v3-module__MvjfCG__error">Your reply was not assessed. The conversation has…</div> aka getByText('Your reply was not assessed.')
+        2) <div role="alert" aria-live="assertive" id="__next-route-announcer__"></div> aka locator('[id="__next-route-announcer__"]')
+
+    Call log:
+      - Expect "toHaveText" getByRole('alert') with timeout 10000ms
+      - waiting for getByRole('alert')
+
+
+      135 |   await expect(textbox).toHaveValue(draft);
+      136 |   await page.getByRole("button", { name: c.send, exact: true }).click();
+    > 137 |   await expect(page.getByRole("alert")).toHaveText(c.stalled);
+          |                                         ^
+      138 |   await expect(textbox).toHaveValue(draft);
+      139 |   await page.getByRole("button", { name: c.send, exact: true }).click();
+      140 |   await expect(textbox).toHaveValue("");
+        at C:\Users\peeta\.codex\visualizations\2026\11\06\01a1b12a-e778-7371-9a75-15adbb3d38fd\scamsuno-v3-remediation\tests\browser\v3.spec.ts:137:41
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\v3-same-turn-verification--743b9-e-the-typed-reply-for-retry\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\v3-same-turn-verification--743b9-e-the-typed-reply-for-retry\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\v3-same-turn-verification--743b9-e-the-typed-reply-for-retry\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\v3-same-turn-verification--743b9-e-the-typed-reply-for-retry\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) tests\browser\v3.spec.ts:148:5 › expired voice proof keeps the transcript and offers an explicit typed submission 
+
+    Error: expect(locator).toHaveText(expected) failed
+
+    Locator: getByRole('alert')
+    Expected: "Voice confirmation expired. Send the saved text as a typed reply, or record again."
+    Error: strict mode violation: getByRole('alert') resolved to 2 elements:
+        1) <div role="alert" class="v3-module__MvjfCG__error">Voice confirmation expired. Send the saved text a…</div> aka getByText('Voice confirmation expired.')
+        2) <div role="alert" aria-live="assertive" id="__next-route-announcer__"></div> aka locator('[id="__next-route-announcer__"]')
+
+    Call log:
+      - Expect "toHaveText" getByRole('alert') with timeout 10000ms
+      - waiting for getByRole('alert')
+
+
+      156 |   await page.getByRole("button", { name: c.stop, exact: true }).click();
+      157 |   await page.getByRole("button", { name: c.confirmSend, exact: true }).click();
+    > 158 |   await expect(page.getByRole("alert")).toHaveText(c.voiceExpired);
+          |                                         ^
+      159 |   expect(f.requests.filter(request => request.action === "reply")).toHaveLength(0);
+      160 |   await expect(page.getByRole("textbox", { name: c.compose })).toHaveValue("I will check independently.");
+      161 |   await page.getByRole("button", { name: c.send, exact: true }).click();
+        at C:\Users\peeta\.codex\visualizations\2026\11\06\01a1b12a-e778-7371-9a75-15adbb3d38fd\scamsuno-v3-remediation\tests\browser\v3.spec.ts:158:41
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\v3-expired-voice-proof-kee-1335b-n-explicit-typed-submission\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\v3-expired-voice-proof-kee-1335b-n-explicit-typed-submission\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\v3-expired-voice-proof-kee-1335b-n-explicit-typed-submission\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\v3-expired-voice-proof-kee-1335b-n-explicit-typed-submission\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    tests\browser\v3.spec.ts:126:5 › same-turn verification and evaluator failure preserve the typed reply for retry 
+    tests\browser\v3.spec.ts:148:5 › expired voice proof keeps the transcript and offers an explicit typed submission 
+  25 passed (1.2m)
+[ELIFECYCLE] Command failed with exit code 1.

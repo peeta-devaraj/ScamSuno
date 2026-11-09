@@ -6,6 +6,7 @@ import { CallAudio } from "@/client/audio";
 import { audible, encodeWav, RECORD_SECONDS } from "@/domain/wav";
 import { SessionSchema, type ConversationSession, type Reply } from "@/domain/v2/contracts";
 import { uiCopy, v2Languages } from "@/domain/v2/ui-copy";
+import { uiCopy as v3Copy } from "@/domain/v3/ui-copy";
 import { rules } from "@/domain/rules";
 import type { Locale } from "@/domain/scenario";
 import { Icon } from "./icons";
@@ -33,7 +34,7 @@ async function jsonRequest<T>(path: string, body: object | FormData, signal: Abo
   return data as T;
 }
 
-export function V2Call({ available, voiceAvailable, initialLocale = "ta", fixture = false }: {
+export function V2Call({ available, voiceAvailable, initialLocale = "en", fixture = false }: {
   available: boolean; voiceAvailable: boolean; initialLocale?: Locale; fixture?: boolean;
 }) {
   const [locale, setLocale] = useState<Locale>(initialLocale);
@@ -146,14 +147,19 @@ export function V2Call({ available, voiceAvailable, initialLocale = "ta", fixtur
     const previous = current.current;
     current.current = parsed.data; setSession(parsed.data);
     if (data.mode === "fixture") setFixtureMode(true);
-    setDraft(""); setHeard(null);
+    if (data.status === "evaluation_unavailable") {
+      setError(c.stalled);
+      setStage(heard ? "confirming" : "ready");
+      return;
+    }
     if (parsed.data.ending) {
+      setDraft(""); setHeard(null);
       stopMicrophone(); stopPlayback(); audioCache.current = null;
       setResult(data.result ?? null); setStage(data.result ? "results" : "ended"); return;
     }
     if (ending) { setStage("ended"); return; }
-    if (data.status === "evaluation_unavailable") { setError(c.stalled); setStage("ready"); return; }
     if (previous?.turn === parsed.data.turn && previous?.sessionId === parsed.data.sessionId) { setStage("ready"); return; }
+    setDraft(""); setHeard(null);
     await playCaption(parsed.data, task);
   }
 
@@ -267,6 +273,10 @@ export function V2Call({ available, voiceAvailable, initialLocale = "ta", fixtur
       <span className={styles.badge}><Icon name="shield" size={13}/>{c.simulation}</span></header>
     {fixtureMode && <p className={styles.fixture} role="status" data-testid="v2-fixture">{c.fixture}</p>}
     <main className={styles.shell}>
+      <nav className={styles.modeNav} aria-label={v3Copy[locale].mode}>
+        <Link href={`/v3?l=${locale}`}>V3 · {v3Copy[locale].trust}</Link>
+        <span aria-current="page">{v3Copy[locale].classic}</span>
+      </nav>
       {error && <div role="alert" className={styles.error}>{error}</div>}
       {!available ? <section className={styles.closed}><div className={styles.avatar}><Icon name="headphones" size={34}/></div>
         <span className={styles.eyebrow}>{c.preview}</span><h1>{c.unavailableTitle}</h1><p>{c.unavailableBody}</p>{languages}

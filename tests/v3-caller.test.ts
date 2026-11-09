@@ -14,7 +14,8 @@ test('V3 evaluator is blind to hidden assignment and caller gets only permitted 
   for(const session of sessions){
    const caller=buildCallerMessages(session,reply);assert.equal(caller.length,2);
    const data=JSON.parse(caller[1].content);
-   assert.equal(data.participant_reply.text,reply.text);
+   assert.ok(!data.participant_reply.text.includes("482197"));
+   assert.equal(data.participant_reply.origin, "typed");
    for(const key of ['groundTruth','scenarioId','debrief','observations','verificationState'])assert.equal(key in data,false);
    assert.ok(Array.isArray(data.permitted_facts));
   }

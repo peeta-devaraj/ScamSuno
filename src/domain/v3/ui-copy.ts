@@ -32,6 +32,7 @@ const classic = {
     "confirmTitle": "Did we hear you correctly?",
     "confirmHint": "Nothing is sent to the caller until you confirm.",
     "edited": "Edited text will be sent as a typed reply.",
+    "voiceExpired": "Voice confirmation expired. Send the saved text as a typed reply, or record again.",
     "confirmSend": "Confirm and send",
     "discard": "Discard recording",
     "micError": "The microphone could not start. Check browser permission and try again, or type your reply below.",
@@ -82,6 +83,7 @@ const classic = {
     "confirmTitle": "நீங்கள் சொன்னதைச் சரியாகக் கேட்டோமா?",
     "confirmHint": "உறுதிப்படுத்தும் வரை பதில் அனுப்பப்படாது.",
     "edited": "திருத்திய உரை தட்டச்சுப் பதிலாக அனுப்பப்படும்.",
+    "voiceExpired": "குரல் உறுதிப்படுத்தும் நேரம் முடிந்தது. சேமித்த உரையை அனுப்புங்கள் அல்லது மீண்டும் பதிவு செய்யுங்கள்.",
     "confirmSend": "உறுதிசெய்து அனுப்பவும்",
     "discard": "பதிவை நீக்கவும்",
     "micError": "மைக்ரோஃபோனைத் தொடங்க முடியவில்லை. உலாவி அனுமதியைச் சரிபார்த்து மீண்டும் முயலுங்கள் அல்லது கீழே தட்டச்சு செய்யுங்கள்.",
@@ -132,6 +134,7 @@ const classic = {
     "confirmTitle": "మీ మాటలను సరిగ్గా విన్నామా?",
     "confirmHint": "మీరు నిర్ధారించే వరకు జవాబు పంపము.",
     "edited": "మార్చిన రాతను టైప్ చేసిన జవాబుగా పంపుతాం.",
+    "voiceExpired": "వాయిస్ నిర్ధారణ సమయం ముగిసింది. ఉన్న వచనాన్ని పంపండి లేదా మళ్లీ రికార్డ్ చేయండి.",
     "confirmSend": "నిర్ధారించి పంపండి",
     "discard": "రికార్డింగ్ తొలగించండి",
     "micError": "మైక్రోఫోన్ ప్రారంభం కాలేదు. బ్రౌజర్ అనుమతిని సరిచూసి మళ్లీ ప్రయత్నించండి లేదా కింద టైప్ చేయండి.",
@@ -182,6 +185,7 @@ const classic = {
     "confirmTitle": "क्या हमने सही सुना?",
     "confirmHint": "पुष्टि करने तक जवाब नहीं भेजा जाएगा।",
     "edited": "बदले गए शब्द लिखे हुए जवाब के रूप में जाएँगे।",
+    "voiceExpired": "आवाज़ की पुष्टि का समय समाप्त हुआ। लिखे हुए जवाब को भेजें या फिर से रिकॉर्ड करें।",
     "confirmSend": "पुष्टि करके भेजें",
     "discard": "रिकॉर्डिंग हटाएँ",
     "micError": "माइक्रोफ़ोन शुरू नहीं हुआ। ब्राउज़र की अनुमति जाँचकर फिर कोशिश करें या नीचे लिखें।",
@@ -202,7 +206,7 @@ const classic = {
 } as const;
 
 // Interface wording only. Scenario assignments, answer keys and rubric labels are server-only.
-export const v3Languages = [{locale:"ta",name:"தமிழ்"},{locale:"te",name:"తెలుగు"},{locale:"en",name:"English"},{locale:"hi",name:"हिन्दी"}] as const;
+export const v3Languages = [{locale:"en",name:"English"},{locale:"ta",name:"தமிழ்"},{locale:"te",name:"తెలుగు"},{locale:"hi",name:"हिन्दी"}] as const;
 export const uiCopy = {
   en: { ...classic.en,
     preview: "Trust or Trap · Preview", incoming: "An unfamiliar voice. An open question.",

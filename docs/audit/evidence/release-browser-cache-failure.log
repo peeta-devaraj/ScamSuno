@@ -1,0 +1,30 @@
+$ playwright test
+[WebServer] (node:23404) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:20624) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 27 tests using 1 worker
+
+(node:27552) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 tests\browser\call.spec.ts:27:7 › தமிழ் keeps the chosen locale from the landing page through the shared result (6.1s)
+  ok  2 tests\browser\call.spec.ts:27:7 › తెలుగు keeps the chosen locale from the landing page through the shared result (2.7s)
+  ok  3 tests\browser\call.spec.ts:55:5 › mobile visitor verifies independently, downloads a PNG and opens the share view (6.0s)
+  ok  4 tests\browser\call.spec.ts:90:5 › early hangup excludes the untested code and verification behaviours (1.3s)
+  ok  5 tests\browser\call.spec.ts:99:5 › ambiguous typed reply falls back to choices; the call can end without a decision (6.1s)
+[WebServer] 
+[WebServer] thread 'tokio-rt-worker' (3184) panicked at turbopack\crates\turbo-tasks-backend\src\backend\operation\mod.rs:825:5:
+[WebServer] task TaskId 136876 (task, MustExist): task is missing in memory or persistent storage — a stale reference to an already-collected or never-created task
+[WebServer] note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+[WebServer] 
+[WebServer] -----
+[WebServer] FATAL: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\peeta\AppData\Local\Temp\next-panic-3943ee6bd2f7555881b0af96a75c7d32.log[WebServer] .
+[WebServer] 
+[WebServer] To help make Turbopack better, report this error by clicking here: https://bugs.nextjs.org/search?category=turbopack-error-report&title=Turbopack%20Error%3A%20task%20TaskId%20136876%20%28task%2C%20MustExist%29%3A%20task%20is%20missing%20in%20memory%20or%20persistent%20storage%20%E2%80%94%20a%20stale%20reference%20to%20an%20already-collected%20or%20never-created%20task&body=Turbopack%20version%3A%20%604e5335a0%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0Atask%20TaskId%20136876%20%28task%2C%20MustExist%29%3A%20task%20is%20missing%20in%20memory%20or%20persistent%20storage%20%E2%80%94%20a%20stale%20reference%20to%20an%20already-collected%20or%20never-created%20task%0A%0ADebug%20info%3A%0A-%20Execution%20of%20get_written_endpoint_with_issues_operation%20failed%0A-%20Execution%20of%20endpoint_write_to_disk%20failed%0A-%20Execution%20of%20%3CAppEndpoint%20as%20Endpoint%3E%3A%3Aoutput%20failed%0A-%20task%20TaskId%20136876%20%28task%2C%20MustExist%29%3A%20task%20is%20missing%20in%20memory%20or%20persistent%20storage%20%E2%80%94%20a%20stale%20reference%20to%20an%20already-collected%20or%20never-created%20task%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[WebServer] -----
+[WebServer] 
+  x   6 tests\browser\call.spec.ts:111:5 › Hindi flow records through AudioWorklet, confirms mock transcription and masks a code (14.6s)
+(node:24620) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  7 tests\browser\call.spec.ts:137:5 › microphone denial leaves the complete captions and quick replies path available (3.0s)

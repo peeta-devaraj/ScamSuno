@@ -1,0 +1,44 @@
+✔ V3 evaluator is blind to hidden assignment and caller gets only permitted scenario facts (28.079ms)
+✔ caller and evaluator reuse the injected gateway once each with separate purposes (6.4357ms)
+✔ ended context, invalid JSON and provider errors fail closed with no retries or private diagnostics (2.0456ms)
+✔ control is extra admission only, fails closed when absent/unreadable and pause survives reinitialization (9.3972ms)
+✔ durable pause revokes a held V3 dispatch lease without altering V2 state or usage policy (17.0218ms)
+✔ paused V3 rejects start/reply while authenticated End and verification still work (35.7185ms)
+✔ private control authenticates before storage, strictly validates same-origin pause and never exposes credentials (7.8099ms)
+✔ independent SQLite clients observe the same persistent pause and initialization cannot reopen it (1233.3239ms)
+✔ readiness stays closed after durable pause even with otherwise valid configuration and fixture allowance (5.2012ms)
+✔ explicit V3 deployments redirect root to the V3 entry and preserve validated locales (5.9071ms)
+✔ flag-off deployments retain the V1 root component (1.635ms)
+✔ normal call clarification is recognised in four locales and Hinglish without granting authentication or verification (15.6107ms)
+✔ clarification cannot launder quoted codes, unrelated questions, hypotheticals or injected instructions into safe feedback (0.6587ms)
+✔ explicit secret boundaries are supported in English, Hindi, Tamil, Telugu and Hinglish (3.2869ms)
+✔ model assertions, bare numbers, quoted/refused codes and conditional text never become unsafe disclosure (1.2269ms)
+✔ invalid schema, confidence, excerpts and injection abstain without retaining participant text (1.236ms)
+✔ independent plans use actual official-channel action evidence and never impersonate completed checks (6.552ms)
+✔ caller-provided channel reliance requires positive explicit intent and preserves negation (1.0783ms)
+✔ equivalent explicit channel commitments are covered in Hindi, Tamil and Telugu (1.2124ms)
+✔ uncertainty and harmless cooperation are distinct from identity authentication (3.4777ms)
+✔ safe exit distinguishes stated intention from authenticated participant ending (1.9369ms)
+✔ button and confirmed voice inputs retain their origin without invented voice metadata (6.8444ms)
+✔ generic refusal is never a risk or evidence of an untested secret-protection skill (0.3717ms)
+✔ same observable decisions have identical grades across all hidden scenario assignments (0.5221ms)
+✔ invalid reply/turn envelopes fail closed and summaries contain no raw evidence or numerical score (0.458ms)
+✔ keys alone do not imply readiness; closed, exhausted and partial voice budgets remain honest (11.2266ms)
+✔ closed V3 policy cannot write sessions and open policy bounds concurrent starts (72.7047ms)
+✔ V3 deployment settings close all V2 live routes before touching providers (2.8022ms)
+✔ cleanup removes expired V3 conversation content and leaves active sessions and ledger attempts (9.4177ms)
+✔ bare and localized numeric replies are masked before both model requests (5.6043ms)
+✔ V3 reuses Prisma/Timbre transport with its own server-owned session and the shared durable ledger (58.9114ms)
+✔ V2 live flag alone, disabled V3, missing proof/STT or unreconciled quota never admit V3 speech (7.8467ms)
+✔ V3 End or feature-off between reservation and atomic speech dispatch releases undispatched allowance (17.5913ms)
+✔ V3 model leases block concurrent speech and shared hosted transport dispatches only under a V3 lease (20.3833ms)
+✔ shared hosted gateway checks mode again inside atomic dispatch, not only before reservation (10.8456ms)
+✔ durable V3 pause after speech reservation blocks dispatch without changing V2 policy or blocking V2 speech (19.5925ms)
+ℹ tests 36
+ℹ suites 0
+ℹ pass 36
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3040.8742

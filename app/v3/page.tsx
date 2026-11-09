@@ -17,5 +17,5 @@ export default async function Page({ searchParams }: {
   const readiness = fixture ? {available:true,voiceAvailable:true} : await v3Readiness();
   const {available,voiceAvailable}=readiness;
   return <V3Call available={available} voiceAvailable={voiceAvailable} fixture={fixture}
-    initialLocale={isLocale(params.l) ? params.l : "ta"} />;
+    initialLocale={isLocale(params.l) ? params.l : "en"} />;
 }

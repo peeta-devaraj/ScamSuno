@@ -5,18 +5,23 @@ import { maskNumbers } from "../../domain/numbers";
 import type { Locale } from "../../domain/scenario";
 import { OperationSchema, type TurnOperation } from "../../domain/v2/contracts";
 import { databaseWrite } from "../v2/database";
+import { readUsageAdmission } from "../v2/ledger";
+import { budgetReadiness } from "./budget";
 import { advanceSession, endSession, startSession, verifySession } from "./controller";
 import { InternalSessionSchema, type StoredSession } from "./public-session";
 import { v3EnabledInTransaction } from "./control";
 import { retainReplyText } from './privacy';
 
 const LEASE_MS = 60_000;
+export const V3_START_LIMIT = 12;
+export const V3_CONTENT_RETENTION_MS = 24 * 60 * 60_000;
 const uuid = z.uuid(), secretShape = /^[a-f0-9]{64}$/;
 const VerifySchema = z.object({ sessionId: uuid, operationId: uuid, expectedTurn: z.number().int().min(0).max(10) }).strict();
 export type VerificationOperation = z.infer<typeof VerifySchema>;
 export class SessionStoreError extends Error {
   constructor(readonly code: "V3_SESSION_NOT_FOUND" | "V3_STALE_TURN" | "V3_OPERATION_CONFLICT" |
-    "V3_OPERATION_IN_PROGRESS" | "V3_OPERATION_UNCERTAIN" | "V3_LEASE_LOST" | "V3_INVALID_STATE" | "V3_INVALID_OPERATION") {
+    "V3_OPERATION_IN_PROGRESS" | "V3_OPERATION_UNCERTAIN" | "V3_LEASE_LOST" | "V3_INVALID_STATE" |
+    "V3_INVALID_OPERATION" | "V3_START_LIMIT" | "V3_NOT_READY") {
     super(code); this.name = "V3SessionStoreError";
   }
 }
@@ -71,15 +76,50 @@ export async function initializeSessions(client: Client) {
       request_digest TEXT NOT NULL,created_at INTEGER NOT NULL)`);
     await tx.execute("CREATE INDEX IF NOT EXISTS v3_turn_session ON v3_turn_operations(session_id)");
     await tx.execute("CREATE INDEX IF NOT EXISTS v3_verification_session ON v3_verification_events(session_id)");
+    await tx.execute("CREATE INDEX IF NOT EXISTS v3_session_expiry ON v3_sessions(expires_at)");
   });
 }
-export async function createStoredSession(client: Client, locale: Locale, now = Date.now(), selectIndex?: () => number) {
+async function pruneExpiredContent(tx: Transaction, now: number) {
+  const expired = await tx.execute({
+    sql: "SELECT session_id FROM v3_sessions WHERE expires_at <= ? ORDER BY expires_at LIMIT 50",
+    args: [now - V3_CONTENT_RETENTION_MS],
+  });
+  if (!expired.rows.length) return 0;
+  const ids = expired.rows.map(row => String(row.session_id));
+  const placeholders = ids.map(() => "?").join(",");
+  await tx.batch(["v3_verification_events", "v3_turn_operations", "v3_sessions"].map(table => ({
+    sql: `DELETE FROM ${table} WHERE session_id IN (${placeholders})`,
+    args: ids,
+  })));
+  return ids.length;
+}
+
+export async function pruneV3Content(client: Client, now = Date.now()) {
   clock(now);
-  const session = safeState(startSession({ sessionId: randomUUID(), locale, now, selectIndex })), secret = randomBytes(32).toString("hex");
-  await write(client, async (tx) => { await tx.execute({ sql: `INSERT INTO v3_sessions
-    (session_id,owner_hash,state_json,turn_number,expires_at) VALUES (?,?,?,?,?)`,
-  args: [session.sessionId, ownerHash(secret), JSON.stringify(session), 0, session.expiresAt] }); });
-  return { session, secret };
+  return write(client, tx => pruneExpiredContent(tx, now));
+}
+
+export async function createStoredSession(client: Client, locale: Locale, now = Date.now(), selectIndex?: () => number, requireAdmission = false) {
+  clock(now);
+  return write(client, async tx => {
+    const startedAt = requireAdmission ? Date.now() : now;
+    if (requireAdmission) {
+      if (!await v3EnabledInTransaction(tx) || !budgetReadiness(await readUsageAdmission(tx, startedAt), false).available) {
+        return fail("V3_NOT_READY");
+      }
+      // Count ended calls too, so start/end loops cannot evade the burst limit.
+      const result = await tx.execute({ sql: "SELECT COUNT(*) AS count FROM v3_sessions WHERE expires_at > ?", args: [startedAt] });
+      if (Number(result.rows[0].count) >= V3_START_LIMIT) return fail("V3_START_LIMIT");
+      await pruneExpiredContent(tx, startedAt);
+    }
+    const session = safeState(startSession({ sessionId: randomUUID(), locale, now: startedAt, selectIndex }));
+    const secret = randomBytes(32).toString("hex");
+    await tx.execute({
+      sql: "INSERT INTO v3_sessions (session_id,owner_hash,state_json,turn_number,expires_at) VALUES (?,?,?,?,?)",
+      args: [session.sessionId, ownerHash(secret), JSON.stringify(session), 0, session.expiresAt],
+    });
+    return { session, secret };
+  });
 }
 async function owned(tx: Transaction, sessionId: string, secret: string) {
   if (!uuid.safeParse(sessionId).success) return fail("V3_SESSION_NOT_FOUND");
@@ -199,6 +239,7 @@ export async function verifyStoredSession(client: Client, secret: string, candid
     }
     if ((await tx.execute({ sql: "SELECT operation_id FROM v3_turn_operations WHERE operation_id=?", args: [op.operationId] })).rows.length) return fail("V3_OPERATION_CONFLICT");
     if (op.expectedTurn !== session.turn) return fail("V3_STALE_TURN");
+    if (session.verificationState === "checked") return session;
     if (row.lease_operation && Number(row.lease_until) > now) return fail("V3_OPERATION_IN_PROGRESS");
     if (row.lease_operation) await tx.execute({ sql: "UPDATE v3_turn_operations SET status='abandoned' WHERE operation_id=? AND status='active'", args: [row.lease_operation] });
     const verified = await save(tx, verifySession(session, now));

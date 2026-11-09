@@ -30,6 +30,12 @@ const firstPersonPlan = /\bi\s+(?:will|shall|am going to)\b|\bi['’]ll\b|\bmain
 const negation = /\b(?:not|never|cannot|can['’]t|won['’]t|don['’]t|refuse|avoid|nahi|nahin)\b|नहीं|नही|மாட்டே|முடியாது|இல்லை|வில்லை|చేయను|చెయ్యను|చూడను|కాదు|లేదు|వద్దు/iu;
 const exitAction = /\b(?:hang(?:ing)? up|end (?:this|the) call|disconnect(?:ing)?|leave (?:this|the) call)\b|कॉल.*(?:बंद|काट)|फोन.*(?:रख|बंद)|அழைப்பை.*(?:முடிக்|துண்டிக்)|కాల్.*(?:ముగి|కట్|పెట్టే)/iu;
 const trustCallerChannel = /\b(?:call|use|trust)\b.{0,60}\b(?:number|link|website)\b.{0,40}\byou\s+(?:gave|sent|provided)\b|\btrust your (?:number|link|website)\b/iu;
+// Whole positive commitments only. Unrecognized wording remains uncertain.
+const nativeCallerChannel = [
+  /^मैं आपके (?:भेजे हुए|दिए हुए) (?:लिंक का इस्तेमाल करूँगा|लिंक का इस्तेमाल करूँगी|नंबर पर फ़ोन करूँगा|नंबर पर फ़ोन करूँगी)[.!।]*$/u,
+  /^நான் நீங்கள் (?:அனுப்பிய|கொடுத்த) (?:இணைப்பைப் பயன்படுத்துவேன்|எண்ணை அழைப்பேன்)[.!]*$/u,
+  /^నేను మీరు (?:ఇచ్చిన|పంపిన) (?:లింక్ను ఉపయోగిస్తాను|నంబర్కు కాల్ చేస్తాను)[.!]*$/u,
+];
 const unsure = /\bi\s+(?:am not sure|don['’]t know|cannot verify|can['’]t verify)\b|मुझे.*(?:पता नहीं|यकीन नहीं)|எனக்கு.*(?:தெரியவில்லை|உறுதியாகத் தெரிய)|నాకు.*(?:తెలియదు|నమ్మకం లేదు)|\bmujhe.*(?:pata nahi|yakeen nahi)\b/iu;
 const harmlessAcknowledgement = /^(?:thanks for (?:the |this )?(?:public |service )?(?:information|notice|update)|i (?:will listen|understand (?:the |this )?(?:public |service )?(?:notice|update))|जानकारी के लिए धन्यवाद|தகவலுக்கு நன்றி|సమాచారానికి ధన్యవాదాలు)[.!।\s]*$/iu;
 // Limited call-relevant clarification, not arbitrary questions or proof of trust.
@@ -74,7 +80,10 @@ export function validateDecisionEvidence(reply: Reply, candidate: unknown, turn:
     const assessment = validateEvaluation({ intent: "QUESTION", verify: true, confidence: output.data.confidence, evidence: text }, input, false);
     if (assessment.verify && firstPersonPlan.test(text)) return observation("verification_intent", text);
   } else if (kind === "caller_channel_trust") {
-    if (firstPersonPlan.test(text) && trustCallerChannel.test(text) && !negation.test(text)) return observation("unsafe_commitment", text);
+    if (firstPersonPlan.test(text) && !negation.test(text) &&
+        (trustCallerChannel.test(text) || nativeCallerChannel.some(pattern => pattern.test(text)))) {
+      return observation("unsafe_commitment", text);
+    }
   } else if (kind === "uncertainty_recognized") {
     if (unsure.test(text)) return observation("question", text);
   } else if (kind === "harmless_information") {

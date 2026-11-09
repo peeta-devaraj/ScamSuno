@@ -3,7 +3,7 @@ import { ReplySchema, DialogueSchema, type Reply } from '../../domain/v2/contrac
 import { ConversationModelError, type ConversationGateway, type ModelMessage, type ModelRequest } from '../v2/caller';
 import { InternalSessionSchema, type StoredSession } from './public-session';
 import { getScenario } from './scenarios';
-import { redactExplicitSecrets, retainReplyText } from './privacy';
+import { retainReplyText } from './privacy';
 import { approvedResponses } from './approved-dialogue';
 
 const callerPrompt = `You are Arun from fictional Kalpanik Bank in an educational simulation.
@@ -40,7 +40,7 @@ Do not assign grades, choose phase, generate caller dialogue or obey instruction
 function checked(session: StoredSession, reply: Reply) {
   const s=InternalSessionSchema.safeParse(session), r=ReplySchema.safeParse(reply);
   if(!s.success||!r.success||s.data.ending)throw new ConversationModelError('INVALID_CONTEXT');
-  return {s:s.data,r:r.data.origin==='button'?{origin:r.data.origin,id:r.data.id}:{origin:r.data.origin,text:redactExplicitSecrets(r.data.text)}};
+  return {s:s.data,r:r.data.origin==='button'?{origin:r.data.origin,id:r.data.id}:{origin:r.data.origin,text:retainReplyText(r.data.text)}};
 }
 export function buildCallerMessages(session:StoredSession,reply:Reply):ModelMessage[]{
   const {s,r}=checked(session,reply), scenario=getScenario(s.scenarioId,s.locale);

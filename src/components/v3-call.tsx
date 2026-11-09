@@ -43,7 +43,7 @@ async function jsonRequest<T>(path: string, body: object | FormData, signal: Abo
   return data as T;
 }
 
-export function V3Call({ available, voiceAvailable, initialLocale = "ta", fixture = false }: {
+export function V3Call({ available, voiceAvailable, initialLocale = "en", fixture = false }: {
   available: boolean; voiceAvailable: boolean; initialLocale?: Locale; fixture?: boolean;
 }) {
   const [locale, setLocale] = useState<Locale>(initialLocale);
@@ -158,15 +158,20 @@ export function V3Call({ available, voiceAvailable, initialLocale = "ta", fixtur
     const previous = current.current;
     current.current = parsed.data; setSession(parsed.data);
     if (data.mode === "fixture") setFixtureMode(true);
-    setDraft(""); setHeard(null);
+    if (data.status === "evaluation_unavailable") {
+      setError(c.stalled);
+      setStage(heard ? "confirming" : "ready");
+      return;
+    }
     if (parsed.data.ending) {
+      setDraft(""); setHeard(null);
       stopMicrophone(); stopPlayback(); audioCache.current = null;
       const result = debrief(data.debrief);
       setResult(result); setStage(result ? "results" : "ended"); return;
     }
     if (ending) { setStage("ended"); return; }
-    if (data.status === "evaluation_unavailable") { setError(c.stalled); setStage("ready"); return; }
     if (previous?.turn === parsed.data.turn && previous?.sessionId === parsed.data.sessionId) { setStage("ready"); return; }
+    setDraft(""); setHeard(null);
     await playCaption(parsed.data, task);
   }
 
@@ -191,6 +196,12 @@ export function V3Call({ available, voiceAvailable, initialLocale = "ta", fixtur
   function sendDraft(event: FormEvent) {
     event.preventDefault();
     if (!draft.trim()) return;
+    if (heard && draft === heard.transcript && heard.expiresAt <= Date.now()) {
+      setHeard(null);
+      setStage("ready");
+      setError(c.voiceExpired);
+      return;
+    }
     if (heard && draft === heard.transcript) {
       void send({ origin: "voice", text: heard.transcript, transcription: {
         provider: "gnani", model: heard.stt.model, requestId: heard.stt.requestId, confirmed: true,

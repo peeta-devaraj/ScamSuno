@@ -19,6 +19,7 @@ export type SpeechSessionView = { locale: Locale; turn: number; lastCaller: stri
 export type SpeechStorage = {
   currentSpeechSession: (tx: Transaction, context: { sessionId: string; expectedTurn: number }, now: number) => Promise<SpeechSessionView | null>;
   enabled?: () => boolean;
+  sttContext?: { keyterms: readonly string[]; topic: string };
 };
 type Stage = "stt" | "tts";
 const fail = (code: SpeechErrorCode): never => { throw new SpeechError(code); };
@@ -207,8 +208,9 @@ export function createSpeechGateway(
           body.set("language_code", session.locale === "en" ? "en-IN" : `${session.locale}-IN,en-IN`);
           body.set("format", config.stt.format);
           body.set("model", config.stt.primaryModel);
-          body.set("keyterms", JSON.stringify(config.stt.keyterms));
-          body.set("topic", config.stt.topic);
+          const context = storage.sttContext ?? config.stt;
+          body.set("keyterms", JSON.stringify(context.keyterms));
+          body.set("topic", context.topic);
         } else {
           headers.set("Content-Type", "application/json");
           body = JSON.stringify({ text: session.lastCaller, voice: config.tts.voice, model: config.tts.model,

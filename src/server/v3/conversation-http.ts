@@ -69,11 +69,12 @@ export function createConversationHandler(deps: ConversationHttpDependencies) {
       const secret = sessionId ? sessionOwner(request, sessionId) : null;
       if (input.action !== "start" && !secret) return failure("V3_SESSION_NOT_FOUND", "Start a practice call to continue.", 401);
       const client = await deps.database();
-      if ((input.action === "start" || input.action === "reply") && !await v3AdmissionEnabled(client)) {
+      if ((input.action === "reply" || (input.action === "start" && mode === "fixture")) && !await v3AdmissionEnabled(client)) {
         return failure("V3_PAUSED", "Trust or Trap is paused. You can still end this call or check independently.", 503);
       }
       if (input.action === "start") {
-        const created = await createStoredSession(client, input.locale), response = stateResponse(created.session, mode!);
+        const created = await createStoredSession(client, input.locale, undefined, undefined, mode === "live");
+        const response = stateResponse(created.session, mode!);
         response.headers.set("Set-Cookie", `${cookieName}=${created.session.sessionId}.${created.secret}; HttpOnly; SameSite=Strict; Path=/api/v3; Max-Age=480${new URL(request.url).protocol === "https:" ? "; Secure" : ""}`);
         return response;
       }
@@ -101,6 +102,8 @@ export function createConversationHandler(deps: ConversationHttpDependencies) {
       return stateResponse(await commitTurn(client, secret!, input.operation.operationId, prepared.session), mode!, prepared.status, prepared.callerSource);
     } catch (error) {
       const code = error && typeof error === "object" && "code" in error ? String(error.code) : "";
+      if (code === "V3_START_LIMIT") return failure(code, "Too many calls started recently. Try again in a few minutes.", 429);
+      if (code === "V3_NOT_READY") return failure(code, "The practice call is temporarily unavailable.", 503);
       if (code === "V3_SESSION_NOT_FOUND") return failure(code, "Start a practice call to continue.", 401);
       if (["V3_STALE_TURN", "V3_OPERATION_CONFLICT", "V3_OPERATION_IN_PROGRESS", "V3_OPERATION_UNCERTAIN", "V3_LEASE_LOST"].includes(code)) {
         return failure(code, "This call changed. End it or start a new practice call.", 409);

@@ -6,8 +6,9 @@ import { uiCopy } from "../../src/domain/v3/ui-copy";
 import { encodeWav } from "../../src/domain/wav";
 
 // Public protocol fixtures only. No server scenario registry, hidden state, provider or database.
-async function fixtures(page: Page, options: { heldReply?: boolean; categoryOnEnd?: string } = {}) {
+async function fixtures(page: Page, options: { heldReply?: boolean; categoryOnEnd?: string; failFirstReply?: boolean; expiredProof?: boolean } = {}) {
   let session: PublicSession;
+  let failed = false;
   const requests: Record<string, unknown>[] = [], responses: Record<string, unknown>[] = [];
   let received!: () => void, release!: () => void;
   const pending = new Promise<void>(resolve => { received = resolve; });
@@ -21,9 +22,10 @@ async function fixtures(page: Page, options: { heldReply?: boolean; categoryOnEn
   await page.route("**/api/v3/tts", route => route.fulfill({ contentType: "audio/wav", body: Buffer.from(wav) }));
   await page.route("**/api/v3/stt", route => route.fulfill({ json: { ok: true, mode: "fixture", educationalSimulation: true,
     transcript: "I will check independently.", stt: { model: "prisma-v3.0", requestId: "explicit-browser-fixture" },
-    proof: "a".repeat(64), expiresAt: Date.now() + 120_000 } }));
+    proof: "a".repeat(64), expiresAt: Date.now() + (options.expiredProof ? -1000 : 120_000) } }));
   await page.route("**/api/v3/conversation", async route => {
     const body = route.request().postDataJSON(); requests.push(body);
+    let status = "ready";
     if (body.action === "start") {
       const now = Date.now(), locale = body.locale as Locale;
       session = { v: 3, mode: "trust-or-trap", sessionId: crypto.randomUUID(), locale, turn: 0,
@@ -35,9 +37,14 @@ async function fixtures(page: Page, options: { heldReply?: boolean; categoryOnEn
         message: "Explicit fixture: the simulated app cannot match this notice. That does not authenticate or disprove the caller." }, updatedAt: Date.now() };
     } else if (body.action === "reply") {
       if (options.heldReply) { received(); await held; }
-      if (!session.ending) session = { ...session, turn: session.turn + 1, updatedAt: Date.now(), lastCaller: caption[session.locale] };
+      if (options.failFirstReply && !failed) {
+        failed = true;
+        status = "evaluation_unavailable";
+      } else if (!session.ending) {
+        session = { ...session, turn: session.turn + 1, updatedAt: Date.now(), lastCaller: caption[session.locale] };
+      }
     }
-    const response = { ok: true, mode: "fixture", educationalSimulation: true, session, status: "ready", callerSource: "authored_fallback",
+    const response = { ok: true, mode: "fixture", educationalSimulation: true, session, status, callerSource: "authored_fallback",
       debrief: session.ending ? {
         educationalSimulation: true, category: options.categoryOnEnd ?? "unverified", categoryLabel: `Explicit fixture reveal: ${options.categoryOnEnd ?? "unverified"}`,
         explanation: "This is an explicitly labelled browser fixture. The finding concerns a notice, not the identity of an incoming voice.",
@@ -96,6 +103,66 @@ test("English fixture verifies independently while active without authenticating
   expect(f.responses.at(-1)!.debrief).toBeNull();
   await page.getByRole("button", { name: c.end, exact: true }).click();
   await expect(page.getByRole("heading", { name: c.resultsTitle })).toBeVisible();
+});
+
+test("English is first and V3 to V2 to V3 retains a selected locale on a narrow phone", async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 700 });
+  for (const version of ["v2", "v3"]) {
+    await page.goto(`/${version}`);
+    const picker = page.getByRole("group", { name: "Call language" });
+    await expect(picker.getByRole("button").first()).toHaveText("English");
+    await expect(picker.getByRole("button", { name: "English" })).toHaveAttribute("aria-pressed", "true");
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
+  }
+  await page.getByRole("button", { name: "తెలుగు" }).click();
+  await page.getByRole("link", { name: uiCopy.te.classic }).click();
+  await expect(page).toHaveURL(/\/v2\?l=te$/);
+  await page.getByRole("link", { name: `V3 · ${uiCopy.te.trust}` }).click();
+  await expect(page).toHaveURL(/\/v3\?l=te$/);
+  await expect(page.getByRole("button", { name: "తెలుగు" })).toHaveAttribute("aria-pressed", "true");
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
+});
+
+test("same-turn verification and evaluator failure preserve the typed reply for retry", async ({ page }) => {
+  const f = await fixtures(page, { failFirstReply: true }), c = uiCopy.en;
+  await page.goto("/v3?fixture=1");
+  await page.getByRole("button", { name: c.answer, exact: true }).click();
+  const textbox = page.getByRole("textbox", { name: c.compose });
+  const draft = "What is this notice about?";
+  await textbox.fill(draft);
+  await page.getByRole("button", { name: c.panelAction }).click();
+  await expect(page.getByTestId("v3-verification-finding")).toBeVisible();
+  await expect(textbox).toHaveValue(draft);
+  await page.getByRole("button", { name: c.send, exact: true }).click();
+  await expect(page.getByRole("alert").filter({ hasText: c.stalled })).toHaveText(c.stalled);
+  await expect(textbox).toHaveValue(draft);
+  await page.getByRole("button", { name: c.send, exact: true }).click();
+  await expect(textbox).toHaveValue("");
+  const attempts = f.requests.filter(request => request.action === "reply").map(request => request.operation as TurnOperation);
+  expect(attempts.map(attempt => attempt.expectedTurn)).toEqual([0, 0]);
+  expect(attempts[0].operationId).not.toEqual(attempts[1].operationId);
+  await page.getByRole("button", { name: c.end, exact: true }).click();
+  await expect(page.getByRole("heading", { name: c.resultsTitle })).toBeVisible();
+});
+
+test("expired voice proof keeps the transcript and offers an explicit typed submission", async ({ page, context }) => {
+  await context.grantPermissions(["microphone"]);
+  const f = await fixtures(page, { expiredProof: true }), c = uiCopy.en;
+  await page.goto("/v3?fixture=1");
+  await page.getByRole("button", { name: c.answer, exact: true }).click();
+  await page.getByRole("button", { name: c.record, exact: true }).click();
+  await expect(page.getByRole("button", { name: c.stop, exact: true })).toBeVisible();
+  await page.waitForTimeout(450);
+  await page.getByRole("button", { name: c.stop, exact: true }).click();
+  await page.getByRole("button", { name: c.confirmSend, exact: true }).click();
+  await expect(page.getByRole("alert").filter({ hasText: c.voiceExpired })).toHaveText(c.voiceExpired);
+  expect(f.requests.filter(request => request.action === "reply")).toHaveLength(0);
+  await expect(page.getByRole("textbox", { name: c.compose })).toHaveValue("I will check independently.");
+  await page.getByRole("button", { name: c.send, exact: true }).click();
+  await expect.poll(() => f.requests.filter(request => request.action === "reply").length).toBe(1);
+  const sent = f.requests.find(request => request.action === "reply")!;
+  expect((sent.operation as TurnOperation).reply.origin).toBe("typed");
+  expect(sent.confirmation).toBeUndefined();
 });
 
 test("End wins over a pending reply and stale fixture output cannot reopen the call", async ({ page }) => {

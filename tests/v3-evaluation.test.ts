@@ -87,6 +87,18 @@ test("caller-provided channel reliance requires positive explicit intent and pre
   }
 });
 
+test("equivalent explicit channel commitments are covered in Hindi, Tamil and Telugu", () => {
+  for (const text of ["मैं आपके भेजे हुए लिंक का इस्तेमाल करूँगा।",
+    "நான் நீங்கள் அனுப்பிய இணைப்பைப் பயன்படுத்துவேன்.", "నేను మీరు ఇచ్చిన లింక్‌ను ఉపయోగిస్తాను."]) {
+    assert.equal(decision("caller_channel_trust", text)[0].kind, "unsafe_commitment", text);
+    assert.equal(decision("caller_channel_trust", `"${text}"`)[0].kind, "uncertain", text);
+  }
+  for (const text of ["मैं आपके भेजे हुए लिंक का इस्तेमाल नहीं करूँगा।",
+    "நான் நீங்கள் அனுப்பிய இணைப்பைப் பயன்படுத்த மாட்டேன்.", "నేను మీరు ఇచ్చిన లింక్‌ను ఉపయోగించను."]) {
+    assert.equal(decision("caller_channel_trust", text)[0].kind, "uncertain", text);
+  }
+});
+
 test("uncertainty and harmless cooperation are distinct from identity authentication", () => {
   assert.equal(decision("uncertainty_recognized", "I am not sure who you are.")[0].kind, "question");
   for (const text of ["Thanks for the service update.", "जानकारी के लिए धन्यवाद।", "தகவலுக்கு நன்றி.", "సమాచారానికి ధన్యవాదాలు."]) {

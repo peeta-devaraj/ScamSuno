@@ -373,11 +373,16 @@ export type UsageSummary = {
   reconciliations: UsageReconciliationRecord[];
 };
 
+export async function readUsageAdmission(tx: Transaction, now: number): Promise<Pick<UsageSummary, "policy" | "counters" | "admissionOpen">> {
+  checkedTime(now);
+  const policy = await policyFrom(tx);
+  return { policy, counters: await counters(tx, policy, now), admissionOpen: isOpen(policy, now) };
+}
+
 export async function usageSummary(client: Client, now: number): Promise<UsageSummary> {
   checkedTime(now);
   return write(client, async (tx) => {
-    const policy = await policyFrom(tx);
-    const usage = await counters(tx, policy, now);
+    const admission = await readUsageAdmission(tx, now);
     const grouped = await tx.execute("SELECT kind,status,COUNT(*) AS count FROM v2_usage_attempts GROUP BY kind,status");
     const byStatus: UsageSummary["byStatus"] = { reserved: 0, dispatched: 0, succeeded: 0, failed: 0, unknown: 0, released: 0 };
     const byKind: UsageSummary["byKind"] = { gnani_stt: 0, gnani_tts: 0, caller: 0, evaluator: 0 };
@@ -389,8 +394,8 @@ export async function usageSummary(client: Client, now: number): Promise<UsageSu
       LEFT JOIN v2_usage_unknown_acknowledgements ack ON ack.attempt_id=a.attempt_id
       ORDER BY a.reserved_at DESC,a.attempt_id LIMIT 50`);
     const reconciliations = await tx.execute("SELECT * FROM v2_usage_reconciliations ORDER BY acknowledged_at DESC,reconciliation_id LIMIT 10");
-    return { asOf: now, policy, admissionOpen: isOpen(policy, now), actualCredits: null,
-      counters: usage, byStatus, byKind, recent: recent.rows.map(attemptFrom),
+    return { asOf: now, ...admission, actualCredits: null,
+      byStatus, byKind, recent: recent.rows.map(attemptFrom),
       reconciliations: reconciliations.rows.map((row) => reconciliationFrom(row).record) };
   });
 }

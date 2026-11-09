@@ -25,5 +25,12 @@ export async function currentSpeechSession(tx: Transaction, context: { sessionId
 }
 
 export function createV3SpeechGateway(client: Client, context: { sessionId: string; expectedTurn: number; operationId: string }, transport: typeof fetch = fetch) {
-  return createSpeechGateway(client, context, transport, { currentSpeechSession, enabled: () => Boolean(liveV3VoiceMode()) });
+  return createSpeechGateway(client, context, transport, {
+    currentSpeechSession,
+    enabled: () => Boolean(liveV3VoiceMode()),
+    sttContext: {
+      keyterms: ["bank", "service notice", "independent verification"],
+      topic: "Fictional practice conversation about a bank service notice",
+    },
+  });
 }

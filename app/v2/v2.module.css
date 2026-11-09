@@ -7,6 +7,10 @@
 .badge { display:inline-flex; align-items:center; justify-content:center; gap:6px; color:#65482e; background:#ffedbd; border-radius:99px; padding:7px 11px; font-size:10px; line-height:1.45; font-weight:800; text-align:center; max-width:210px; }
 .fixture { margin:0; padding:8px 16px; color:white; background:#873248; text-align:center; font-size:12px; font-weight:750; }
 .shell { width:min(1120px,100% - 40px); margin:auto; padding:40px 0; }
+.modeNav { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:20px; }
+.modeNav a,.modeNav span { display:inline-flex; align-items:center; min-height:44px; box-sizing:border-box; padding:8px 12px; border:1px solid #dfcfc2; border-radius:12px; font-size:14px; text-decoration:none; }
+.modeNav a:hover { background:#f5e6d9; }
+.modeNav [aria-current=page] { color:#fff; background:#292238; border-color:#292238; }
 .eyebrow { display:flex; align-items:center; gap:8px; color:#9b4240; font-size:11px; font-weight:800; letter-spacing:.09em; line-height:1.7; text-transform:uppercase; }
 .eyebrow::before { content:""; height:7px; width:7px; border-radius:50%; background:#ca7165; flex-shrink:0; }
 .hero { display:grid; gap:30px; align-items:center; }

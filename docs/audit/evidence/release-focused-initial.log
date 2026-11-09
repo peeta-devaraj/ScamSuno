@@ -1,0 +1,64 @@
+✔ V3 evaluator is blind to hidden assignment and caller gets only permitted scenario facts (30.8267ms)
+✔ caller and evaluator reuse the injected gateway once each with separate purposes (3.5588ms)
+✔ ended context, invalid JSON and provider errors fail closed with no retries or private diagnostics (2.3081ms)
+✔ control is extra admission only, fails closed when absent/unreadable and pause survives reinitialization (6.6677ms)
+✔ durable pause revokes a held V3 dispatch lease without altering V2 state or usage policy (15.3813ms)
+✔ paused V3 rejects start/reply while authenticated End and verification still work (27.282ms)
+✔ private control authenticates before storage, strictly validates same-origin pause and never exposes credentials (5.2819ms)
+✔ independent SQLite clients observe the same persistent pause and initialization cannot reopen it (1080.1873ms)
+✔ readiness stays closed after durable pause even with otherwise valid configuration and fixture allowance (7.3378ms)
+✔ explicit V3 deployments redirect root to the V3 entry and preserve validated locales (2.9328ms)
+✔ flag-off deployments retain the V1 root component (0.7879ms)
+✔ normal call clarification is recognised in four locales and Hinglish without granting authentication or verification (18.9382ms)
+✔ clarification cannot launder quoted codes, unrelated questions, hypotheticals or injected instructions into safe feedback (0.9483ms)
+✔ explicit secret boundaries are supported in English, Hindi, Tamil, Telugu and Hinglish (3.8472ms)
+✔ model assertions, bare numbers, quoted/refused codes and conditional text never become unsafe disclosure (1.2172ms)
+✔ invalid schema, confidence, excerpts and injection abstain without retaining participant text (1.5471ms)
+✔ independent plans use actual official-channel action evidence and never impersonate completed checks (8.1468ms)
+✔ caller-provided channel reliance requires positive explicit intent and preserves negation (1.968ms)
+✖ equivalent explicit channel commitments are covered in Hindi, Tamil and Telugu (5.5482ms)
+✔ uncertainty and harmless cooperation are distinct from identity authentication (2.6099ms)
+✔ safe exit distinguishes stated intention from authenticated participant ending (2.0754ms)
+✔ button and confirmed voice inputs retain their origin without invented voice metadata (3.2962ms)
+✔ generic refusal is never a risk or evidence of an untested secret-protection skill (0.3628ms)
+✔ same observable decisions have identical grades across all hidden scenario assignments (0.8322ms)
+✔ invalid reply/turn envelopes fail closed and summaries contain no raw evidence or numerical score (1.0322ms)
+✔ keys alone do not imply readiness; closed, exhausted and partial voice budgets remain honest (12.0685ms)
+✔ closed V3 policy cannot write sessions and open policy bounds concurrent starts (63.0419ms)
+✔ V3 deployment settings close all V2 live routes before touching providers (1.8152ms)
+✔ cleanup removes expired V3 conversation content and leaves active sessions and ledger attempts (9.1302ms)
+✔ bare and localized numeric replies are masked before both model requests (4.2084ms)
+ℹ tests 30
+ℹ suites 0
+ℹ pass 29
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3261.0883
+
+✖ failing tests:
+
+test at tests\v3-evaluation.test.ts:90:1
+✖ equivalent explicit channel commitments are covered in Hindi, Tamil and Telugu (5.5482ms)
+  AssertionError [ERR_ASSERTION]: నేను మీరు ఇచ్చిన లింక్‌ను ఉపయోగిస్తాను.
+  + actual - expected
+  
+  + 'uncertain'
+  - 'unsafe_commitment'
+       ^
+  
+      at TestContext.<anonymous> (C:\Users\peeta\.codex\visualizations\2026\11\06\01a1b12a-e778-7371-9a75-15adbb3d38fd\scamsuno-v3-remediation\tests\v3-evaluation.test.ts:93:12)
+      at Test.runInAsyncScope (node:async_hooks:214:14)
+      at Test.run (node:internal/test_runner/test:1106:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+      at Test.postRun (node:internal/test_runner/test:1235:19)
+      at Test.run (node:internal/test_runner/test:1163:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'uncertain',
+    expected: 'unsafe_commitment',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

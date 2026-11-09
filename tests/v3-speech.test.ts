@@ -44,7 +44,13 @@ test("V3 reuses Prisma/Timbre transport with its own server-owned session and th
   const f = await fixture(t); let calls = 0;
   const gateway = createV3SpeechGateway(f.client, f.context, async (url, options) => {
     calls++;
-    if (String(url).endsWith("/stt/v3")) return Response.json({ success: true, transcript: "நான் தனியாகச் சரிபார்ப்பேன்", model: "prisma-v3.0", request_id: "explicit-synthetic-response" });
+    if (String(url).endsWith("/stt/v3")) {
+      assert.ok(options?.body instanceof FormData);
+      assert.equal(options.body.get("topic"), "Fictional practice conversation about a bank service notice");
+      assert.equal(options.body.get("language_code"), "ta-IN,en-IN");
+      assert.ok(!String(options.body.get("keyterms")).includes("OTP"));
+      return Response.json({ success: true, transcript: "நான் தனியாகச் சரிபார்ப்பேன்", model: "prisma-v3.0", request_id: "explicit-synthetic-response" });
+    }
     const body = JSON.parse(String(options?.body));
     assert.equal(body.text, f.session.lastCaller); assert.equal(body.language, "ta-IN");
     assert.ok(!JSON.stringify(body).includes("routine_update"));

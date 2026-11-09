@@ -157,5 +157,5 @@ export const uiCopy: Record<Locale, { [K in keyof typeof en]: string }> = {
   },
 };
 
-export const v2Languages = [{ locale: "ta", name: "தமிழ்" }, { locale: "te", name: "తెలుగు" },
-  { locale: "en", name: "English" }, { locale: "hi", name: "हिन्दी" }] as const;
+export const v2Languages = [{ locale: "en", name: "English" }, { locale: "ta", name: "தமிழ்" },
+  { locale: "te", name: "తెలుగు" }, { locale: "hi", name: "हिन्दी" }] as const;
