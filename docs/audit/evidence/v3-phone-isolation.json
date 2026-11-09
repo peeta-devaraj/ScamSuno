@@ -1,0 +1,143 @@
+{
+  "at": "2026-11-09T04:42:58.534Z",
+  "differentStores": true,
+  "v3": {
+    "admissionOpen": false,
+    "expiresAt": "2026-11-08T13:42:50.703Z",
+    "reserve": 2000,
+    "counters": {
+      "gnani": {
+        "totalSinceReconciliation": 6,
+        "daily": 0
+      },
+      "llm": {
+        "totalSinceReconciliation": 24,
+        "daily": 0
+      },
+      "active": 0,
+      "sessionRequests": 0
+    },
+    "byKind": {
+      "gnani_stt": 0,
+      "gnani_tts": 6,
+      "caller": 13,
+      "evaluator": 11
+    },
+    "byStatus": {
+      "reserved": 0,
+      "dispatched": 0,
+      "succeeded": 30,
+      "failed": 0,
+      "unknown": 0,
+      "released": 0
+    },
+    "unknownHeld": 0
+  },
+  "v2": {
+    "admissionOpen": false,
+    "expiresAt": "2026-11-08T05:58:55.000Z",
+    "reserve": 1000,
+    "counters": {
+      "gnani": {
+        "totalSinceReconciliation": 14,
+        "daily": 0
+      },
+      "llm": {
+        "totalSinceReconciliation": 22,
+        "daily": 0
+      },
+      "active": 0,
+      "sessionRequests": 0
+    },
+    "byKind": {
+      "gnani_stt": 4,
+      "gnani_tts": 10,
+      "caller": 12,
+      "evaluator": 12
+    },
+    "byStatus": {
+      "reserved": 0,
+      "dispatched": 0,
+      "succeeded": 34,
+      "failed": 2,
+      "unknown": 0,
+      "released": 2
+    },
+    "unknownHeld": 0
+  },
+  "listings": [
+    {
+      "name": "scamsuno-v3",
+      "hasNextPage": true,
+      "deployments": [
+        {
+          "id": "dpl_4StB9xtdBiA3yd7BGcQybE52tx8j",
+          "host": "scamsuno-v3-qlpi5j2w7-peetadevaraj-2614s-projects.vercel.app",
+          "target": "preview",
+          "state": "READY"
+        },
+        {
+          "id": "dpl_HkW2XC38QdT4YCwKM5dKS54V4MBM",
+          "host": "scamsuno-v3-gy6v04bmg-peetadevaraj-2614s-projects.vercel.app",
+          "target": "preview",
+          "state": "READY"
+        },
+        {
+          "id": "dpl_5ehwAwkDqHmerBYC7SikSK2JySUB",
+          "host": "scamsuno-v3-7pvoq66z3-peetadevaraj-2614s-projects.vercel.app",
+          "target": "preview",
+          "state": "READY"
+        },
+        {
+          "id": "dpl_Fd5Tt4mKBjDUc1BHRq4RywfhGJFH",
+          "host": "scamsuno-v3-eq3rs68d4-peetadevaraj-2614s-projects.vercel.app",
+          "target": "preview",
+          "state": "READY"
+        },
+        {
+          "id": "dpl_Cz5pMnMeNrxuzqDyayuqVGjowQBC",
+          "host": "scamsuno-v3-l33vfaltb-peetadevaraj-2614s-projects.vercel.app",
+          "target": "preview",
+          "state": "READY"
+        },
+        {
+          "id": "dpl_GdXrhZSY2nKZs7WXneprxHfbevYs",
+          "host": "scamsuno-v3-f1bqralk0-peetadevaraj-2614s-projects.vercel.app",
+          "target": "production",
+          "state": "READY"
+        }
+      ]
+    },
+    {
+      "name": "scamsuno-v2-preview",
+      "hasNextPage": true,
+      "deployments": [
+        {
+          "id": "dpl_9beoLjFqAiVxGbrNr59pxHYso5sk",
+          "host": "scamsuno-v2-preview-ndzi4m344-peetadevaraj-2614s-projects.vercel.app",
+          "target": "preview",
+          "state": "READY"
+        },
+        {
+          "id": "dpl_C5EEpxC7GugrtGRXA3KFTzUR8ALf",
+          "host": "scamsuno-v2-preview-8iolgt6tn-peetadevaraj-2614s-projects.vercel.app",
+          "target": "preview",
+          "state": "READY"
+        },
+        {
+          "id": "dpl_2ssTocP4WcLbFAmL1x9ux39FCkHU",
+          "host": "scamsuno-v2-preview-painocdbh-peetadevaraj-2614s-projects.vercel.app",
+          "target": "preview",
+          "state": "ERROR"
+        },
+        {
+          "id": "dpl_6pqmg42RZ78vQHRfNLy5a5PcDPC8",
+          "host": "scamsuno-v2-preview-pt55k29qt-peetadevaraj-2614s-projects.vercel.app",
+          "target": "production",
+          "state": "READY"
+        }
+      ]
+    }
+  ],
+  "providerCalls": 0
+}

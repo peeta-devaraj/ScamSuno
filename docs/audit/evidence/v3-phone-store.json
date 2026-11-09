@@ -1,0 +1,27 @@
+{
+  "at": "2026-11-09T04:49:20.638Z",
+  "resource": "store_Auu20hZJnWcdErdW",
+  "plan": "Starter $0/month",
+  "region": "bom1",
+  "environment": "preview",
+  "distinctFromBothPriorStores": true,
+  "accountingRows": {
+    "v2_usage_policy": 1,
+    "v2_usage_policy_history": 1,
+    "v2_usage_attempts": 30,
+    "v2_usage_reconciliations": 0,
+    "v2_usage_unknown_acknowledgements": 0
+  },
+  "admissionOpen": false,
+  "active": 0,
+  "byStatus": {
+    "reserved": 0,
+    "dispatched": 0,
+    "succeeded": 30,
+    "failed": 0,
+    "unknown": 0,
+    "released": 0
+  },
+  "copiedParticipantSessions": 0,
+  "providerCalls": 0
+}

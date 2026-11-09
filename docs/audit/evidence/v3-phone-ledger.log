@@ -1,0 +1,10 @@
+✔ isolated copy preserves the expired original policy, billing rows and unknown holds (26.3618ms)
+✔ reconciled isolated plan caps one exchange per session and leaves the original closed (7.7913ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 701.9268

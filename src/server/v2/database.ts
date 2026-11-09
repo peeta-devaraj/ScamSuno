@@ -8,12 +8,20 @@ export class StoreError extends Error {
 
 /** No file-backed database in Vercel: its local filesystem is not durable storage. */
 export function databaseFromEnvironment(): Client {
-  const url = process.env.V2_DATABASE_URL?.trim() || process.env.TURSO_DATABASE_URL?.trim();
-  const authToken = process.env.V2_DATABASE_AUTH_TOKEN?.trim() || process.env.TURSO_AUTH_TOKEN?.trim();
+  const legacyUrl = process.env.V2_DATABASE_URL?.trim() || process.env.TURSO_DATABASE_URL?.trim();
+  const legacyToken = process.env.V2_DATABASE_AUTH_TOKEN?.trim() || process.env.TURSO_AUTH_TOKEN?.trim();
+  const phone = process.env.V3_PHONE_LEDGER_ENABLED === "true";
+  const url = phone ? process.env.V3_PHONE_TURSO_DATABASE_URL?.trim() : legacyUrl;
+  const authToken = phone ? process.env.V3_PHONE_TURSO_AUTH_TOKEN?.trim() : legacyToken;
+  if (phone && (process.env.VERCEL_ENV !== "preview" || !process.env.VERCEL ||
+      process.env.V3_TRUST_OR_TRAP_ENABLED !== "true" || !legacyUrl || !legacyToken || authToken === legacyToken)) {
+    throw new StoreError("INVALID_STORE_CONFIG");
+  }
   if (!url) throw new StoreError("STORE_NOT_CONFIGURED");
   try {
     const parsed = new URL(url);
     const remote = ["libsql:", "https:"].includes(parsed.protocol);
+    if (phone && (!remote || parsed.hostname === new URL(legacyUrl!).hostname)) throw new StoreError("INVALID_STORE_CONFIG");
     if ((remote && (!authToken || parsed.username || parsed.password || parsed.search || parsed.hash)) ||
         (!remote && (parsed.protocol !== "file:" || Boolean(process.env.VERCEL)))) {
       throw new StoreError("INVALID_STORE_CONFIG");
