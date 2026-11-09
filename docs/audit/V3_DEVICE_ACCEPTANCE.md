@@ -4,7 +4,7 @@ Status: **NOT PERFORMED**. This checklist is prepared for the participant. A dev
 
 ## Operator preflight
 
-- Use the exact candidate commit, immutable Preview URL and deployment ID in the [release stress report](V3_RELEASE_STRESS_REPORT.md). Confirm the page identifies V3 Trust or Trap before testing.
+- Use the exact isolated candidate commit, Preview URL and deployment ID in the [voice launch runbook](V3_VOICE_LAUNCH_RUNBOOK.md). Confirm the page identifies V3 Trust or Trap before testing.
 - Confirm private Vercel access: the participant signs into the same Vercel account on Android Chrome. Do not send credentials in chat or disable deployment protection to avoid login. Public judge access is a separate later release gate.
 - Current Gnani balance is **unknown until freshly reconciled against provider data**. Capture only nonsecret official remaining-credit and STT/TTS/request totals with timestamp. Earlier screenshots and local request counters do not establish the current balance. V1 shares the provider account, so leave its allowance intact.
 - Read durable V3 usage policy/counters and unresolved holds. Require a current reconciled policy with at most one active attempt. Never reset unknown or dispatched spending to regain quota. Preserve the V3-only pause mechanism.

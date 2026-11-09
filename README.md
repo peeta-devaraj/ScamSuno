@@ -2,7 +2,7 @@
 
 An educational fictional-call simulation in Tamil, Telugu, Hindi and English. Ask your own questions, check a notice through the simulated trusted panel, end the call safely, then review evidence-based feedback. V3 uses turn-based voice: listen → record → confirm/send → hear the reply.
 
-**[Open the V3 private Preview](https://scamsuno-v3-qlpi5j2w7-peetadevaraj-2614s-projects.vercel.app/v3)** · **[Release stress report](docs/audit/V3_RELEASE_STRESS_REPORT.md)** · **[Tamil/Telugu phone-test checklist](docs/audit/V3_DEVICE_ACCEPTANCE.md)**
+**[Open the V3 private phone-test Preview](https://scamsuno-v3-2zha20741-peetadevaraj-2614s-projects.vercel.app/v3)** · **[Voice launch runbook](docs/audit/V3_VOICE_LAUNCH_RUNBOOK.md)** · **[Release stress report](docs/audit/V3_RELEASE_STRESS_REPORT.md)**
 
 V3's entry route is `/v3` on the dedicated private `scamsuno-v3` Preview. English appears first and is selected by default. The V2 and V3 mode links carry your selected language in both directions. On a V3 deployment, `/` redirects to `/v3` and preserves a valid language choice. Sign in to Vercel if prompted. A paused page means live admission is closed.
 
