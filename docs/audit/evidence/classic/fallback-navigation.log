@@ -1,0 +1,55 @@
+$ playwright test "--grep" "closed preview offers V1|disabled V3 offers|practice navigation uses|English is first"
+[WebServer] (node:27748) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:14876) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 4 tests using 1 worker
+
+(node:9540) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 tests\browser\v2.spec.ts:128:5 › closed preview offers V1 without credential jargon or provider requests (3.0s)
+  x  2 tests\browser\v3.spec.ts:108:5 › English is first and V3 to V2 to V3 retains a selected locale on a narrow phone (12.9s)
+(node:23384) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 3 tests\browser\v3.spec.ts:219:5 › disabled V3 offers existing modes and makes no V3 API request (2.3s)
+  ok 4 tests\browser\v3.spec.ts:232:5 › practice navigation uses distinct names and keeps its brand inside Trust or Trap (1.7s)
+
+
+  1) tests\browser\v3.spec.ts:108:5 › English is first and V3 to V2 to V3 retains a selected locale on a narrow phone 
+
+    Error: expect(received).toBeLessThanOrEqual(expected)
+
+    Expected: <= 320
+    Received:    Infinity
+
+    Call Log:
+    - Timeout 10000ms exceeded while waiting on the predicate
+
+      115 |     await expect.poll(async () =>
+      116 |       await page.locator("html").evaluate(root => root.scrollWidth).catch(() => Infinity)
+    > 117 |     ).toBeLessThanOrEqual(320);
+          |       ^
+      118 |   }
+      119 |   await page.getByRole("button", { name: "తెలుగు" }).click();
+      120 |   await page.getByRole("link", { name: uiCopy.te.classic }).click();
+        at C:\Users\peeta\.codex\visualizations\2026\11\06\01a1b12a-e778-7371-9a75-15adbb3d38fd\scamsuno-v3-remediation\tests\browser\v3.spec.ts:117:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\v3-English-is-first-and-V3-51d92-ed-locale-on-a-narrow-phone\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\v3-English-is-first-and-V3-51d92-ed-locale-on-a-narrow-phone\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\v3-English-is-first-and-V3-51d92-ed-locale-on-a-narrow-phone\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\v3-English-is-first-and-V3-51d92-ed-locale-on-a-narrow-phone\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests\browser\v3.spec.ts:108:5 › English is first and V3 to V2 to V3 retains a selected locale on a narrow phone 
+  3 passed (27.9s)
+[ELIFECYCLE] Command failed with exit code 1.

@@ -1,5 +1,7 @@
 .env*
 .vercel
+.agents
+brag-output
 .v2-data
 .git
 .next

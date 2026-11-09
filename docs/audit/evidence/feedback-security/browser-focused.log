@@ -1,0 +1,14 @@
+$ playwright test "--grep" "incomplete End|plum practice"
+[WebServer] (node:29636) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:21164) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 2 tests using 1 worker
+
+(node:15364) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 tests\browser\v3.spec.ts:182:5 › an incomplete End response can be retried and feedback receives focus on mobile (5.8s)
+  ok 2 tests\browser\v3.spec.ts:260:5 › plum practice UI stays readable and keyboard usable at 320 and 430 pixels (2.4s)
+
+  2 passed (14.8s)

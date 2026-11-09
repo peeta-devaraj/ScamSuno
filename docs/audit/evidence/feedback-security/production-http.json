@@ -1,0 +1,103 @@
+{
+  "at": "2026-11-09T10:12:59.094Z",
+  "noSpeechOrModelRequests": true,
+  "root": {
+    "status": 307,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "frame": "DENY",
+    "hsts": true,
+    "referrer": "no-referrer",
+    "path": "/v3?l=en"
+  },
+  "tamil": {
+    "status": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "frame": "DENY",
+    "hsts": true,
+    "referrer": "no-referrer",
+    "privateScenarioMarker": false,
+    "secretShape": false
+  },
+  "telugu": {
+    "status": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "frame": "DENY",
+    "hsts": true,
+    "referrer": "no-referrer",
+    "privateScenarioMarker": false,
+    "secretShape": false
+  },
+  "classic": {
+    "status": 200,
+    "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "frame": "DENY",
+    "hsts": true,
+    "referrer": "no-referrer"
+  },
+  "chunks": {
+    "scanned": 9,
+    "privateScenarioMarker": false,
+    "secretShape": false
+  },
+  "admin": [
+    {
+      "status": 401,
+      "cache": "no-store",
+      "frame": "DENY",
+      "hsts": true,
+      "referrer": "no-referrer"
+    },
+    {
+      "status": 401,
+      "cache": "no-store",
+      "frame": "DENY",
+      "hsts": true,
+      "referrer": "no-referrer"
+    }
+  ],
+  "csrf": {
+    "status": 403,
+    "cache": "no-store",
+    "frame": "DENY",
+    "hsts": true,
+    "referrer": "no-referrer"
+  },
+  "unauth": {
+    "status": 401,
+    "cache": "no-store",
+    "frame": "DENY",
+    "hsts": true,
+    "referrer": "no-referrer"
+  },
+  "providerFreeSession": {
+    "status": 200,
+    "earlyDebrief": false,
+    "startLeak": {
+      "privateScenarioMarker": false,
+      "secretShape": false
+    },
+    "cookieHttpOnly": true,
+    "cookieSecure": true,
+    "end": {
+      "status": 200,
+      "cache": "no-store",
+      "frame": "DENY",
+      "hsts": true,
+      "referrer": "no-referrer"
+    },
+    "debriefPresent": true,
+    "decisionCount": 4,
+    "noReplyDecisionStatuses": [
+      "not_tested",
+      "observed_safe"
+    ],
+    "stranger": {
+      "status": 401,
+      "cache": "no-store",
+      "frame": "DENY",
+      "hsts": true,
+      "referrer": "no-referrer"
+    },
+    "sameDebriefOnRetry": true
+  }
+}

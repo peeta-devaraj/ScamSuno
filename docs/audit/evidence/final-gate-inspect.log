@@ -1,0 +1,47 @@
+Vercel CLI 65.12.1
+> Fetched deployment "scamsuno-v3-2zha20741-peetadevaraj-2614s-projects.vercel.app" in peetadevaraj-2614s-projects [451ms]
+
+  General
+
+    id		dpl_ChCFLVcKR3TAFQJV3F5pWHPqt4S6
+    name	scamsuno-v3
+    target	preview
+    status	● Ready
+    url		https://scamsuno-v3-2zha20741-peetadevaraj-2614s-projects.vercel.app
+    created	Mon Nov 09 2026 10:22:03 GMT+0530 (India Standard Time) [43m ago]
+
+
+  Build Machine
+
+    requested build machine basic
+    actual assigned cores   2 vCPU (actual assignment)
+    memory                  8192 MiB
+    selection type          fixed
+    selection source        plan-default
+
+
+  Build Cache
+
+    size       156.66 MiB / 1.5 GiB limit
+    file count ~12,582 (approx., paths selected for packing)
+
+
+  Duration
+
+    build duration	43s
+    post-build duration	17s
+    billable duration	1m
+    CPU Minutes Usage	2 minutes (1m x 2vCPU)
+
+
+  Builds
+
+    ┌ .        [0ms]
+    ├── λ index (5.25MB) [bom1]
+    ├── λ _not-found (5.25MB) [bom1]
+    ├── λ _not-found.rsc (5.25MB) [bom1]
+    ├── λ about (5.25MB) [bom1]
+    ├── λ about.rsc (5.25MB) [bom1]
+    └── 38 output items hidden
+    
+

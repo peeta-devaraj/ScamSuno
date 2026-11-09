@@ -2,6 +2,7 @@ import type { Client } from "@libsql/client";
 import { z } from "zod";
 import { locales } from "../../domain/scenario";
 import { OperationSchema } from "../../domain/v2/contracts";
+import { V3_LIMITS } from "../../domain/v3/contracts";
 import { boundedBody, failure, reply, withinLimit } from "../http";
 import type { ConversationGateway } from "../v2/caller";
 import { verifyVoiceProof } from "../v2/voice-proof";
@@ -9,7 +10,7 @@ import { prepareConversationTurn } from "./conversation";
 import { v3AdmissionEnabled } from "./control";
 import { buildDebrief } from "./controller";
 import { projectPublicSession, type StoredSession } from "./public-session";
-import { assertActiveTurn, claimTurn, commitTurn, createStoredSession, endStoredSession, readStoredSession, verifyStoredSession } from "./sessions";
+import { assertActiveTurn, claimTurn, commitTurn, createStoredSession, endStoredSession, readStoredSession, verifyStoredSession, V3_FEEDBACK_GRACE_MS } from "./sessions";
 
 const InputSchema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("start"), locale: z.enum(locales) }).strict(),
@@ -25,13 +26,21 @@ export type ConversationHttpDependencies = {
   gateway: (client: Client, context: { sessionId: string; turnOperationId: string }) => ConversationGateway;
 };
 const cookieName = "scamsuno_v3";
+// The owner can still retrieve a debrief after the conversation stops accepting turns.
+const ownerCookieSeconds = (V3_LIMITS.sessionMs + V3_FEEDBACK_GRACE_MS) / 1000;
+const ownerCookieName = (sessionId: string) => `${cookieName}_${sessionId}`;
 export function sessionOwner(request: Request, sessionId: string) {
   const cookies = request.headers.get("cookie") ?? "";
   if (cookies.length > 8192 || !z.uuid().safeParse(sessionId).success) return null;
-  const matches = cookies.split(";").map((value) => value.trim()).filter((value) => value.startsWith(`${cookieName}=`));
-  if (matches.length !== 1) return null;
-  const value = matches[0].slice(cookieName.length + 1);
-  return value.startsWith(`${sessionId}.`) && /^[a-f0-9]{64}$/.test(value.slice(sessionId.length + 1)) ? value.slice(sessionId.length + 1) : null;
+  const values = cookies.split(";").map(value => value.trim());
+  const read = (name: string) => values.filter(value => value.startsWith(`${name}=`)).map(value => value.slice(name.length + 1));
+  const scoped = read(ownerCookieName(sessionId));
+  if (scoped.length) return scoped.length === 1 && /^[a-f0-9]{64}$/.test(scoped[0]) ? scoped[0] : null;
+  // Allow sessions already in flight when this release is installed to finish.
+  const previous = read(cookieName);
+  const prefix = `${sessionId}.`;
+  const secret = previous.length === 1 && previous[0].startsWith(prefix) ? previous[0].slice(prefix.length) : "";
+  return /^[a-f0-9]{64}$/.test(secret) ? secret : null;
 }
 function trustedOrigin(request: Request) {
   const url = new URL(request.url);
@@ -75,7 +84,7 @@ export function createConversationHandler(deps: ConversationHttpDependencies) {
       if (input.action === "start") {
         const created = await createStoredSession(client, input.locale, undefined, undefined, mode === "live");
         const response = stateResponse(created.session, mode!);
-        response.headers.set("Set-Cookie", `${cookieName}=${created.session.sessionId}.${created.secret}; HttpOnly; SameSite=Strict; Path=/api/v3; Max-Age=480${new URL(request.url).protocol === "https:" ? "; Secure" : ""}`);
+        response.headers.set("Set-Cookie", `${ownerCookieName(created.session.sessionId)}=${created.secret}; HttpOnly; SameSite=Strict; Path=/api/v3; Max-Age=${ownerCookieSeconds}${new URL(request.url).protocol === "https:" ? "; Secure" : ""}`);
         return response;
       }
       const responseMode = enabled ? mode! : "disabled";

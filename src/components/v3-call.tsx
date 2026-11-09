@@ -43,8 +43,9 @@ async function jsonRequest<T>(path: string, body: object | FormData, signal: Abo
   return data as T;
 }
 
-export function V3Call({ available, voiceAvailable, initialLocale = "en", fixture = false }: {
+export function V3Call({ available, voiceAvailable, initialLocale = "en", fixture = false, privatePreview, scriptedOrigin }: {
   available: boolean; voiceAvailable: boolean; initialLocale?: Locale; fixture?: boolean;
+  privatePreview: boolean; scriptedOrigin: string;
 }) {
   const [locale, setLocale] = useState<Locale>(initialLocale);
   const [stage, setStage] = useState<Stage>("incoming");
@@ -58,6 +59,7 @@ export function V3Call({ available, voiceAvailable, initialLocale = "en", fixtur
   const [recordSeconds, setRecordSeconds] = useState(0);
   const [elapsed, setElapsed] = useState(0);
   const [checking, setChecking] = useState(false);
+  const resultsHeading = useRef<HTMLHeadingElement>(null);
   const current = useRef<ConversationSession | null>(null);
   const generation = useRef(0);
   const mounted = useRef(true);
@@ -73,9 +75,14 @@ export function V3Call({ available, voiceAvailable, initialLocale = "en", fixtur
   const audioCache = useRef<{ key: string; blob: Blob } | null>(null);
   const finishing = useRef(false);
   const c = uiCopy[locale];
-  const v1Href = `https://scamsuno.vercel.app/?l=${locale}`;
+  const v1Href = `${scriptedOrigin}/?l=${locale}`;
   const busy = checking || ["connecting", "thinking", "arming", "transcribing", "ending"].includes(stage);
   const active = !["incoming", "results", "ended"].includes(stage);
+  useEffect(() => {
+    if (stage !== "results") return;
+    resultsHeading.current?.focus({ preventScroll: true });
+    resultsHeading.current?.scrollIntoView({ block: "start" });
+  }, [stage]);
   const alive = (task: Job) => mounted.current && generation.current === task.token && !task.signal.aborted;
 
   function stopPlayback() {
@@ -155,21 +162,23 @@ export function V3Call({ available, voiceAvailable, initialLocale = "en", fixtur
     if (!alive(task)) return;
     const parsed = SessionSchema.safeParse(data.session);
     if (!parsed.success || parsed.data.locale !== locale) throw new Error("V3_INVALID_RESPONSE");
+    const feedback = parsed.data.ending ? debrief(data.debrief) : null;
+    if ((ending || parsed.data.ending) && (!feedback || feedback.ending !== parsed.data.ending)) {
+      throw new Error("V3_INVALID_DEBRIEF");
+    }
     const previous = current.current;
     current.current = parsed.data; setSession(parsed.data);
     if (data.mode === "fixture") setFixtureMode(true);
+    if (feedback) {
+      setDraft(""); setHeard(null);
+      stopMicrophone(); stopPlayback(); audioCache.current = null;
+      setResult(feedback); setStage("results"); return;
+    }
     if (data.status === "evaluation_unavailable") {
       setError(c.stalled);
       setStage(heard ? "confirming" : "ready");
       return;
     }
-    if (parsed.data.ending) {
-      setDraft(""); setHeard(null);
-      stopMicrophone(); stopPlayback(); audioCache.current = null;
-      const result = debrief(data.debrief);
-      setResult(result); setStage(result ? "results" : "ended"); return;
-    }
-    if (ending) { setStage("ended"); return; }
     if (previous?.turn === parsed.data.turn && previous?.sessionId === parsed.data.sessionId) { setStage("ready"); return; }
     setDraft(""); setHeard(null);
     await playCaption(parsed.data, task);
@@ -306,22 +315,25 @@ export function V3Call({ available, voiceAvailable, initialLocale = "en", fixtur
       <span className={styles.badge}><Icon name="shield" size={13}/>{c.simulation}</span></header>
     {fixtureMode && <p className={styles.fixture} role="status" data-testid="v3-fixture">{c.fixture}</p>}
     <main className={styles.shell}>
-      <nav className={styles.modeNav} aria-label={c.mode}><span aria-current="page">V3 · {c.trust}</span><Link href={`/v2?l=${locale}`}>{c.classic}</Link></nav>
+      <nav className={styles.modeNav} aria-label={c.mode}><span aria-current="page">{c.trust}</span><Link href={`/v2?l=${locale}`}>{c.classic}</Link></nav>
       {error && <div role="alert" className={styles.error}>{error}</div>}
-      {!available ? <section className={styles.closed}><div className={styles.avatar}><Icon name="headphones" size={34}/></div>
-        <span className={styles.eyebrow}>{c.preview}</span><h1>{c.unavailableTitle}</h1><p>{c.unavailableBody}</p>{languages}
-        <Link href={v1Href} className={styles.primary}>{c.v1}<Icon name="arrow" size={17}/></Link></section> :
-      stage === "incoming" ? <><div className={styles.hero}><section className={styles.intro}>
-        <div className={styles.eyebrow}>{c.incoming}</div><h1>{c.title}<span>{c.accent}</span></h1><p className={styles.lead}>{c.intro}</p>
-        {languages}</section>
-        <section className={styles.incoming} aria-label={c.fictional}><div className={styles.incomingTag}><Icon name="phone" size={14}/>{c.fictional}</div>
-          <div><div className={styles.avatar}><Icon name="phone" size={34}/></div><h2>{c.caller}</h2><p>{c.organisation}</p></div>
-          <button className={styles.primary} type="button" onClick={() => void answer()}><Icon name="phone" size={18}/>{c.answer}<Icon name="arrow" size={17}/></button></section></div>
+      {!available || stage === "incoming" ? <><div className={styles.hero}><section className={styles.intro}>
+        <div className={styles.eyebrow}>{c.trust}</div><h1>{c.title} <span>{c.accent}</span></h1>
+        <p className={styles.lead}>{c.intro}</p>{languages}</section>
+        <section className={styles.incoming} aria-label={c.fictional}>
+          <div className={styles.incomingTag}><Icon name="phone" size={14}/>{c.fictional}</div>
+          <div><div className={styles.avatar}><Icon name={available ? "phone" : "headphones"} size={34}/></div>
+            <h2>{available ? c.caller : c.unavailableTitle}</h2>
+            <p>{available ? c.organisation : privatePreview ? c.unavailableBody : c.pausedBody}</p></div>
+          {available ? <button className={styles.primary} type="button" onClick={() => void answer()}>
+            <Icon name="phone" size={18}/>{c.answer}<Icon name="arrow" size={17}/></button> :
+            <Link href={v1Href} className={styles.primary}>{c.v1}<Icon name="arrow" size={17}/></Link>}
+        </section></div>
         <div className={styles.steps}>{[c.stepOne, c.stepTwo, c.stepThree].map((text, index) => <div key={text}><b>0{index + 1}</b>{text}</div>)}</div>
         <p className={styles.privacy}><Icon name="lock" size={16}/>{c.privacy}</p>
-        <Link href={v1Href} className={styles.quiet}>{c.v1}<Icon name="arrow-up" size={14}/></Link></> :
+        {available && <Link href={v1Href} className={styles.quiet}>{c.v1}<Icon name="arrow-up" size={14}/></Link>}</> :
       stage === "results" && result ? <section className={styles.results}>
-        <div className={styles.resultsHero}><span className={styles.eyebrow}>{c.simulation}</span><h1>{c.resultsTitle}</h1><p>{c.resultsLead}</p>
+        <div className={styles.resultsHero}><span className={styles.eyebrow}>{c.simulation}</span><h1 ref={resultsHeading} tabIndex={-1}>{c.resultsTitle}</h1><p>{c.resultsLead}</p>
           <div className={styles.reveal} data-testid="v3-reveal"><strong>{result.categoryLabel}</strong><p>{result.explanation}</p></div></div>
         <div className={styles.criteria}>{result.decisions.map(decision=><div className={styles.criterion} key={decision.id} data-testid="v3-decision">
           <div className={styles.criterionBody}><strong>{decision.label}</strong><p>{decision.explanation}</p>{decision.evidenceTurns.length>0&&<small>{c.evidence}: {decision.evidenceTurns.join(", ")}</small>}</div>
@@ -347,8 +359,8 @@ export function V3Call({ available, voiceAvailable, initialLocale = "en", fixtur
         {voiceAvailable && <div className={styles.recordArea}><button type="button" className={styles.primary} disabled={busy || stage === "confirming" || !session}
           onClick={() => stage === "recording" ? void finishRecording({ token: generation.current, signal: job.current!.signal }) : void record()}>
           <Icon name="mic" size={20}/>{stage === "recording" ? c.stop : c.record}</button><p>{c.limit}</p></div>}
-        {verificationPanel}
         <div className={styles.endBar}><button type="button" className={styles.end} disabled={stage === "ending"} onClick={() => void end()}><Icon name="end" size={21}/>{c.end}</button></div>
+        {verificationPanel}
       </section>
       {stage === "confirming" && heard ? <form className={styles.confirm} onSubmit={sendDraft}>
         <label htmlFor="v3-confirmation">{c.confirmTitle}</label><p>{c.confirmHint}</p><textarea id="v3-confirmation" value={draft} maxLength={500} onChange={(event) => setDraft(event.target.value)}/>
@@ -359,6 +371,6 @@ export function V3Call({ available, voiceAvailable, initialLocale = "en", fixtur
         <button type="submit" className={styles.primary} disabled={busy || stage === "recording" || !session || !draft.trim()}>{c.send}<Icon name="arrow" size={17}/></button>
         <p>{c.captionOnly}</p></form>}
       </div>}
-    </main><footer className={styles.footer}><span>ScamSuno · {c.preview}</span><span>{c.simulation}</span></footer>
+    </main><footer className={styles.footer}><span>ScamSuno · {c.tagline}</span><span>{c.simulation}</span></footer>
   </div>;
 }

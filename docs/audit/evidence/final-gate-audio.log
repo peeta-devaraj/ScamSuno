@@ -1,0 +1,2 @@
+$ tsx scripts/audio.ts --check
+All shipped captions have verified manifest entries and audio checksums.

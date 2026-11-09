@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { locales, type Locale } from "../../domain/scenario";
-import { maskNumbers, normalize } from "../../domain/numbers";
+import { normalize } from "../../domain/numbers";
 import { OperationSchema, type TurnOperation } from "../../domain/v2/contracts";
 import { validateDialogue } from "../../domain/v2/safety";
 import { V3_LIMITS } from "../../domain/v3/contracts";
@@ -8,7 +8,7 @@ import { validateDecisionEvidence, summarizeDecisions } from "./evaluation";
 import { InternalSessionSchema, type StoredSession } from "./public-session";
 import { getScenario, selectScenario, scenarioIds } from "./scenarios";
 import { categoryLabel, presentDecisions } from './debrief-copy';
-import { retainReplyText } from './privacy';
+import { withoutParticipantText as retained } from './privacy';
 import { isApprovedResponse } from './approved-dialogue';
 
 export class V3ControllerError extends Error {
@@ -21,13 +21,6 @@ function checkedState(input: StoredSession, now: number) {
   if (!parsed.success || !Number.isSafeInteger(now) || now < 0 || now < parsed.data.updatedAt) throw new V3ControllerError("V3_INVALID_STATE");
   return parsed.data;
 }
-function retained(input: StoredSession) {
-  return InternalSessionSchema.parse({ ...input, lastCaller: maskNumbers(input.lastCaller),
-    history: input.history.map((h) => ({ ...h, caller: maskNumbers(h.caller), participant: retainReplyText(h.participant) })),
-    observations: input.observations.map((o) => ({ ...o, evidence: retainReplyText(o.evidence) })),
-  });
-}
-
 /** Only trusted server session creation supplies the UUID, clock and optional test index. */
 export function startSession(input: { sessionId: string; locale: Locale; now: number; selectIndex?: () => number }): StoredSession {
   const params = z.object({ sessionId: z.uuid(), locale: z.enum(locales), now: z.number().int().nonnegative()
@@ -57,8 +50,7 @@ export function advanceSession(state: StoredSession, candidate: TurnOperation, e
   const ending: StoredSession["ending"] = button === "end" || kinds.has("exit") ? "participant" :
     button === "refuse" || stopped || kinds.has("boundary") ? "refused" : turn >= V3_LIMITS.turns ? "limit" : null;
   return retained({ ...s, turn, updatedAt: now, ending,
-    history: [...s.history, { turn, caller: s.lastCaller,
-      participant: op.reply.origin === "button" ? `[button:${op.reply.id}]` : op.reply.text, origin: op.reply.origin }].slice(-V3_LIMITS.history),
+    history: [...s.history, { turn, caller: s.lastCaller, participant: "", origin: op.reply.origin }].slice(-V3_LIMITS.history),
     observations: [...s.observations, ...observations],
     // End keeps the last presented caption; it must not invent a delivered warning.
     lastCaller: ending ? s.lastCaller : getScenario(s.scenarioId, s.locale).continuation,

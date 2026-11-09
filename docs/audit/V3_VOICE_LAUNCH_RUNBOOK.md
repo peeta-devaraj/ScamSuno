@@ -1,8 +1,10 @@
 # V3 voice acceptance and release runbook
 
+The protected-preview procedure below preserves its original controls. For the current canonical host, see the [bounded Production rollout, ledger and pause/rollback controls](../release/PUBLIC_VOICE_ROLLOUT.md). [Classic](https://scamsuno-classic.vercel.app) is the public scripted fallback.
+
 ## Recovery points
 
-- V1 is `b3462ac0a9eeb809c7e870044baa291d4c1e378e` at deployment `dpl_6ZwzMVyH7GML842n8DsPUheBshBX`. The live health check matched the immutable `v1-stable` source and reported 60 clips across four languages. [V1](https://scamsuno.vercel.app) · [Preservation record](../V1_PRESERVATION.md)
+- V1 is `b3462ac0a9eeb809c7e870044baa291d4c1e378e` at preserved deployment `dpl_6ZwzMVyH7GML842n8DsPUheBshBX`. The checkpoint health check matched the immutable `v1-stable` source and reported 60 clips across four languages. [Preservation record](../V1_PRESERVATION.md)
 - The previously tested V3 application is `3e7ab99172327851536e923dbb98550ac46911e7` at `dpl_4StB9xtdBiA3yd7BGcQybE52tx8j`. Annotated tag `v3-voice-release-base-2026-11-09`, a verified complete Git bundle and a source ZIP preserve it. The sibling `scamsuno-v3-release-recovery-2026-11-09` directory also contains encrypted configuration, deployment metadata and a read-only snapshot of 11 tables. A separate in-memory restoration reproduced the recorded data. DPAPI recovery requires the original Windows account and machine. [Test record](V3_RELEASE_STRESS_REPORT.md)
 
 ## Collect current Gnani evidence

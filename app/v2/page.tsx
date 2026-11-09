@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { scriptedPracticeOrigin } from "@/server/brand";
 import { trustOrTrapEnabled } from "@/server/v3/config";
 import { V2Call } from "@/components/v2-call";
 import { isLocale } from "@/domain/scenario";
@@ -23,5 +24,5 @@ export default async function Page({ searchParams }: {
   const available = fixture || Boolean(!trustOrTrapEnabled() && hostedConfiguration() && databaseReady);
   const voiceAvailable = fixture || Boolean(available && process.env.GNANI_API_KEY && process.env.STT_ENABLED === "true" && voiceProofReady());
   return <V2Call available={available} voiceAvailable={voiceAvailable} fixture={fixture}
-    initialLocale={isLocale(params.l) ? params.l : "en"} />;
+    initialLocale={isLocale(params.l) ? params.l : "en"} scriptedOrigin={scriptedPracticeOrigin()} />;
 }

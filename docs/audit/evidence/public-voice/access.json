@@ -1,0 +1,9 @@
+{
+  "at": "2026-11-09T09:59:41.4135111Z",
+  "signedOutAdmin": {
+    "/admin/v3": 401,
+    "/admin/usage": 401
+  },
+  "separatePreview": 302,
+  "classicClips": 60
+}

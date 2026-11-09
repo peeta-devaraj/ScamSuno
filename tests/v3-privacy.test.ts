@@ -90,7 +90,7 @@ test('multilingual synthetic paraphrases cannot survive controller history, SQLi
    const op={sessionId:created.session.sessionId,operationId:crypto.randomUUID(),expectedTurn:0,reply:{origin:'typed' as const,text}};
    await claimTurn(client,created.secret,op,now+1);
    const next=advanceSession(created.session,op,{kind:'sensitive_disclosure_intent',confidence:0.99,evidence:SENSITIVE_CONTENT_OMITTED},now+1);
-   assert.equal(next.history[0].participant,SENSITIVE_CONTENT_OMITTED,text);
+   assert.equal(next.history[0].participant,'',text);
    assert.equal(next.observations[0].kind,'uncertain');
    await commitTurn(client,created.secret,op.operationId,next,now+2);
   }
@@ -108,7 +108,7 @@ test('controller and actual SQLite persistence omit synthetic credential values 
   const op={sessionId:created.session.sessionId,operationId:crypto.randomUUID(),expectedTurn:0,reply:{origin:'typed' as const,text:samples[0]}};
   await claimTurn(client,created.secret,op,now+1);
   const next=advanceSession(created.session,op,{kind:'sensitive_disclosure_intent',confidence:0.99,evidence:SENSITIVE_CONTENT_OMITTED},now+1);
-  assert.equal(next.observations[0].kind,'uncertain');assert.equal(next.history[0].participant,SENSITIVE_CONTENT_OMITTED);
+  assert.equal(next.observations[0].kind,'uncertain');assert.equal(next.history[0].participant,'');
   await commitTurn(client,created.secret,op.operationId,next,now+2);
   assert.ok(!JSON.stringify((await client.execute('SELECT * FROM v3_sessions')).rows).includes('fictional-example-secret'));
   assert.ok(!JSON.stringify((await client.execute('SELECT * FROM v3_turn_operations')).rows).includes('fictional-example-secret'));

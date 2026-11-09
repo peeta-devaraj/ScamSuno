@@ -1,0 +1,21 @@
+{
+  "capturedAt": "2026-11-09T10:05:43.438Z",
+  "origin": "https://scamsuno.vercel.app",
+  "rootStatus": 307,
+  "entryStatus": 200,
+  "viewport": [
+    412,
+    820
+  ],
+  "signedIn": false,
+  "entryAnswerEnabled": true,
+  "languagesShown": [
+    "en",
+    "ta",
+    "te",
+    "en"
+  ],
+  "startedCall": false,
+  "blockedRequests": 0,
+  "providerRoutesAllowed": false
+}

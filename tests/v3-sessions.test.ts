@@ -13,7 +13,7 @@ import type { StoredSession } from "../src/server/v3/public-session";
 import { scenarioIds } from "../src/server/v3/scenarios";
 import { databaseWrite } from "../src/server/v2/database";
 import { initializeSessions, createStoredSession, readStoredSession, claimTurn, commitTurn,
-  endStoredSession, verifyStoredSession, assertActiveTurn, hasActiveTurnLease } from "../src/server/v3/sessions";
+  endStoredSession, verifyStoredSession, assertActiveTurn, hasActiveTurnLease, V3_FEEDBACK_GRACE_MS } from "../src/server/v3/sessions";
 
 const now = 1_800_000_000_000;
 async function fixture(t: TestContext, index = 0) {
@@ -49,7 +49,7 @@ test("one parallel operation owns the lease; duplicates and changed payloads can
   await assert.rejects(claimTurn(f.client, f.secret, { ...input, operationId: randomUUID() }, now + 2), code("V3_OPERATION_IN_PROGRESS"));
 });
 
-test("committed turns mask participant numbers, preserve identity and replay current state", async (t) => {
+test("committed turns omit participant text, preserve identity and replay current state", async (t) => {
   const f = await fixture(t), input = op(f.session, "Who asked for 482197?");
   await claimTurn(f.client, f.secret, input, now + 1);
   const prepared = advanceSession(f.session, input, null, now + 2);
@@ -57,10 +57,19 @@ test("committed turns mask participant numbers, preserve identity and replay cur
   assert.equal(committed.turn, 1);
   const operations = JSON.stringify((await f.client.execute("SELECT * FROM v3_turn_operations")).rows);
   const raw = JSON.stringify((await f.client.execute("SELECT * FROM v3_sessions")).rows) + operations;
-  assert.ok(!raw.includes("482197")); assert.ok(!operations.includes("Who asked"));
+  assert.ok(!raw.includes("482197")); assert.ok(!raw.includes("Who asked"));
+  assert.equal(committed.history[0].origin, "typed");
   const ended = await endStoredSession(f.client, f.session.sessionId, f.secret, now + 4);
   assert.equal((await claimTurn(f.client, f.secret, input, now + 5)).session.ending, ended.ending);
   assert.equal((await commitTurn(f.client, f.secret, input.operationId, prepared, now + 5)).ending, ended.ending);
+});
+
+test("an expired call can return feedback during the grace period without extending ownership", async (t) => {
+  const f = await fixture(t), expiresAt = f.session.expiresAt;
+  const ending = await endStoredSession(f.client, f.session.sessionId, f.secret, expiresAt + 1);
+  assert.equal(ending.ending, "expired");
+  assert.deepEqual(await endStoredSession(f.client, f.session.sessionId, f.secret, expiresAt + V3_FEEDBACK_GRACE_MS - 1), ending);
+  await assert.rejects(endStoredSession(f.client, f.session.sessionId, f.secret, expiresAt + V3_FEEDBACK_GRACE_MS), code("V3_SESSION_NOT_FOUND"));
 });
 
 test("authenticated End wins over pending work and revokes paid-dispatch lease atomically", async (t) => {

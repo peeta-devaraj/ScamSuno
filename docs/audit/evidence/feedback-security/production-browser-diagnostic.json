@@ -1,0 +1,26 @@
+{
+  "at": "2026-11-09T10:18:03.139Z",
+  "locale": "te",
+  "noProviderCalls": true,
+  "browser": "headless Chrome, mobile viewport",
+  "requests": [
+    {
+      "action": "start",
+      "origin": "https://scamsuno.vercel.app",
+      "fetchSite": null,
+      "hasCookie": false,
+      "status": 200,
+      "code": null,
+      "hasDebrief": false
+    },
+    {
+      "action": "end",
+      "origin": "https://scamsuno.vercel.app",
+      "fetchSite": null,
+      "hasCookie": true
+    }
+  ],
+  "referrerPolicy": "no-referrer",
+  "feedbackItems": 0,
+  "alert": ""
+}

@@ -1,0 +1,17 @@
+{
+  "adminStatuses": [
+    401,
+    401
+  ],
+  "at": "2026-11-09T05:34:49.003Z",
+  "host": "https://scamsuno-v3-2zha20741-peetadevaraj-2614s-projects.vercel.app",
+  "rootRedirect": "/v3?l=en",
+  "v2Page": 200,
+  "v3Page": 200,
+  "englishSelected": true,
+  "teluguReturnLink": true,
+  "v2Start": 503,
+  "closedV3Start": 503,
+  "anonymous": 302,
+  "providerCalls": 0
+}

@@ -2,6 +2,8 @@
 
 Status: **NOT PERFORMED**. This checklist is prepared for the participant. A development fixture, model-generated synthetic speech or a V1 screenshot cannot satisfy it.
 
+**Public rollout:** the live English smoke used synthetic input and leaves this status unchanged. If the operator confirms enough room for both calls on the approved [bounded public rollout](../release/PUBLIC_VOICE_ROLLOUT.md), use [Tamil](https://scamsuno.vercel.app/v3?l=ta) then [Telugu](https://scamsuno.vercel.app/v3?l=te) without Vercel sign-in. Otherwise use the protected candidate and preflight below when a suitable allowance is confirmed. The approved expiry is a limit, not a guarantee that requests are left.
+
 ## Operator preflight
 
 - Use the exact isolated candidate commit, Preview URL and deployment ID in the [voice launch runbook](V3_VOICE_LAUNCH_RUNBOOK.md). Confirm the page identifies V3 Trust or Trap before testing.
@@ -17,7 +19,7 @@ Status: **NOT PERFORMED**. This checklist is prepared for the participant. A dev
 Use Android with Chrome (regular tab, HTTPS), headphones if available, quiet surroundings and a stable connection. Record phone model, Android version, Chrome version, speaker/headphone choice and network type. Do not use an in-app browser. iPhone/Safari remains unverified until separately tested.
 
 1. Open the exact candidate URL ending `/v3?l=ta`. Sign into Vercel if asked.
-2. Verify **V3** appears in the mode navigation and the educational simulation label is visible. The page must say Trust or Trap in the selected language. If you see preset V1 quick replies, stop and report the URL/mode; do not continue the wrong test.
+2. Verify the selected mode is **Trust or Trap** (or its localized title) and the educational simulation label is visible. The branded navigation uses the mode name rather than the version number. If the page is paused or you see the Classic scripted interface, stop and report the URL/mode.
 3. Allow microphone permission when Chrome requests it. Use fictional information only. Never speak a real OTP, PIN, password, phone number, account detail or personal identifier.
 
 ## Tamil — one exchange

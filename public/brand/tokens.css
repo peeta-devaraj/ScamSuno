@@ -1,0 +1,39 @@
+/* Shared source for the Trust or Trap app and demo composition. */
+:root {
+  --ss-bg: #211a2a;
+  --ss-bg-raised: #2b2238;
+  --ss-glow: #45334d;
+  --ss-surface: #382c42;
+  --ss-surface-raised: #4b3851;
+  --ss-surface-inset: #251d30;
+  --ss-text: #fff4ed;
+  --ss-text-soft: #e7d8e5;
+  --ss-text-muted: #cdbbd1;
+  --ss-accent: #ffad94;
+  --ss-accent-hover: #ffc5b1;
+  --ss-accent-ink: #382639;
+  --ss-border: #806a83;
+  --ss-divider: #59475e;
+  --ss-focus: #ffe3b7;
+  --ss-disabled-bg: #3e3349;
+  --ss-disabled-text: #b9a9bf;
+  --ss-warning-bg: #4e3835;
+  --ss-warning-text: #ffdfad;
+  --ss-error-bg: #512c3d;
+  --ss-error-text: #ffd8cc;
+  --ss-success-bg: #344139;
+  --ss-success-text: #e1efcf;
+  --ss-lavender: #e7d5f3;
+  --ss-paper: #fff9f0;
+  --ss-paper-ink: #292238;
+  --ss-paper-accent: #a83238;
+  --ss-font: "Segoe UI", Arial, "Nirmala UI", sans-serif;
+  --ss-mono: ui-monospace, monospace;
+  --ss-radius-sm: 12px;
+  --ss-radius-md: 18px;
+  --ss-radius-lg: 28px;
+  --ss-shadow: 0 20px 55px #150e1d80;
+  --ss-background: radial-gradient(ellipse at 79% 40%, var(--ss-glow), var(--ss-bg-raised) 46%, var(--ss-bg) 88%);
+  --ss-card: linear-gradient(155deg, var(--ss-surface-raised), var(--ss-bg-raised) 75%);
+}
+

@@ -6,7 +6,7 @@ import { uiCopy } from "../../src/domain/v3/ui-copy";
 import { encodeWav } from "../../src/domain/wav";
 
 // Public protocol fixtures only. No server scenario registry, hidden state, provider or database.
-async function fixtures(page: Page, options: { heldReply?: boolean; categoryOnEnd?: string; failFirstReply?: boolean; expiredProof?: boolean } = {}) {
+async function fixtures(page: Page, options: { heldReply?: boolean; categoryOnEnd?: string; failFirstReply?: boolean; expiredProof?: boolean; omitFirstDebrief?: boolean } = {}) {
   let session: PublicSession;
   let failed = false;
   const requests: Record<string, unknown>[] = [], responses: Record<string, unknown>[] = [];
@@ -45,7 +45,7 @@ async function fixtures(page: Page, options: { heldReply?: boolean; categoryOnEn
       }
     }
     const response = { ok: true, mode: "fixture", educationalSimulation: true, session, status, callerSource: "authored_fallback",
-      debrief: session.ending ? {
+      debrief: session.ending && !(options.omitFirstDebrief && body.action === "end" && requests.filter(r => r.action === "end").length === 1) ? {
         educationalSimulation: true, category: options.categoryOnEnd ?? "unverified", categoryLabel: `Explicit fixture reveal: ${options.categoryOnEnd ?? "unverified"}`,
         explanation: "This is an explicitly labelled browser fixture. The finding concerns a notice, not the identity of an incoming voice.",
         recordedCaptions: [session.lastCaller], ending: session.ending,
@@ -117,7 +117,7 @@ test("English is first and V3 to V2 to V3 retains a selected locale on a narrow 
   await page.getByRole("button", { name: "తెలుగు" }).click();
   await page.getByRole("link", { name: uiCopy.te.classic }).click();
   await expect(page).toHaveURL(/\/v2\?l=te$/);
-  await page.getByRole("link", { name: `V3 · ${uiCopy.te.trust}` }).click();
+  await page.getByRole("link", { name: uiCopy.te.trust }).click();
   await expect(page).toHaveURL(/\/v3\?l=te$/);
   await expect(page.getByRole("button", { name: "తెలుగు" })).toHaveAttribute("aria-pressed", "true");
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
@@ -179,6 +179,25 @@ test("End wins over a pending reply and stale fixture output cannot reopen the c
   await expect(page.getByRole("button", { name: c.record, exact: true })).toHaveCount(0);
 });
 
+test("an incomplete End response can be retried and feedback receives focus on mobile", async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 650 });
+  const f = await fixtures(page, { omitFirstDebrief: true }), c = uiCopy.te;
+  await page.goto("/v3?fixture=1&l=te");
+  await page.getByRole("button", { name: c.answer, exact: true }).click();
+  await expect(page.getByTestId("v3-state")).toHaveText(c.ready);
+  await page.getByRole("button", { name: c.end, exact: true }).click();
+  await expect(page.getByRole("alert").filter({ hasText: c.endError })).toBeVisible();
+  await expect(page.getByTestId("v3-reveal")).toHaveCount(0);
+  await page.getByRole("button", { name: c.saveEnd, exact: true }).click();
+  const heading = page.getByRole("heading", { name: c.resultsTitle });
+  await expect(heading).toBeInViewport();
+  await expect(heading).toBeFocused();
+  await expect(page.getByTestId("v3-decision")).toHaveCount(1);
+  const endings = f.requests.filter(r => r.action === "end");
+  expect(endings).toHaveLength(2);
+  expect(endings[0]).toEqual(endings[1]);
+});
+
 for (const edited of [false, true]) {
   test(`real browser recorder preserves ${edited ? "typed origin after editing" : "confirmed voice origin"} with fixture STT`, async ({ page, context }) => {
     await context.grantPermissions(["microphone"]);
@@ -220,20 +239,69 @@ test("disabled V3 offers existing modes and makes no V3 API request", async ({ p
   await page.goto("/v3?l=en");
   await expect(page.getByRole("heading", { name: c.unavailableTitle })).toBeVisible();
   await expect(page.getByRole("link", { name: c.classic, exact: true })).toHaveAttribute("href", "/v2?l=en");
-  await expect(page.getByRole("link", { name: c.v1, exact: true })).toHaveAttribute("href", "https://scamsuno.vercel.app/?l=en");
+  await expect(page.getByRole("link", { name: c.v1, exact: true })).toHaveAttribute("href", "https://scamsuno-classic.vercel.app/?l=en");
   await expect(page.getByRole("button", { name: c.answer, exact: true })).toHaveCount(0);
   await expect(page.getByTestId("v3-fixture")).toHaveCount(0);
   expect(calls).toBe(0);
 });
 
 
-test("V3 navigation names generations and keeps its brand inside V3", async ({ page }) => {
+test("practice navigation uses distinct names and keeps its brand inside Trust or Trap", async ({ page }) => {
   await fixtures(page); const c = uiCopy.en;
   await page.goto("/v3?fixture=1&l=en");
   await expect(page.getByTestId("v3-brand")).toHaveAttribute("href", "/v3?l=en");
-  await expect(page.locator('[aria-current="page"]')).toContainText("V3");
-  await expect(page.getByRole("link", {name:c.classic,exact:true})).toContainText("V2");
+  await expect(page.locator('[aria-current="page"]')).toHaveText(c.trust);
+  await expect(page.getByRole("link", {name:c.classic,exact:true})).toHaveText(c.classic);
   await expect(page.getByRole("link", {name:c.classic,exact:true})).toHaveAttribute("href", "/v2?l=en");
-  await expect(page.getByRole("link", {name:c.v1,exact:true})).toContainText("V1");
-  await expect(page.getByRole("link", {name:c.v1,exact:true})).toHaveAttribute("href", "https://scamsuno.vercel.app/?l=en");
+  await expect(page.getByRole("link", {name:c.v1,exact:true})).toHaveText(c.v1);
+  await expect(page.getByRole("link", {name:c.v1,exact:true})).toHaveAttribute("href", "https://scamsuno-classic.vercel.app/?l=en");
+});
+
+test("plum practice UI stays readable and keyboard usable at 320 and 430 pixels", async ({ page }, info) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await fixtures(page);
+  const c = uiCopy.en;
+  for (const width of [320, 430]) {
+    await page.setViewportSize({ width, height: 820 });
+    await page.goto("/v3?fixture=1&l=en");
+    const hero = page.getByRole("heading", { name: /a convincing voice can still be a scam/i });
+    const start = page.getByRole("button", { name: c.answer, exact: true });
+    await expect(hero).toBeVisible();
+    await expect(hero).toHaveCSS("color", "rgb(255, 244, 237)");
+    await expect(start).toHaveCSS("background-color", "rgb(255, 173, 148)");
+    expect((await start.boundingBox())?.height).toBeGreaterThanOrEqual(44);
+    await start.focus();
+    await expect(start).toHaveCSS("outline-width", "3px");
+    await expect(start).toHaveCSS("outline-color", "rgb(255, 227, 183)");
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(width);
+    await info.attach("landing-" + width, { body: await page.screenshot({ fullPage: true }), contentType: "image/png" });
+  }
+
+  await page.setViewportSize({ width: 320, height: 820 });
+  await page.getByRole("button", { name: c.answer, exact: true }).press("Enter");
+  await expect(page.getByTestId("v3-caption")).toBeVisible();
+  const end = page.getByRole("button", { name: c.end, exact: true });
+  expect((await end.boundingBox())?.height).toBeGreaterThanOrEqual(44);
+  const verification = page.getByTestId("v3-verification");
+  const endBounds = (await end.boundingBox())!;
+  const verificationBounds = (await verification.boundingBox())!;
+  expect(endBounds.y + endBounds.height).toBeLessThanOrEqual(verificationBounds.y);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(320);
+  await info.attach("call-320", { body: await page.screenshot({ fullPage: true }), contentType: "image/png" });
+  await end.click();
+  await expect(page.getByTestId("v3-reveal")).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(320);
+  await info.attach("debrief-320", { body: await page.screenshot({ fullPage: true }), contentType: "image/png" });
+});
+
+test("private practice exposes branded tab assets and no deployment address in social metadata", async ({ page }) => {
+  await page.goto("/v3?l=en");
+  await expect(page).toHaveTitle("ScamSuno — Can you trust this call?");
+  await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute("content", "#211a2a");
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", "noindex, nofollow");
+  await expect(page.locator('link[rel="icon"]')).toHaveAttribute("href", "/brand/scamsuno-icon.svg");
+  await expect(page.locator('meta[property="og:url"], meta[property="og:image"], link[rel="canonical"]')).toHaveCount(0);
+  const card = await page.request.get("/brand/scamsuno-social.png");
+  expect(card.ok()).toBe(true);
+  expect(card.headers()["content-type"]).toContain("image/png");
 });

@@ -46,7 +46,8 @@ export function buildCallerMessages(session:StoredSession,reply:Reply):ModelMess
   const {s,r}=checked(session,reply), scenario=getScenario(s.scenarioId,s.locale);
   return [{role:'system',content:callerPrompt},{role:'user',content:JSON.stringify({locale:s.locale,
     persona:scenario.persona,permitted_facts:scenario.allowedFacts,forbidden_behaviours:scenario.forbiddenBehaviours,approved_responses:approvedResponses(s.scenarioId,s.locale),
-    previous_caller:maskNumbers(s.lastCaller),history:s.history.map(h=>({caller:maskNumbers(h.caller),participant:retainReplyText(h.participant),origin:h.origin})),participant_reply:r})}];
+    previous_caller:maskNumbers(s.lastCaller),history:s.history.map(h=>({caller:maskNumbers(h.caller),origin:h.origin,
+      observed_decisions:s.observations.filter(o=>o.turn===h.turn).map(o=>o.kind)})),participant_reply:r})}];
 }
 export function buildEvaluatorMessages(session:StoredSession,reply:Reply):ModelMessage[]{
   const {s,r}=checked(session,reply);

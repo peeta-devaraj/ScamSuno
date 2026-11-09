@@ -34,8 +34,8 @@ async function jsonRequest<T>(path: string, body: object | FormData, signal: Abo
   return data as T;
 }
 
-export function V2Call({ available, voiceAvailable, initialLocale = "en", fixture = false }: {
-  available: boolean; voiceAvailable: boolean; initialLocale?: Locale; fixture?: boolean;
+export function V2Call({ available, voiceAvailable, initialLocale = "en", fixture = false, scriptedOrigin }: {
+  available: boolean; voiceAvailable: boolean; initialLocale?: Locale; fixture?: boolean; scriptedOrigin: string;
 }) {
   const [locale, setLocale] = useState<Locale>(initialLocale);
   const [stage, setStage] = useState<Stage>("incoming");
@@ -63,7 +63,7 @@ export function V2Call({ available, voiceAvailable, initialLocale = "en", fixtur
   const audioCache = useRef<{ key: string; blob: Blob } | null>(null);
   const finishing = useRef(false);
   const c = uiCopy[locale];
-  const v1Href = `https://scamsuno.vercel.app/?l=${locale}`;
+  const v1Href = `${scriptedOrigin}/?l=${locale}`;
   const busy = ["connecting", "thinking", "arming", "transcribing", "ending"].includes(stage);
   const active = !["incoming", "results", "ended"].includes(stage);
   const alive = (task: Job) => mounted.current && generation.current === task.token && !task.signal.aborted;
@@ -274,7 +274,7 @@ export function V2Call({ available, voiceAvailable, initialLocale = "en", fixtur
     {fixtureMode && <p className={styles.fixture} role="status" data-testid="v2-fixture">{c.fixture}</p>}
     <main className={styles.shell}>
       <nav className={styles.modeNav} aria-label={v3Copy[locale].mode}>
-        <Link href={`/v3?l=${locale}`}>V3 · {v3Copy[locale].trust}</Link>
+        <Link href={`/v3?l=${locale}`}>{v3Copy[locale].trust}</Link>
         <span aria-current="page">{v3Copy[locale].classic}</span>
       </nav>
       {error && <div role="alert" className={styles.error}>{error}</div>}

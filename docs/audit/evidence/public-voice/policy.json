@@ -1,0 +1,20 @@
+{
+  "event": "SCAMSUNO_PUBLIC_VOICE_LEDGER_READY",
+  "resource": "store_tLFZyW5kJ3Ttm5WG",
+  "verifiedReport": "4.9/5k (owner-reported)",
+  "enabled": true,
+  "killSwitch": false,
+  "reconciledAt": 1794217902911,
+  "expiresAt": 1794304302911,
+  "verifiedCreditFloor": 4800,
+  "reserveCredits": 2000,
+  "maxGnaniRequests": 20,
+  "maxGnaniRequestsPerDay": 20,
+  "maxLLMRequests": 20,
+  "maxLLMRequestsPerDay": 20,
+  "maxRequestsPerSession": 13,
+  "maxConcurrent": 2,
+  "maxSTTSeconds": 15,
+  "maxTTSChars": 420,
+  "active": 0
+}

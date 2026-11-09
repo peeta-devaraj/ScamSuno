@@ -131,7 +131,7 @@ test("closed preview offers V1 without credential jargon or provider requests", 
   await page.route("**/api/v2/**", (route) => { requests++; return route.abort(); });
   await page.goto("/v2?l=en");
   await expect(page.getByRole("heading", { name: c.unavailableTitle })).toBeVisible();
-  await expect(page.getByRole("link", { name: c.v1, exact: true })).toHaveAttribute("href", "https://scamsuno.vercel.app/?l=en");
+  await expect(page.getByRole("link", { name: c.v1, exact: true })).toHaveAttribute("href", "https://scamsuno-classic.vercel.app/?l=en");
   await expect(page.getByRole("button", { name: c.answer, exact: true })).toHaveCount(0);
   await expect(page.getByTestId("v2-fixture")).toHaveCount(0);
   expect(await page.locator("main").innerText()).not.toMatch(/credential|API key|environment variable|database/i);

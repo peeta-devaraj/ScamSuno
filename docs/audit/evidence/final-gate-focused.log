@@ -1,0 +1,35 @@
+✔ control is extra admission only, fails closed when absent/unreadable and pause survives reinitialization (8.8446ms)
+✔ durable pause revokes a held V3 dispatch lease without altering V2 state or usage policy (19.953ms)
+✔ paused V3 rejects start/reply while authenticated End and verification still work (27.1315ms)
+✔ private control authenticates before storage, strictly validates same-origin pause and never exposes credentials (6.4478ms)
+✔ independent SQLite clients observe the same persistent pause and initialization cannot reopen it (1163.6569ms)
+✔ readiness stays closed after durable pause even with otherwise valid configuration and fixture allowance (4.6635ms)
+✔ explicit V3 deployments redirect root to the V3 entry and preserve validated locales (7.0049ms)
+✔ flag-off deployments retain the V1 root component (1.6187ms)
+✔ contradiction, negation, invented evidence and suffixes cannot enter any scenario in four languages (207.9125ms)
+✔ the phone profile requires a separate credential and host in a protected Preview environment (3.5135ms)
+✔ isolated copy preserves the expired original policy, billing rows and unknown holds (31.888ms)
+✔ reconciled isolated plan caps one exchange per session and leaves the original closed (17.1016ms)
+✔ explicit credential-value discussion is omitted as a whole in supported scripts (5.6638ms)
+✔ plain refusal, quotation and independent-check semantics remain intact without a disclosed value (1.0043ms)
+✔ multilingual credential paraphrases and refusal-plus-value tails are withheld in both payloads (15.8504ms)
+✔ withholding sensitive quotations never creates a risk grade, and reviewed refusals still support safe boundaries (6.8617ms)
+✔ caller and evaluator never receive an explicit credential value; provenance is retained (1.5132ms)
+✔ multilingual synthetic paraphrases cannot survive controller history, SQLite state or operation rows (73.6932ms)
+✔ controller and actual SQLite persistence omit synthetic credential values and keep unscored uncertainty (5.9289ms)
+✔ closed V3 policy cannot write sessions and open policy bounds concurrent starts (80.6676ms)
+✔ V3 deployment settings close all V2 live routes before touching providers (3.3336ms)
+✔ cleanup removes expired V3 conversation content and leaves active sessions and ledger attempts (10.6741ms)
+✔ bare and localized numeric replies are masked before both model requests (3.8676ms)
+✔ V3-owned fixture speech returns signed confirmed provenance and no hidden assignment (49.7543ms)
+✔ V3 voice rejects V2 cookies, wrong owners, cross-origin requests and browser-supplied caller text before speech (18.0164ms)
+✔ End during V3 fixture STT or TTS withholds late transcripts, proofs and audio (13.927ms)
+✔ V3 preview/production rejects injected fixture mode before database or speech access (3.7742ms)
+ℹ tests 27
+ℹ suites 0
+ℹ pass 27
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2968.3786

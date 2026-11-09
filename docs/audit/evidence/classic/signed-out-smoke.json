@@ -1,0 +1,41 @@
+{
+  "checkedAt": "2026-11-09T09:29:28.305Z",
+  "origin": "https://scamsuno-classic.vercel.app",
+  "health": {
+    "callerClips": 60,
+    "stt": false,
+    "classifier": "buttons",
+    "reportedBuild": ""
+  },
+  "mainBuild": "b3462ac0a9eeb809c7e870044baa291d4c1e378e",
+  "results": [
+    {
+      "locale": "en",
+      "signedOut": true,
+      "introClip": 200,
+      "result": "verified independently",
+      "debrief": true
+    },
+    {
+      "locale": "ta",
+      "signedOut": true,
+      "introClip": 200,
+      "result": "verified independently",
+      "debrief": true
+    },
+    {
+      "locale": "te",
+      "signedOut": true,
+      "introClip": 200,
+      "result": "verified independently",
+      "debrief": true
+    },
+    {
+      "locale": "hi",
+      "signedOut": true,
+      "introClip": 200,
+      "result": "verified independently",
+      "debrief": true
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+Vercel CLI 65.12.1
+> Fetched deployment "scamsuno-v3-f1bqralk0-peetadevaraj-2614s-projects.vercel.app" in peetadevaraj-2614s-projects [485ms]
+
+  General
+
+    id		dpl_GdXrhZSY2nKZs7WXneprxHfbevYs
+    name	scamsuno-v3
+    target	production
+    status	● Ready
+    url		https://scamsuno-v3-f1bqralk0-peetadevaraj-2614s-projects.vercel.app
+    created	Sun Nov 08 2026 17:03:30 GMT+0530 (India Standard Time) [18h ago]
+
+
+  Build Machine
+
+    requested build machine basic
+    actual assigned cores   2 vCPU (actual assignment)
+    memory                  8192 MiB
+    selection type          fixed
+    selection source        plan-default
+
+
+  Build Cache
+
+    not saved (nothing to cache)
+
+
+  Duration
+
+    build duration	2s
+    post-build duration	5s
+    billable duration	1m
+    CPU Minutes Usage	2 minutes (1m x 2vCPU)
+
+
+  Aliases
+
+    ╶ https://scamsuno-v3.vercel.app
+    ╶ https://scamsuno-v3-peetadevaraj-2614s-projects.vercel.app
+    
+
+  Builds
+
+    ╶ .        [0ms]
+    
+

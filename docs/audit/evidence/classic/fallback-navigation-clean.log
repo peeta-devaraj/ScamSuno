@@ -1,0 +1,16 @@
+$ playwright test "--grep" "closed preview offers V1|disabled V3 offers|practice navigation uses|English is first"
+[WebServer] (node:27216) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:25312) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 4 tests using 1 worker
+
+(node:8980) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 tests\browser\v2.spec.ts:128:5 › closed preview offers V1 without credential jargon or provider requests (4.3s)
+  ok 2 tests\browser\v3.spec.ts:108:5 › English is first and V3 to V2 to V3 retains a selected locale on a narrow phone (2.5s)
+  ok 3 tests\browser\v3.spec.ts:217:5 › disabled V3 offers existing modes and makes no V3 API request (769ms)
+  ok 4 tests\browser\v3.spec.ts:230:5 › practice navigation uses distinct names and keeps its brand inside Trust or Trap (797ms)
+
+  4 passed (14.9s)

@@ -1,0 +1,41 @@
+{
+  "at": "2026-11-09T09:59:05.791Z",
+  "locale": "en",
+  "input": "synthetic Flite speech; real hosted Prisma, Timbre and conversation endpoints",
+  "passed": true,
+  "stages": [
+    {
+      "step": "start",
+      "status": 200
+    },
+    {
+      "step": "opening_tts",
+      "status": 200,
+      "model": "timbre-v3.0",
+      "audioSeconds": 6.64
+    },
+    {
+      "step": "stt_synthetic_input",
+      "status": 200,
+      "model": "prisma-v3.0",
+      "transcriptPresent": true
+    },
+    {
+      "step": "signed_voice_reply",
+      "status": 200,
+      "conversationStatus": "ready",
+      "callerSource": "hosted"
+    },
+    {
+      "step": "followup_tts",
+      "status": 200,
+      "model": "timbre-v3.0",
+      "audioSeconds": 8.16
+    },
+    {
+      "step": "debrief",
+      "status": 200,
+      "debrief": true
+    }
+  ]
+}

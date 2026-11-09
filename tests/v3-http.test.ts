@@ -38,7 +38,7 @@ async function start(f: Awaited<ReturnType<typeof fixture>>, locale = "en") {
 
 test("start issues an isolated secure owner cookie and a strict public session without hidden answers", async (t) => {
   const f = await fixture(t), s = await start(f, "ta");
-  assert.match(s.response.headers.get("set-cookie")!, /scamsuno_v3=.*HttpOnly; SameSite=Strict; Path=\/api\/v3; Max-Age=480; Secure/);
+  assert.match(s.response.headers.get("set-cookie")!, /scamsuno_v3_[a-f0-9-]{36}=[a-f0-9]{64}; HttpOnly; SameSite=Strict; Path=\/api\/v3; Max-Age=780; Secure/);
   assert.equal(s.body.debrief, null); assert.equal(s.body.educationalSimulation, true);
   assert.equal(s.body.session.locale, "ta"); assert.equal(s.response.headers.get("cache-control"), "no-store");
   for (const forbidden of ["scenarioId", "groundTruth", "observations", "history", "routine_update", "kyc_pressure", "unverified_notice"]) {
@@ -47,6 +47,25 @@ test("start issues an isolated secure owner cookie and a strict public session w
   assert.equal(sessionOwner(post({}, s.cookie), s.body.session.sessionId)?.length, 64);
   assert.equal(sessionOwner(post({}, `${s.cookie}; ${s.cookie}`), s.body.session.sessionId), null);
   assert.equal(sessionOwner(post({}, s.cookie.replace("scamsuno_v3", "scamsuno_v2")), s.body.session.sessionId), null);
+  assert.deepEqual(f.requests, []);
+});
+
+test("two calls in the same browser keep independent feedback ownership, including across a pause", async (t) => {
+  const f = await fixture(t), a = await start(f, "ta"), b = await start(f, "te");
+  const sidA = a.body.session.sessionId, sidB = b.body.session.sessionId;
+  assert.notEqual(a.cookie.split("=")[0], b.cookie.split("=")[0]);
+  const finish = (id: string, cookies: string) => f.handler(post({ action: "end", sessionId: id }, cookies));
+  assert.equal((await finish(sidA, b.cookie)).status, 401);
+  assert.equal((await finish(sidB, a.cookie)).status, 401);
+  const both = `${a.cookie}; ${b.cookie}`;
+  f.control.mode = null;
+  for (const [id, locale] of [[sidA, "ta"], [sidB, "te"]]) {
+    const response = await finish(id, both), data = await response.json();
+    assert.equal(response.status, 200);
+    assert.equal(data.session.locale, locale);
+    assert.equal(data.debrief.decisions.length, 4);
+    assert.deepEqual((await (await finish(id, both)).json()).debrief, data.debrief);
+  }
   assert.deepEqual(f.requests, []);
 });
 
@@ -110,7 +129,7 @@ test("TLS, same-origin, strict schemas and size limits reject malformed or forge
 
 test("forged or edited voice provenance is rejected, confirmed voice keeps its stored origin", async (t) => {
   const f = await fixture(t), s = await start(f), sessionId = s.body.session.sessionId;
-  const secret = s.cookie.slice(s.cookie.indexOf(".") + 1), text = "I am not sure who you are.";
+  const secret = sessionOwner(post({}, s.cookie), sessionId)!, text = "I am not sure who you are.";
   const confirmation = mintVoiceProof(secret, { sessionId, expectedTurn: 0, locale: "en", text, model: "prisma-v3.0", requestId: "v3-fixture" });
   const operation = { sessionId, operationId: crypto.randomUUID(), expectedTurn: 0, reply: { origin: "voice", text,
     transcription: { provider: "gnani", model: "prisma-v3.0", requestId: "v3-fixture", confirmed: true } } };

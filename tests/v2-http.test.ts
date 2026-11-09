@@ -3,8 +3,17 @@ import { before, after } from "node:test";
 
 // Dedicated synthetic server signing key; never a provider credential.
 const previousProofKey = process.env.V2_VOICE_PROOF_SECRET;
-before(() => { process.env.V2_VOICE_PROOF_SECRET = "c".repeat(64); });
-after(() => { if (previousProofKey === undefined) delete process.env.V2_VOICE_PROOF_SECRET; else process.env.V2_VOICE_PROOF_SECRET = previousProofKey; });
+const previousVercelEnv = process.env.VERCEL_ENV;
+before(() => {
+  process.env.V2_VOICE_PROOF_SECRET = "c".repeat(64);
+  process.env.VERCEL_ENV = "development";
+});
+after(() => {
+  if (previousProofKey === undefined) delete process.env.V2_VOICE_PROOF_SECRET;
+  else process.env.V2_VOICE_PROOF_SECRET = previousProofKey;
+  if (previousVercelEnv === undefined) delete process.env.VERCEL_ENV;
+  else process.env.VERCEL_ENV = previousVercelEnv;
+});
 import test from "node:test";
 import { createClient } from "@libsql/client";
 import { createConversationHandler } from "../src/server/v2/conversation-http";

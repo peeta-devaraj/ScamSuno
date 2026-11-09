@@ -1,0 +1,31 @@
+{
+  "at": "2026-11-09T10:18:51.560Z",
+  "locale": "te",
+  "browser": "headless Chrome, mobile viewport",
+  "noProviderCalls": true,
+  "stages": [
+    {
+      "action": "start",
+      "status": 200,
+      "hasDebrief": false,
+      "code": null
+    },
+    {
+      "action": "end",
+      "status": 200,
+      "hasDebrief": true,
+      "code": null
+    }
+  ],
+  "blockedApiPaths": [
+    "/api/v3/tts"
+  ],
+  "feedbackItems": 4,
+  "decisionStatuses": [
+    "not_tested",
+    "not_tested",
+    "not_tested",
+    "observed_safe"
+  ],
+  "passed": true
+}

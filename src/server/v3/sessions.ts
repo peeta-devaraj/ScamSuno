@@ -1,7 +1,6 @@
 import { createHash, createHmac, randomBytes, randomUUID, timingSafeEqual } from "node:crypto";
 import type { Client, Transaction } from "@libsql/client";
 import { z } from "zod";
-import { maskNumbers } from "../../domain/numbers";
 import type { Locale } from "../../domain/scenario";
 import { OperationSchema, type TurnOperation } from "../../domain/v2/contracts";
 import { databaseWrite } from "../v2/database";
@@ -10,11 +9,12 @@ import { budgetReadiness } from "./budget";
 import { advanceSession, endSession, startSession, verifySession } from "./controller";
 import { InternalSessionSchema, type StoredSession } from "./public-session";
 import { v3EnabledInTransaction } from "./control";
-import { retainReplyText } from './privacy';
+import { withoutParticipantText } from './privacy';
 
 const LEASE_MS = 60_000;
 export const V3_START_LIMIT = 12;
 export const V3_CONTENT_RETENTION_MS = 24 * 60 * 60_000;
+export const V3_FEEDBACK_GRACE_MS = 5 * 60_000;
 const uuid = z.uuid(), secretShape = /^[a-f0-9]{64}$/;
 const VerifySchema = z.object({ sessionId: uuid, operationId: uuid, expectedTurn: z.number().int().min(0).max(10) }).strict();
 export type VerificationOperation = z.infer<typeof VerifySchema>;
@@ -43,11 +43,7 @@ async function write<T>(client: Client, action: (tx: Transaction) => Promise<T>)
 function safeState(candidate: StoredSession) {
   const parsed = InternalSessionSchema.safeParse(candidate);
   if (!parsed.success) return fail("V3_INVALID_STATE");
-  const s = parsed.data;
-  return InternalSessionSchema.parse({ ...s, lastCaller: maskNumbers(s.lastCaller),
-    history: s.history.map((h) => ({ ...h, caller: maskNumbers(h.caller), participant: retainReplyText(h.participant) })),
-    observations: s.observations.map((o) => ({ ...o, evidence: retainReplyText(o.evidence) })),
-  });
+  return withoutParticipantText(parsed.data);
 }
 function state(value: unknown) {
   try { return safeState(JSON.parse(String(value))); }
@@ -121,15 +117,15 @@ export async function createStoredSession(client: Client, locale: Locale, now = 
     return { session, secret };
   });
 }
-async function owned(tx: Transaction, sessionId: string, secret: string) {
+async function owned(tx: Transaction, sessionId: string, secret: string, now: number) {
   if (!uuid.safeParse(sessionId).success) return fail("V3_SESSION_NOT_FOUND");
   const result = await tx.execute({ sql: "SELECT * FROM v3_sessions WHERE session_id=? AND owner_hash=?", args: [sessionId, ownerHash(secret)] });
   const row = result.rows[0];
-  if (!row) return fail("V3_SESSION_NOT_FOUND");
+  if (!row || now >= Number(row.expires_at) + V3_FEEDBACK_GRACE_MS) return fail("V3_SESSION_NOT_FOUND");
   return { row, session: state(row.state_json) };
 }
 export async function readStoredSession(client: Client, sessionId: string, secret: string) {
-  return write(client, async (tx) => (await owned(tx, sessionId, secret)).session);
+  return write(client, async (tx) => (await owned(tx, sessionId, secret, Date.now())).session);
 }
 export async function hasActiveTurnLease(tx: Transaction, context: { sessionId: string; turnOperationId: string }, now: number): Promise<boolean> {
   clock(now);
@@ -158,7 +154,7 @@ export async function claimTurn(client: Client, secret: string, candidate: TurnO
   if (!parsed.success) return fail("V3_INVALID_OPERATION");
   const op = parsed.data, requestDigest = digest(secret, op);
   return write(client, async (tx) => {
-    const { row, session } = await owned(tx, op.sessionId, secret);
+    const { row, session } = await owned(tx, op.sessionId, secret, now);
     if (now < session.updatedAt) return fail("V3_INVALID_OPERATION");
     const event = await tx.execute({ sql: "SELECT operation_id FROM v3_verification_events WHERE operation_id=?", args: [op.operationId] });
     if (event.rows.length) return fail("V3_OPERATION_CONFLICT");
@@ -186,7 +182,7 @@ export async function commitTurn(client: Client, secret: string, operationId: st
   if (!uuid.safeParse(operationId).success) return fail("V3_INVALID_OPERATION");
   const next = safeState(prepared);
   return write(client, async (tx) => {
-    const { row, session: current } = await owned(tx, next.sessionId, secret);
+    const { row, session: current } = await owned(tx, next.sessionId, secret, now);
     const op = (await tx.execute({ sql: "SELECT * FROM v3_turn_operations WHERE operation_id=? AND session_id=?", args: [operationId, current.sessionId] })).rows[0];
     if (op?.status === "completed") return current;
     if (!op || op.status !== "active" || current.ending || row.lease_operation !== operationId || Number(row.lease_until ?? 0) <= now ||
@@ -216,7 +212,7 @@ export async function commitTurn(client: Client, secret: string, operationId: st
 export async function endStoredSession(client: Client, sessionId: string, secret: string, now = Date.now()) {
   clock(now);
   return write(client, async (tx) => {
-    const { session } = await owned(tx, sessionId, secret);
+    const { session } = await owned(tx, sessionId, secret, now);
     if (session.ending) return session;
     if (now < session.updatedAt) return fail("V3_INVALID_OPERATION");
     await tx.execute({ sql: "UPDATE v3_turn_operations SET status='abandoned' WHERE session_id=? AND status='active'", args: [sessionId] });
@@ -230,7 +226,7 @@ export async function verifyStoredSession(client: Client, secret: string, candid
   if (!parsed.success) return fail("V3_INVALID_OPERATION");
   const op = parsed.data, requestDigest = digest(secret, { action: "verify", ...op });
   return write(client, async (tx) => {
-    const { row, session } = await owned(tx, op.sessionId, secret);
+    const { row, session } = await owned(tx, op.sessionId, secret, now);
     if (now < session.updatedAt) return fail("V3_INVALID_OPERATION");
     const existing = (await tx.execute({ sql: "SELECT * FROM v3_verification_events WHERE operation_id=?", args: [op.operationId] })).rows[0];
     if (existing) {

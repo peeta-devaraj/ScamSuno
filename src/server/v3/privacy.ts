@@ -1,4 +1,5 @@
 import { maskNumbers } from '../../domain/numbers';
+import { InternalSessionSchema, type StoredSession } from './public-session';
 
 export const SENSITIVE_CONTENT_OMITTED = '[Sensitive information omitted]';
 
@@ -22,4 +23,14 @@ export function redactExplicitSecrets(text: string): string {
 }
 export function retainReplyText(text: string): string {
   return maskNumbers(redactExplicitSecrets(text));
+}
+
+/** Feedback and caller continuity need authored captions, origin and validated
+ * decision kinds, not prior participant utterances or evaluator quotations.
+ * Keep empty legacy fields so existing sessions remain readable on rollback. */
+export function withoutParticipantText(session: StoredSession): StoredSession {
+  return InternalSessionSchema.parse({ ...session, lastCaller: maskNumbers(session.lastCaller),
+    history: session.history.map(turn => ({ ...turn, caller: maskNumbers(turn.caller), participant: "" })),
+    observations: session.observations.map(observation => ({ ...observation, evidence: "" })),
+  });
 }

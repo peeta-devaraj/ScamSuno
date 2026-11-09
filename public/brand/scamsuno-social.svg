@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title">
+  <title id="title">ScamSuno. Can you trust this call? Trust or Trap educational simulation.</title>
+  <defs>
+    <radialGradient id="plum" cx=".77" cy=".4" r=".82"><stop stop-color="#45334d"/><stop offset=".52" stop-color="#2b2238"/><stop offset="1" stop-color="#211a2a"/></radialGradient>
+  </defs>
+  <path fill="url(#plum)" d="M0 0h1200v630H0z"/>
+  <g fill="none" stroke="#b18a9d" opacity=".23">
+    <circle cx="600" cy="315" r="242"/><circle cx="600" cy="315" r="278"/><circle cx="600" cy="315" r="316"/>
+  </g>
+  <rect x="549" y="108" width="102" height="102" rx="27" fill="#ffad94"/>
+  <path transform="translate(562 121) scale(3.17)" d="M2 12h4l2-6 4 12 4-12 2 6h4" fill="none" stroke="#382639" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+  <g text-anchor="middle" font-family="Segoe UI,Arial,sans-serif">
+    <text x="600" y="306" font-size="89" font-weight="850" letter-spacing="-6" fill="#fff4ed">Scam<tspan fill="#ffad94">Suno</tspan></text>
+    <text x="600" y="389" font-size="42" font-weight="750" letter-spacing="-1.5" fill="#fff4ed">Can you trust this call?</text>
+    <text x="600" y="453" font-size="21" font-weight="700" letter-spacing="2.2" fill="#e7d8e5">TRUST OR TRAP · EDUCATIONAL SIMULATION</text>
+  </g>
+</svg>
+
