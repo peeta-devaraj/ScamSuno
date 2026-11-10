@@ -1,0 +1,121 @@
+1
+00:00:00,270 --> 00:00:02,640
+A good scam call doesn't sound like one.
+
+2
+00:00:02,680 --> 00:00:05,240
+It sounds polite. Even helpful.
+
+3
+00:00:06,920 --> 00:00:10,040
+In ScamSuno, every caller is fictional.
+
+4
+00:00:10,080 --> 00:00:12,160
+Not every caller is lying.
+
+5
+00:00:12,795 --> 00:00:17,610
+Choose a language. We'll use English for
+this offline, typed walkthrough.
+
+6
+00:00:19,595 --> 00:00:23,580
+A fictional bank caller brings up a
+service notice. What's it about?
+
+7
+00:00:26,145 --> 00:00:30,230
+Type a question in your own words. We ask
+what the notice is about.
+
+8
+00:00:33,595 --> 00:00:37,650
+The caller describes a general update and
+points us to the fictional app.
+
+9
+00:00:42,932 --> 00:00:46,767
+Before acting on the call, open a channel
+that you already trust.
+
+10
+00:00:50,492 --> 00:00:54,487
+The fictional app confirms the notice. Who
+called is still unverified.
+
+11
+00:00:55,942 --> 00:00:59,617
+The debrief records our independent check
+and safe exit.
+
+12
+00:01:01,062 --> 00:01:05,747
+Gnani Prisma transcribes a short voice
+turn. You review it before sending.
+
+13
+00:01:06,962 --> 00:01:09,987
+The engine selects a reviewed response for
+the scenario.
+
+14
+00:01:11,452 --> 00:01:14,467
+Separate decision rules check what your
+reply supports.
+
+15
+00:01:15,042 --> 00:01:19,277
+Gnani Timbre reads the approved caller
+line. Then it's your turn.
+
+16
+00:01:21,212 --> 00:01:25,787
+What if the trusted app can't match the
+notice? Here's a second offline call.
+
+17
+00:01:27,720 --> 00:01:31,680
+Nothing here is obviously wrong. That's
+what makes it hard.
+
+18
+00:01:31,720 --> 00:01:34,930
+So you check somewhere the caller can't
+control.
+
+19
+00:01:37,120 --> 00:01:38,490
+No matching notice.
+
+20
+00:01:38,530 --> 00:01:42,020
+Not proof of fraud, but not enough to
+trust the call.
+
+21
+00:01:44,320 --> 00:01:47,510
+End the call to see what was really going
+on,
+
+22
+00:01:47,550 --> 00:01:49,790
+and which of your choices mattered.
+
+23
+00:01:50,320 --> 00:01:53,380
+Anything the call didn't test isn't
+scored.
+
+24
+00:01:53,420 --> 00:01:57,110
+Some calls are genuine. Some are scams.
+
+25
+00:01:57,150 --> 00:01:59,130
+Some never become clear.
+
+26
+00:01:59,170 --> 00:02:04,460
+ScamSuno. Practise on a call that doesn't
+matter, before one that does.

@@ -1,45 +1,42 @@
-# ScamSuno
+# ScamSuno — Can you trust this call?
 
 ![ScamSuno. Can you trust this call? An educational simulation.](public/brand/scamsuno-social.png)
 
-**Can you trust this call?** ScamSuno is a multilingual voice simulator for practising how to respond to suspicious calls. Trust or Trap presents a fictional caller, lets you answer in your own words, and explains what your choices showed after you end the call.
+**Trust or Trap** is a multilingual educational simulator for practising how to respond to a convincing phone call. It was built for Gnani AI’s Great Indian AI Internship Challenge 2026.
 
-[Open Trust or Trap](https://scamsuno.vercel.app) · [Open Classic scripted practice](https://scamsuno-classic.vercel.app) · [Watch the 60-second demo draft](brag-output/scamsuno-v3-draft.mp4)
+[Open Trust or Trap](https://scamsuno.vercel.app/) · [Read the one-page solution pitch](docs/submission/ScamSuno-One-Page-Solution-Pitch.pdf) · [Watch the 2:05 competition demo](docs/submission/ScamSuno-Submission-Final.mp4) · [Open Classic scripted practice](https://scamsuno-classic.vercel.app/)
 
 ## Try Trust or Trap
 
-1. Choose **English**, **தமிழ் (Tamil)**, **తెలుగు (Telugu)** or **हिन्दी (Hindi)**. English is the default.
-2. Answer the fictional call. Listen or read the caption, then speak or type a reply. With voice, review the transcript before you send it.
-3. Check the caller's claim in the simulated trusted channel if you choose. The check evaluates the notice. The caller's identity remains unverified.
-4. Tap **End Call** for the debrief. It reveals the scenario and explains the observed decisions. Behaviours the call did not test are marked accordingly.
+1. Choose English, தமிழ் (Tamil), తెలుగు (Telugu) or हिन्दी (Hindi). The server assigns a fictional legitimate, fraudulent or ambiguous call.
+2. Read or listen to the caller and reply in your own words. When voice is available, record a short turn and review the transcript before sending.
+3. Open the simulated trusted app to verify the notice. The caller’s identity remains unverified.
+4. End the call to reveal the scenario and see feedback based on the choices observed. Untested behaviours and uncertain interpretations stay unscored.
 
-The scenarios include legitimate, fraudulent and ambiguous calls. Use fictional details throughout. Live voice availability depends on a time-limited provider allowance. Classic runs separately with scripted replies and shipped caller audio. [Rollout and verification](docs/release/PUBLIC_VOICE_ROLLOUT.md)
+Use fictional details. If live admission is closed, the public entry links to Classic, the separate scripted exercise with shipped caller audio.
 
-## How it works
+## Architecture
 
-```mermaid
-flowchart LR
-  A["Record or type"] --> B["Confirm reply"]
-  B --> C["Server-owned scenario and decision rules"]
-  C --> D["Approved caller response"]
-  D --> A
-  C --> E["End call and review feedback"]
-```
+A confirmed voice transcript or typed reply enters the same server-owned scenario. A hosted text model selects from scenario-approved caller lines. The server validates the selection and evaluates participant decisions separately. Gnani **Prisma** transcribes the voice turn, and Gnani **Timbre** synthesises the approved caller line. The browser receives a restricted view of the session. The server releases the debrief after End.
 
-Gnani **Prisma** transcribes audio and **Timbre** speaks the caller's lines. The hosted text model ranks scenario-approved replies and helps interpret decisions. The server validates those decisions and owns the scenario, independent check and debrief. Calls run in turns so you can review what was heard before the caller responds. The app uses Next.js, React, TypeScript and a durable libSQL ledger.
+The stack uses Next.js, React, TypeScript, Zod and libSQL. The app handles audio in memory and sends recordings to Gnani for transcription. New V3 session records omit participant reply text. The filtered current reply can go to the hosted model. The durable usage ledger limits provider admission. [Scenario design](docs/V3_SCENARIO_DESIGN.md) · [Evaluation rubric](docs/V3_EVALUATION_RUBRIC.md) · [Usage ledger](docs/V2_LEDGER_SCHEMA.md)
 
-ScamSuno sends recordings to Gnani for transcription. It keeps audio in memory and omits participant reply text from new V3 session records. The current filtered reply can go to the hosted model. Session ownership protects the debrief, and the provider ledger caps attempts and concurrency. [Scenario design](docs/V3_SCENARIO_DESIGN.md) · [Evaluation rubric](docs/V3_EVALUATION_RUBRIC.md) · [Usage ledger](docs/V2_LEDGER_SCHEMA.md)
+## Demo and verification limits
+
+The final competition video, **ScamSuno-Submission-Final.mp4**, runs **2:05**. It shows two offline typed cases and explains the voice architecture. The [submission assets](docs/submission/README.md) include the full demo, the separate 60-second social cut, and captions for both.
+
+A separate bounded English API smoke used synthetic input with live Prisma and Timbre and completed the reply and debrief. Physical Android microphone acceptance in Tamil and Telugu remains pending. Live speech and hosted conversations depend on the production admission policy. The simulator is an educational prototype. [Public rollout and provider evidence](docs/release/PUBLIC_VOICE_ROLLOUT.md)
 
 ## Run locally
 
-Install **Node.js 24** and **pnpm 11.25.0**, then start the local server.
+Use **Node.js 24** and **pnpm 11.25.0**. The local mock uses scripted practice and requires no provider credentials.
 
 ```sh
 pnpm install --frozen-lockfile
 GNANI_MODE=mock CLASSIFIER_MODE=buttons VERCEL_ENV=development pnpm dev
 ```
 
-In PowerShell, set the variables on separate lines.
+In PowerShell, run the install first, then set the environment and start the server.
 
 ```powershell
 $env:GNANI_MODE = 'mock'
@@ -48,23 +45,13 @@ $env:VERCEL_ENV = 'development'
 pnpm dev
 ```
 
-Open the local home page to try scripted practice. To see a full V3 call without credentials, install Chromium as described below and run `pnpm test:e2e --headed tests/browser/v3.spec.ts`. Playwright supplies the labelled test responses. [Local home page](http://127.0.0.1:3000)
-
-## Verify a change
+Open [the local home page](http://127.0.0.1:3000). To exercise the V3 flow using labelled offline fixtures, install the Playwright Chromium browser and run the V3 journeys.
 
 ```sh
-pnpm verify
-pnpm check:audio
 pnpm exec playwright install chromium
-pnpm test:e2e
+pnpm test:e2e --headed tests/browser/v3.spec.ts
 ```
 
-`pnpm verify` runs the type check, unit and route tests, and a production build. Browser tests use labelled fixtures and generated microphone input. Set `PLAYWRIGHT_CHROME` to use a local Chrome executable. On Linux CI, install Chromium's system dependencies with `pnpm exec playwright install --with-deps chromium`. [GitHub Actions](https://github.com/peeta-devaraj/ScamSuno/actions)
+Run `pnpm verify` for type checking, unit and route tests and the production build. Run `pnpm check:audio` for shipped audio integrity and `pnpm test:e2e` for the full browser suite.
 
-## Release and demo
-
-GitHub holds the source and runs verification. Vercel production promotion is a separate operator step. Keep provider credentials in ignored local files or the target project's server environment, with separate Preview and Production ledgers. [Environment template](.env.example) · [Release checklist](docs/release/BRAND_RELEASE_CHECKLIST.md) · [Voice runbook](docs/audit/V3_VOICE_LAUNCH_RUNBOOK.md)
-
-The demo draft shows the public site. Its voice, independent check and feedback sequence is illustrated while the Android recording is pending. A production English smoke used synthetic input with real Prisma and Timbre, and the public Tamil and Telugu debrief checks exercised End without microphone input. [Demo status](docs/demo/VIDEO_PRODUCTION_STATUS.md) · [Editable composition](brag-output/composition/) · [Android acceptance checklist](docs/audit/V3_DEVICE_ACCEPTANCE.md)
-
-V1 and V2 remain recoverable from the `v1-stable` and `v2-verified-2026-11-08` tags. The V3 recovery record covers the source, deployment and ledger separately. [V1 recovery](docs/V1_PRESERVATION.md) · [V3 recovery](docs/V3_RECOVERY.md)
+Keep credentials in ignored local environment files or the intended server environment. GitHub verification and Vercel promotion are separate. [Environment template](.env.example) · [Voice runbook](docs/audit/V3_VOICE_LAUNCH_RUNBOOK.md) · [V1 preservation](docs/V1_PRESERVATION.md) · [V3 recovery](docs/V3_RECOVERY.md)
